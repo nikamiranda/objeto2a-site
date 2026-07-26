@@ -27,24 +27,10 @@ const cases = [
     size: "wide",
   },
   {
-    title: "Mentorias",
-    text: "Percursos individuais para ampliar repertório, autonomia e direção.",
-    tag: "DESENVOLVIMENTO | CONTÍNUO",
-    image: "/mentoring.jpg",
-    size: "small",
-  },
-  {
     title: "Workshops experienciais",
     text: "Aprendizagem prática para transformar reflexão em movimento.",
     tag: "EQUIPES | SOB MEDIDA",
     image: "/case-redballoon-monica.png",
-    size: "small",
-  },
-  {
-    title: "Laboratórios de aprendizagem",
-    text: "Problemas reais, metodologias ativas e construção coletiva.",
-    tag: "INOVAÇÃO | PRÁTICA",
-    image: "/bootcamp.png",
     size: "small",
   },
   {
@@ -53,13 +39,6 @@ const cases = [
     tag: "CULTURA | RELAÇÕES",
     image: "/facilitation.jpg",
     size: "small",
-  },
-  {
-    title: "Mapa da empatia",
-    text: "Ferramentas de leitura humana aplicadas ao contexto do trabalho.",
-    tag: "ESCUTA | CONTEXTO",
-    image: "/mapa-empatia.jpg",
-    size: "wide",
   },
 ];
 
@@ -157,10 +136,6 @@ function clamp(value, min = 0, max = 1) {
   return Math.min(max, Math.max(min, value));
 }
 
-function range(value, from, to) {
-  return clamp((value - from) / (to - from));
-}
-
 function MethodExplorer() {
   const [activeStage, setActiveStage] = useState(0);
   const stage = nexusStages[activeStage];
@@ -239,7 +214,6 @@ export function App() {
   const [scrolled, setScrolled] = useState(false);
   const [navHidden, setNavHidden] = useState(false);
   const heroRef = useRef(null);
-  const expansionRef = useRef(null);
 
   useEffect(() => {
     let lastY = window.scrollY;
@@ -307,37 +281,6 @@ export function App() {
       hero.removeEventListener("pointerenter", enter);
       hero.removeEventListener("pointerleave", leave);
       window.removeEventListener("scroll", scroll);
-    };
-  }, []);
-
-  useEffect(() => {
-    const track = expansionRef.current;
-    if (!track) return undefined;
-    let frame = 0;
-    let target = 0;
-    let current = 0;
-    const update = () => {
-      const rect = track.getBoundingClientRect();
-      target = clamp((-rect.top + window.innerHeight * 0.78) / (rect.height - window.innerHeight * 0.2));
-    };
-    const animate = () => {
-      current += (target - current) * 0.08;
-      const eased = range(current, 0, 0.85);
-      track.style.setProperty("--expand-y", `${20 * (1 - eased)}%`);
-      track.style.setProperty("--expand-x", `${15 * (1 - eased)}%`);
-      const copyProgress = range(current, 0.58, 0.85);
-      track.style.setProperty("--expand-copy", copyProgress);
-      track.style.setProperty("--expand-shift", `${24 * (1 - copyProgress)}px`);
-      frame = requestAnimationFrame(animate);
-    };
-    update();
-    window.addEventListener("scroll", update, { passive: true });
-    window.addEventListener("resize", update);
-    frame = requestAnimationFrame(animate);
-    return () => {
-      cancelAnimationFrame(frame);
-      window.removeEventListener("scroll", update);
-      window.removeEventListener("resize", update);
     };
   }, []);
 
@@ -485,17 +428,6 @@ export function App() {
             </article>
           ))}
         </div>
-        <article className="feature-case">
-          <img src="/case-redballoon-reuniao.png" alt="Reunião de diagnóstico e desenvolvimento com a Red Balloon" />
-          <div>
-            <h3>Ciclo Red Balloon</h3>
-            <p>
-              Diagnóstico, experiência e desenvolvimento de soft skills para
-              fortalecer comunicação, autonomia e inteligência relacional.
-            </p>
-            <span>RIO DE JANEIRO | 05 UNIDADES</span>
-          </div>
-        </article>
       </section>
 
       <section className="solutions section-pad" id="solucoes">
@@ -532,32 +464,13 @@ export function App() {
           </div>
         </div>
 
-        <div className="service-detail">
-          <div>
-            <p className="overline">EM DESTAQUE</p>
-            <h3>{services[activeService].title}</h3>
-            <p>{services[activeService].text}</p>
-            <a className="button button--dark" href="#contato">CONVERSAR SOBRE ISSO <span>↗</span></a>
-          </div>
-          <img src={services[activeService].image} alt="" />
-          <div className="key-points">
-            <h4>Pontos-chave</h4>
-            {services[activeService].points.map((point) => <p key={point}><i>✓</i>{point}</p>)}
-          </div>
-        </div>
-
-        <div className="service-list">
-          {services.map((service, index) => index !== activeService && (
-            <button type="button" onClick={() => setActiveService(index)} key={service.title}>
-              <h3>{service.title}</h3>
-              <img src={service.image} alt="" />
-              <span>+</span>
-            </button>
-          ))}
+        <div className="solution-action">
+          <p>{services[activeService].points.join(" · ")}</p>
+          <a className="button button--dark" href="#contato">CONVERSAR SOBRE ESTA SOLUÇÃO <span>↗</span></a>
         </div>
       </section>
 
-      <div className="manifesto-track" ref={expansionRef}>
+      <div className="manifesto-track">
         <section className="manifesto">
           <img src="/nexo-humano-hero.png" alt="" />
           <div>

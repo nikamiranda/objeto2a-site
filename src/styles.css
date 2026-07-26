@@ -336,7 +336,7 @@ h1, h2, h3, h4, p { margin-top: 0; }
   to { opacity: 1; transform: scale(1); }
 }
 
-.about { min-height: 1319px; }
+.about { min-height: auto; }
 .about > h2 {
   max-width: 810px;
   margin: 0;
@@ -351,7 +351,7 @@ h1, h2, h3, h4, p { margin-top: 0; }
 .about-pillars h3 { margin: 32px 0 12px; font-size: 20px; font-weight: 500; }
 .about-pillars p { max-width: 390px; margin: 0; color: #6d6961; line-height: 1.5; }
 .about-collage {
-  margin-top: 330px;
+  margin-top: 96px;
   display: grid;
   grid-template-columns: .7fr .68fr 1.45fr;
   gap: 30px;
@@ -408,6 +408,22 @@ h1, h2, h3, h4, p { margin-top: 0; }
 .solution-accordion b { font-size: 1.2rem; font-weight: 500; }
 .solution-accordion small { max-width: 430px; margin-top: 14px; display: block; color: #67635d; font-size: .8rem; line-height: 1.5; }
 .solution-accordion i { font-size: 1.5rem; font-style: normal; font-weight: 300; }
+.solution-action {
+  margin-top: 36px;
+  padding-top: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  border-top: 1px solid var(--line);
+}
+.solution-action p {
+  max-width: 760px;
+  margin: 0;
+  color: #68645d;
+  font-size: 13px;
+  line-height: 1.55;
+}
 .service-detail {
   margin-top: 125px;
   padding: 85px 0 52px;
@@ -445,24 +461,19 @@ h1, h2, h3, h4, p { margin-top: 0; }
 .service-list span { font-size: 1.6rem; }
 
 .manifesto-track {
-  --expand-x: 15%;
-  --expand-y: 20%;
-  --expand-copy: 0;
-  --expand-shift: 24px;
   position: relative;
-  min-height: 160svh;
+  min-height: auto;
+  padding: 80px 4px;
   background: var(--paper);
 }
 .manifesto {
-  position: sticky;
-  top: 8px;
-  min-height: calc(100svh - 16px);
-  height: calc(100svh - 16px);
+  position: relative;
+  min-height: 680px;
+  height: 680px;
   overflow: hidden;
-  clip-path: inset(var(--expand-y) var(--expand-x) round 28px);
+  border-radius: 28px;
   color: white;
   background: #111;
-  will-change: clip-path;
 }
 .manifesto::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(0,0,0,.82), rgba(0,0,0,.1)); }
 .manifesto > img { position: absolute; inset: 0; height: 100%; object-fit: cover; }
@@ -475,13 +486,11 @@ h1, h2, h3, h4, p { margin-top: 0; }
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  opacity: var(--expand-copy);
-  transform: translateY(var(--expand-shift));
 }
 .manifesto h2 { margin: 0 0 28px; font-size: 42px; font-weight: 500; letter-spacing: -.03em; line-height: 1.2; }
 .manifesto p { max-width: 540px; margin-bottom: 32px; line-height: 1.5; }
 
-.insights { min-height: 1065px; }
+.insights { min-height: auto; }
 .insights > h2 { margin-bottom: 30px; }
 .insight-grid { margin-top: 80px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
 .insight-image { position: relative; height: 470px; overflow: hidden; border-radius: 22px; }
@@ -566,8 +575,8 @@ h1, h2, h3, h4, p { margin-top: 0; }
   }
 
   .about {
-    position: relative;
-    height: 1319px;
+    position: static;
+    height: auto;
     min-height: 0;
   }
   .about > h2 {
@@ -577,43 +586,33 @@ h1, h2, h3, h4, p { margin-top: 0; }
   }
   .about > .overline { margin-bottom: 7px; }
   .about-pillars {
-    position: absolute;
-    top: 284px;
-    left: 50px;
-    right: 50px;
-    margin: 0;
+    position: static;
+    margin-top: 70px;
   }
   .about-collage {
-    position: absolute;
-    top: 539px;
-    left: 50px;
-    right: 50px;
-    margin: 0;
-    grid-template-columns: 273px 273px 575px;
+    position: static;
+    margin-top: 96px;
+    grid-template-columns: .7fr .68fr 1.45fr;
     gap: 30px;
   }
   .about-image {
-    height: 554px;
-    margin-top: 144px;
+    height: 430px;
+    margin-top: 0;
   }
   .about-fragment { margin-top: 0; }
-  .about-fragment img { height: 566px; }
-  .about-story img { height: 534px; }
+  .about-fragment img,
+  .about-story img { height: 430px; }
 
   .works {
-    position: relative;
-    height: 2074px;
-    overflow: hidden;
+    position: static;
+    height: auto;
+    overflow: visible;
   }
-  .works .section-head { margin-bottom: 0; }
-  .works .section-head { transform: translateY(7px); }
+  .works .section-head { margin-bottom: 72px; transform: none; }
   .work-grid {
-    position: absolute;
-    top: 296px;
-    left: 50px;
-    right: 50px;
-    grid-template-rows: 473px 441px;
-    grid-auto-rows: 441px;
+    position: static;
+    grid-template-rows: auto;
+    grid-auto-rows: auto;
     gap: 48px 30px;
   }
   .work-card { overflow: hidden; }
@@ -629,24 +628,14 @@ h1, h2, h3, h4, p { margin-top: 0; }
     margin-bottom: 8px;
     font-size: 12px;
   }
-  .feature-case {
-    position: absolute;
-    top: 1348px;
-    left: 50px;
-    right: 50px;
-    height: 644px;
-    min-height: 0;
-    margin: 0;
-  }
-
   .solutions {
-    position: relative;
-    height: 2615px;
-    overflow: hidden;
+    position: static;
+    height: auto;
+    overflow: visible;
   }
   .solutions .section-head {
-    margin-bottom: 0;
-    transform: translateY(7px);
+    margin-bottom: 72px;
+    transform: none;
   }
   .solutions .section-head h2 {
     width: 750px;
@@ -658,10 +647,7 @@ h1, h2, h3, h4, p { margin-top: 0; }
     margin-top: 22px;
   }
   .solution-overview {
-    position: absolute;
-    top: 469px;
-    left: 50px;
-    right: 50px;
+    position: static;
     height: 482px;
     grid-template-columns: 696px 436px;
     gap: 48px;
@@ -706,16 +692,13 @@ h1, h2, h3, h4, p { margin-top: 0; }
   }
   .service-list span { justify-self: end; }
 
-  .manifesto-track { margin-top: 100px; }
+  .manifesto-track { margin-top: 0; }
   .manifesto { margin-top: 0; }
   .manifesto > div {
-    justify-content: flex-start;
-    padding-top: 300px;
+    justify-content: center;
+    padding-top: 0;
   }
-  .insights {
-    margin-top: 100px;
-    padding-top: 108px;
-  }
+  .insights { margin-top: 0; padding-top: 108px; }
   .insight-grid { margin-top: 96px; }
   .contact { padding-top: 200px; }
 }
@@ -746,7 +729,7 @@ h1, h2, h3, h4, p { margin-top: 0; }
   .hero-stats { gap: 25px; }
   .about { min-height: auto; }
   .about { min-height: auto; }
-  .about-collage { margin-top: 260px; grid-template-columns: .8fr 1.2fr; }
+  .about-collage { margin-top: 90px; grid-template-columns: .8fr 1.2fr; }
   .about-story { grid-column: 2; }
   .work-grid { grid-template-columns: repeat(2, 1fr); }
   .solution-overview { grid-template-columns: 1fr 1fr; }
@@ -827,7 +810,7 @@ h1, h2, h3, h4, p { margin-top: 0; }
   .section-head h2, .insights > h2, .about > h2 { font-size: 34px; }
   .about-pillars { margin-top: 60px; grid-template-columns: 1fr; gap: 35px; }
   .about-pillars h3 { margin-top: 20px; }
-  .about-collage { margin-top: 180px; grid-template-columns: 1fr; }
+  .about-collage { margin-top: 72px; grid-template-columns: 1fr; }
   .about-image { height: 480px; }
   .about-fragment { margin-top: 20px; }
   .about-story { grid-column: 1; }
@@ -845,16 +828,18 @@ h1, h2, h3, h4, p { margin-top: 0; }
   .service-list h3 { font-size: 1.35rem; }
   .service-list img { height: 100px; }
   .manifesto, .manifesto > div { min-height: 620px; }
-  .manifesto-track { min-height: 135svh; }
+  .manifesto-track { min-height: auto; padding: 44px 4px; }
   .manifesto {
-    height: calc(100svh - 8px);
-    top: 4px;
+    position: relative;
+    height: 620px;
+    top: auto;
   }
   .manifesto > div { padding-inline: 16px; }
   .manifesto h2 { font-size: 34px; }
   .insights { min-height: auto; }
   .insight-grid { grid-template-columns: 1fr; }
   .insight-image { height: 450px; }
+  .solution-action { align-items: flex-start; flex-direction: column; }
   .contact { padding: 85px 20px 25px; }
   .contact-head { padding-bottom: 75px; grid-template-columns: 1fr; }
   .contact-head h2 { font-size: 4.3rem; }
