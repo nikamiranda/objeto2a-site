@@ -132,6 +132,15 @@ const nexusStages = [
   },
 ];
 
+const navItems = [
+  { id: "inicio", label: "Início" },
+  { id: "metodo", label: "Método" },
+  { id: "sobre", label: "Sobre" },
+  { id: "trabalhos", label: "Trabalhos" },
+  { id: "solucoes", label: "Soluções" },
+  { id: "contato", label: "Contato" },
+];
+
 function clamp(value, min = 0, max = 1) {
   return Math.min(max, Math.max(min, value));
 }
@@ -212,17 +221,21 @@ export function App() {
   const [activeService, setActiveService] = useState(0);
   const [formState, setFormState] = useState("idle");
   const [scrolled, setScrolled] = useState(false);
-  const [navHidden, setNavHidden] = useState(false);
+  const [activeSection, setActiveSection] = useState("inicio");
   const heroRef = useRef(null);
 
   useEffect(() => {
-    let lastY = window.scrollY;
     const update = () => {
       const nextY = window.scrollY;
       setScrolled(nextY > window.innerHeight * 0.72);
-      if (nextY > 180 && nextY > lastY + 2) setNavHidden(true);
-      if (nextY < lastY - 2 || nextY < 120) setNavHidden(false);
-      lastY = nextY;
+      let current = "inicio";
+      navItems.slice(1).forEach(({ id }) => {
+        const section = document.getElementById(id);
+        if (section && section.getBoundingClientRect().top <= window.innerHeight * 0.38) {
+          current = id;
+        }
+      });
+      setActiveSection(current);
     };
     update();
     window.addEventListener("scroll", update, { passive: true });
@@ -306,14 +319,20 @@ export function App() {
 
   return (
     <main id="inicio">
-      <header className={`site-header ${scrolled ? "site-header--light" : ""} ${navHidden ? "site-header--hidden" : ""}`}>
+      <header className={`site-header ${scrolled ? "site-header--light" : ""}`}>
         <Brand inverse={!scrolled} />
         <nav className={menuOpen ? "nav is-open" : "nav"} aria-label="Navegação principal">
-          <a href="#inicio" onClick={() => setMenuOpen(false)}>Início</a>
-          <a href="#sobre" onClick={() => setMenuOpen(false)}>Sobre</a>
-          <a href="#solucoes" onClick={() => setMenuOpen(false)}>Soluções</a>
-          <a href="#trabalhos" onClick={() => setMenuOpen(false)}>Trabalhos</a>
-          <a href="#contato" onClick={() => setMenuOpen(false)}>Contato</a>
+          {navItems.map((item) => (
+            <a
+              href={`#${item.id}`}
+              className={activeSection === item.id ? "is-active" : ""}
+              aria-current={activeSection === item.id ? "location" : undefined}
+              onClick={() => setMenuOpen(false)}
+              key={item.id}
+            >
+              {item.label}
+            </a>
+          ))}
         </nav>
         <a className="header-action" href="#contato">Vamos conversar</a>
         <button
@@ -372,6 +391,10 @@ export function App() {
             </div>
           </div>
         </div>
+        <a className="hero-scroll-cue" href="#metodo">
+          <span>Conheça nosso método</span>
+          <i>↓</i>
+        </a>
       </section>
 
       <MethodExplorer />
