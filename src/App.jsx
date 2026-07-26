@@ -161,98 +161,64 @@ function range(value, from, to) {
   return clamp((value - from) / (to - from));
 }
 
-function NexusScrollStory() {
-  const sectionRef = useRef(null);
-  const pinRef = useRef(null);
-  const variantRefs = useRef([]);
+function MethodExplorer() {
+  const [activeStage, setActiveStage] = useState(0);
+  const stage = nexusStages[activeStage];
 
-  useEffect(() => {
-    const section = sectionRef.current;
-    const pin = pinRef.current;
-    if (!section || !pin) return undefined;
-    let frame = 0;
-    let current = 0;
-    let target = 0;
-
-    const updateTarget = () => {
-      const rect = section.getBoundingClientRect();
-      target = clamp((window.innerHeight - rect.top) / rect.height);
-    };
-
-    const animate = () => {
-      current += (target - current) * 0.08;
-      const first = 1 - range(current, 0.4, 0.426);
-      const second = Math.min(
-        range(current, 0.426, 0.451),
-        1 - range(current, 0.683, 0.709),
-      );
-      const third = range(current, 0.709, 0.734);
-      const fills = [
-        range(current, 0, 0.426),
-        range(current, 0.426, 0.709),
-        range(current, 0.709, 1),
-      ];
-      pin.style.setProperty("--story-1", first);
-      pin.style.setProperty("--story-2", second);
-      pin.style.setProperty("--story-3", third);
-      fills.forEach((fill, index) => {
-        pin.style.setProperty(`--progress-${index + 1}`, `${fill * 100}%`);
-      });
-      variantRefs.current.forEach((variant, index) => {
-        if (variant) variant.setAttribute("aria-hidden", fills[index] === 0 ? "true" : "false");
-      });
-      frame = requestAnimationFrame(animate);
-    };
-
-    updateTarget();
-    window.addEventListener("scroll", updateTarget, { passive: true });
-    window.addEventListener("resize", updateTarget);
-    frame = requestAnimationFrame(animate);
-    return () => {
-      cancelAnimationFrame(frame);
-      window.removeEventListener("scroll", updateTarget);
-      window.removeEventListener("resize", updateTarget);
-    };
-  }, []);
+  function handleStepKeyDown(event) {
+    if (!["ArrowLeft", "ArrowRight"].includes(event.key)) return;
+    event.preventDefault();
+    const direction = event.key === "ArrowRight" ? 1 : -1;
+    setActiveStage((current) => (current + direction + nexusStages.length) % nexusStages.length);
+  }
 
   return (
-    <section className="nexus-story" ref={sectionRef} aria-label="Como a Objeto 2A atua">
-      <div className="nexus-story__pin" ref={pinRef}>
-        <div className="nexus-story__progress" aria-hidden="true">
-          <i></i><i></i><i></i>
+    <section className="method section-pad" id="metodo" aria-labelledby="method-title">
+      <div className="method-heading">
+        <div>
+          <p className="overline">COMO A OBJETO 2A ATUA</p>
+          <h2 id="method-title">Da escuta ao movimento,<br />em três passos claros.</h2>
         </div>
-        <div className="nexus-story__stage">
-          {nexusStages.map((stage, index) => (
-            <figure
-              className={`nexus-story__photo nexus-story__photo--${index + 1}`}
-              key={stage.image}
-            >
-              <img src={stage.image} alt={stage.alt} />
-              <figcaption><span>0{index + 1}</span>{stage.eyebrow.split(" · ")[1]}</figcaption>
-            </figure>
-          ))}
-          <span className="nexus-story__object-label">MÉTODO OBJETO 2A</span>
-        </div>
-        <div className="nexus-story__content">
-          {nexusStages.map((stage, index) => (
-            <article
-              className={`nexus-story__variant nexus-story__variant--${index + 1}`}
-              ref={(element) => { variantRefs.current[index] = element; }}
-              key={stage.eyebrow}
-            >
-              <div className="nexus-story__copy">
-                <p>{stage.eyebrow}</p>
-                <h2>{stage.title.map((line) => <span key={line}>{line}</span>)}</h2>
-              </div>
-              <div className="nexus-story__metric">
-                <small>{stage.metric}</small>
-                <strong>{stage.value}</strong>
-                <p><i></i>{stage.detail}</p>
-              </div>
-            </article>
-          ))}
-        </div>
+        <p>
+          Cada jornada começa no contexto real e avança no ritmo que pessoas,
+          equipes e organizações conseguem sustentar.
+        </p>
       </div>
+
+      <div className="method-tabs" role="tablist" aria-label="Etapas do método">
+        {nexusStages.map((item, index) => (
+          <button
+            type="button"
+            role="tab"
+            aria-selected={index === activeStage}
+            aria-controls="method-panel"
+            className={index === activeStage ? "is-active" : ""}
+            onClick={() => setActiveStage(index)}
+            onKeyDown={handleStepKeyDown}
+            key={item.eyebrow}
+          >
+            <span>0{index + 1}</span>
+            <b>{item.eyebrow.split(" · ")[1]}</b>
+          </button>
+        ))}
+      </div>
+
+      <article className="method-panel" id="method-panel" role="tabpanel" aria-live="polite">
+        <figure>
+          <img src={stage.image} alt={stage.alt} />
+          <figcaption>0{activeStage + 1} / 03</figcaption>
+        </figure>
+        <div className="method-panel__copy">
+          <p className="overline">{stage.eyebrow}</p>
+          <h3>{stage.title.join(" ")}</h3>
+          <p>{stage.detail}</p>
+          <div className="method-result">
+            <small>{stage.metric}</small>
+            <strong>{stage.value}</strong>
+          </div>
+          <a className="text-link" href="#solucoes">Ver como isso vira uma solução <span>↘</span></a>
+        </div>
+      </article>
     </section>
   );
 }
@@ -465,7 +431,7 @@ export function App() {
         </div>
       </section>
 
-      <NexusScrollStory />
+      <MethodExplorer />
 
       <section className="about section-pad" id="sobre">
         <p className="overline">SOBRE A OBJETO 2A</p>
