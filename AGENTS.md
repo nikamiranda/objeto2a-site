@@ -1,0 +1,29 @@
+# Prototype Instructions
+
+Run the local server yourself and open the preview in the browser available to this environment. Do not give the user server-start instructions when you can run it.
+
+Before making substantial visual changes, use the Product Design plugin's `get-context` skill when the visual source is unclear or no longer matches the current goal. When the user gives durable prototype-specific design feedback, preferences, or decisions, record them in `AGENTS.md`.
+
+## Durable design direction
+
+- The user selected direction 1 as a compositional starting point, not as a fixed brand system.
+- Objeto 2A is in a rebranding process. Use the existing portfolio only for strategic essence, positioning, services, and copy; do not treat its current logo, colors, or visual identity as authoritative UI references.
+- The rebrand territory should feel contemporary, editorial, human, and authored. Avoid reproducing the old identity or leaning on literal scrapbook/craft clichés.
+- The user felt the initial concept looked too simple. Preserve generous whitespace, but add depth through layered compositions, meaningful interactions, richer service storytelling, and polished responsive behavior.
+- After seeing the first implementation, the user explicitly rejected a text-heavy, minimally visual page. Favor image-led compositions and short, high-impact copy.
+- The Sensiq reference is important for interaction architecture: use a product-like visual object that remains pinned while scroll changes narrative stages, progress, supporting data, color, and layout. Adapt this mechanic to Objeto 2A rather than merely borrowing its surface styling.
+- Local research in the company's 2025–2026 proposals, program matrices, cases, client feedback, and “O Nexo Humano” deck established the core positioning: Objeto 2A joins organizational diagnosis, clinical sociology, applied psychoanalysis, active methodologies, adaptive leadership, and qualitative progress tracking.
+- The strongest emerging rebrand concept is “O Nexo Humano”: the bridge between technical performance and relational/psychic health. The core ecosystem converges soft skills and emotional intelligence, communication/CNV, human management and NR-1, and critical thinking in the AI era into a “cultura das relações”.
+- The emerging visual territory uses deep slate/navy, architectural cobalt systems, warm coral organic forms, editorial serif typography, and scientific/architectural tension between structure and subjectivity.
+- Use real company photography as proof and human presence, especially the Red Balloon work and the founders, but not as the sole hero because the available photographs are documentary rather than campaign imagery.
+- Avoid fabricated impact metrics. Verified Red Balloon material supports five Rio units, diagnosis and soft-skills development, and qualitative outcomes described as “maturidade tática e inteligência relacional”.
+- After exploring two more experimental redesigns, the user asked to return to the initial approved editorial-collage version because the identity and message had become diluted. Treat this restored version as the current visual baseline; do not reintroduce the later Sensiq-like or “Nexo Humano” redesign wholesale.
+- The user later chose `titen.framer.website` as the new structural base. Replicate its architectural rhythm: dark photographic hero, fixed contrast-changing header, very large cream editorial sections, spacious three-column principles, a gray masonry case grid, image-led service accordions, dark full-width CTA, three-column editorial cards, and a black contact/footer. Adapt the structure to Objeto 2A rather than copying Titen's architecture content or image assets.
+- The user explicitly rejected a loose Titen-inspired interpretation as still too different. Treat the rendered Titen site as a measurable layout reference: preserve its section-by-section anatomy, exact desktop proportions, grid widths, image heights, spacing rhythm, and responsive hierarchy while replacing only the brand content and imagery.
+- The user then asked to retain that Titen architecture while bringing in Sensiq's modern interaction system, faithfully in behavior rather than surface styling. The inspected Sensiq implementation uses a dual-layer hero with a spring-smoothed radial pointer mask, a 280svh sticky three-stage narrative with segmented progress, smoothed scroll state and a scroll-driven canvas object, plus sticky image expansion through an animated inset `clip-path` and direction-aware glass navigation. Adapt these mechanics to the Objeto 2A “Nexo Humano” narrative.
+- The user rejected both abstract “Nexo Humano” visualizations (procedural rings and node networks). Do not represent the positioning with invented abstract symbols. Keep the Sensiq-like scroll mechanics, but ground the narrative in real Objeto 2A photography, actual work stages, documentary evidence, and clear editorial transitions.
+- The user requested a larger video-led opening and more rounded borders. Use a full-bleed collaborative-work video in the hero, generous card radii across major media and panels, and keep the locally hosted stock video clearly replaceable when a real Objeto 2A video becomes available.
+
+When implementing from a selected generated mock, treat that image as the source of truth for layout, component anatomy, density, spacing, color, typography, visible content, and hierarchy.
+
+Build app UI in `src/`. Keep `.openai/hosting.json`, `worker/index.js`, `scripts/prepare-sites-build.mjs`, and `tests/sites-worker.test.mjs` intact so the same local prototype can be handed to Sites. Before a Sites handoff, run `npm run build` and `npm run test:sites`; the build must leave `dist/client/index.html`, `dist/server/index.js`, and `dist/.openai/hosting.json`.
