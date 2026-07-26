@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Subpage } from "./Subpages.jsx";
 
 const testimonials = [
   {
@@ -61,7 +62,7 @@ const services = [
   {
     title: "Programas para organizações",
     text: "Jornadas completas para lideranças, equipes e culturas em movimento. Do diagnóstico ao acompanhamento qualitativo.",
-    image: "/case-redballoon-reuniao.png",
+    image: "/case-redballoon-reuniao-v2.png",
     points: ["Diagnóstico organizacional", "Liderança e cultura", "Soft skills e CNV", "Relatório qualitativo de progresso"],
   },
   {
@@ -109,7 +110,7 @@ const nexusStages = [
     metric: "Ponto de partida",
     value: "Escuta situada",
     detail: "Pessoas, relações e trabalho observados onde realmente acontecem.",
-    image: "/fundadoras.png",
+    image: "/fundadoras-v2.png",
     alt: "Fundadoras da Objeto 2A em atividade",
   },
   {
@@ -118,7 +119,7 @@ const nexusStages = [
     metric: "Diagnóstico vivo",
     value: "05 unidades",
     detail: "Uma leitura qualitativa que conecta cultura, rotina e relações.",
-    image: "/case-redballoon-reuniao.png",
+    image: "/case-redballoon-reuniao-v2.png",
     alt: "Encontro de diagnóstico com equipe da Red Balloon",
   },
   {
@@ -133,12 +134,12 @@ const nexusStages = [
 ];
 
 const navItems = [
-  { id: "inicio", label: "Início" },
-  { id: "metodo", label: "Método" },
-  { id: "sobre", label: "Sobre" },
-  { id: "trabalhos", label: "Trabalhos" },
-  { id: "solucoes", label: "Soluções" },
-  { id: "contato", label: "Contato" },
+  { id: "inicio", label: "Início", href: "/" },
+  { id: "metodo", label: "Método", href: "/metodo" },
+  { id: "solucoes", label: "Soluções", href: "/solucoes" },
+  { id: "trabalhos", label: "Trabalhos", href: "/trabalhos" },
+  { id: "sobre", label: "Sobre", href: "/sobre" },
+  { id: "contato", label: "Contato", href: "/#contato" },
 ];
 
 function clamp(value, min = 0, max = 1) {
@@ -255,7 +256,7 @@ function Brand({ inverse = false }) {
   );
 }
 
-export function App() {
+function HomePage() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeService, setActiveService] = useState(0);
   const [formState, setFormState] = useState("idle");
@@ -395,7 +396,7 @@ export function App() {
         <nav className={menuOpen ? "nav is-open" : "nav"} aria-label="Navegação principal">
           {navItems.map((item) => (
             <a
-              href={`#${item.id}`}
+              href={item.href}
               className={activeSection === item.id ? "is-active" : ""}
               aria-current={activeSection === item.id ? "location" : undefined}
               onClick={() => setMenuOpen(false)}
@@ -441,7 +442,7 @@ export function App() {
             </p>
             <div className="button-row">
               <a className="button button--light" href="#contato">COMEÇAR UMA CONVERSA</a>
-              <a className="button button--accent" href="#solucoes">NOSSAS SOLUÇÕES <span>↗</span></a>
+              <a className="button button--accent" href="/solucoes">NOSSAS SOLUÇÕES <span>↗</span></a>
             </div>
           </div>
 
@@ -484,21 +485,21 @@ export function App() {
         </div>
         <div className="about-collage">
           <figure className="about-image about-image--portrait">
-            <img src="/fundadoras.png" alt="Mônica Miranda e Kátia Puente, fundadoras da Objeto 2A" />
+            <img src="/fundadoras-v2.png" alt="Mônica Miranda e Kátia Puente, fundadoras da Objeto 2A" />
           </figure>
           <div className="about-fragment">
             <img src="/mapa-empatia.jpg" alt="" />
             <p>Combinamos sociologia clínica, psicanálise aplicada, comunicação, gestão e metodologias ativas.</p>
           </div>
           <div className="about-story">
-            <img src="/case-redballoon-reuniao.png" alt="Encontro de desenvolvimento com a equipe Red Balloon" />
+            <img src="/case-redballoon-reuniao-v2.png" alt="Encontro de desenvolvimento com a equipe Red Balloon" />
             <p>
               Não entregamos uma resposta pronta. Entramos no sistema, escutamos
               o contexto e desenhamos a experiência que aquele movimento pede.
             </p>
             <div className="button-row">
-              <a className="button button--dark" href="#solucoes">COMO ATUAMOS</a>
-              <a className="button button--accent" href="#trabalhos">TRABALHOS <span>↗</span></a>
+              <a className="button button--dark" href="/metodo">COMO ATUAMOS</a>
+              <a className="button button--accent" href="/trabalhos">TRABALHOS <span>↗</span></a>
             </div>
           </div>
         </div>
@@ -510,7 +511,7 @@ export function App() {
             <p className="overline">TRABALHOS & EXPERIÊNCIAS</p>
             <h2>Ideias que ganham corpo no contexto real.</h2>
           </div>
-          <a className="button button--dark" href="#contato">DESENHAR UMA JORNADA</a>
+          <a className="button button--dark" href="/trabalhos">EXPLORAR TRABALHOS</a>
         </div>
         <div className="work-grid">
           {cases.map((item) => (
@@ -534,7 +535,7 @@ export function App() {
               transforma quando encontra o contexto.
             </p>
           </div>
-          <a className="button button--dark" href="#contato">VER POSSIBILIDADES</a>
+          <a className="button button--dark" href="/solucoes">VER POSSIBILIDADES</a>
         </div>
 
         <div className="solution-overview">
@@ -619,8 +620,8 @@ export function App() {
             <p>Rio de Janeiro · Brasil</p>
           </div>
           <div className="footer-links">
-            <div><b>Atuação</b><a href="#solucoes">Organizações</a><a href="#solucoes">Mentorias</a><a href="#solucoes">Experiências</a></div>
-            <div><b>Objeto 2A</b><a href="#sobre">Sobre</a><a href="#trabalhos">Trabalhos</a><a href="#contato">Contato</a></div>
+            <div><b>Atuação</b><a href="/solucoes">Organizações</a><a href="/solucoes">Mentorias</a><a href="/solucoes">Experiências</a></div>
+            <div><b>Objeto 2A</b><a href="/sobre">Sobre</a><a href="/trabalhos">Trabalhos</a><a href="#contato">Contato</a></div>
           </div>
           <form id="contact-form" onSubmit={handleSubmit}>
             <h3>Qual transformação você quer ativar?</h3>
@@ -645,4 +646,9 @@ export function App() {
       </section>
     </main>
   );
+}
+
+export function App() {
+  const path = window.location.pathname.replace(/\/+$/, "") || "/";
+  return path === "/" ? <HomePage /> : <Subpage path={path} />;
 }
