@@ -371,22 +371,14 @@ function HomePage() {
 
   async function handleSubmit(event) {
     event.preventDefault();
-    setFormState("sending");
     const form = event.currentTarget;
     const data = Object.fromEntries(new FormData(form));
-
-    try {
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      if (!response.ok) throw new Error();
-      form.reset();
-      setFormState("sent");
-    } catch {
-      setFormState("error");
-    }
+    const subject = encodeURIComponent(`Contato pelo site — ${data.name}`);
+    const body = encodeURIComponent(
+      `Nome: ${data.name}\nE-mail: ${data.email}\n\nContexto:\n${data.message}`,
+    );
+    setFormState("email");
+    window.location.href = `mailto:contato@objeto2a.com.br?subject=${subject}&body=${body}`;
   }
 
   return (
@@ -629,12 +621,11 @@ function HomePage() {
             <label>E-mail<input name="email" required type="email" autoComplete="email" placeholder="voce@empresa.com" /></label>
             <label>Contexto<textarea name="message" required rows="2" placeholder="Conte em poucas palavras"></textarea></label>
             <input name="organization" type="hidden" value="" />
-            <button type="submit" disabled={formState === "sending"}>
-              {formState === "sending" ? "ENVIANDO..." : "ENVIAR"} <span>↗</span>
+            <button type="submit">
+              ENVIAR POR E-MAIL <span>↗</span>
             </button>
             <p className={`form-status ${formState}`} role="status">
-              {formState === "sent" && "Mensagem recebida. Em breve, continuamos a conversa."}
-              {formState === "error" && "Não foi possível enviar agora. Tente novamente."}
+              {formState === "email" && "Seu aplicativo de e-mail será aberto com a mensagem preenchida."}
             </p>
           </form>
         </div>
