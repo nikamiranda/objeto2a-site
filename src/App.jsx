@@ -262,6 +262,7 @@ export function App() {
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("inicio");
   const heroRef = useRef(null);
+  const expansionRef = useRef(null);
 
   useEffect(() => {
     const update = () => {
@@ -333,6 +334,37 @@ export function App() {
       hero.removeEventListener("pointerenter", enter);
       hero.removeEventListener("pointerleave", leave);
       window.removeEventListener("scroll", scroll);
+    };
+  }, []);
+
+  useEffect(() => {
+    const track = expansionRef.current;
+    if (!track) return undefined;
+    let frame = 0;
+    let target = 0;
+    let current = 0;
+    const update = () => {
+      const rect = track.getBoundingClientRect();
+      target = clamp((-rect.top + window.innerHeight * 0.78) / (rect.height - window.innerHeight * 0.2));
+    };
+    const animate = () => {
+      current += (target - current) * 0.08;
+      const eased = range(current, 0, 0.85);
+      track.style.setProperty("--expand-y", `${20 * (1 - eased)}%`);
+      track.style.setProperty("--expand-x", `${15 * (1 - eased)}%`);
+      const copyProgress = range(current, 0.58, 0.85);
+      track.style.setProperty("--expand-copy", copyProgress);
+      track.style.setProperty("--expand-shift", `${24 * (1 - copyProgress)}px`);
+      frame = requestAnimationFrame(animate);
+    };
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    frame = requestAnimationFrame(animate);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
     };
   }, []);
 
@@ -532,7 +564,7 @@ export function App() {
         </div>
       </section>
 
-      <div className="manifesto-track">
+      <div className="manifesto-track" ref={expansionRef}>
         <section className="manifesto">
           <img src="/nexo-humano-hero.png" alt="" />
           <div>

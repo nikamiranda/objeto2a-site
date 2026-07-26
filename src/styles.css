@@ -587,19 +587,24 @@ textarea:focus-visible {
 .service-list span { font-size: 1.6rem; }
 
 .manifesto-track {
+  --expand-x: 15%;
+  --expand-y: 20%;
+  --expand-copy: 0;
+  --expand-shift: 24px;
   position: relative;
-  min-height: auto;
-  padding: 80px 4px;
+  min-height: 160svh;
   background: var(--paper);
 }
 .manifesto {
-  position: relative;
-  min-height: 680px;
-  height: 680px;
+  position: sticky;
+  top: 8px;
+  min-height: calc(100svh - 16px);
+  height: calc(100svh - 16px);
   overflow: hidden;
-  border-radius: 28px;
+  clip-path: inset(var(--expand-y) var(--expand-x) round 28px);
   color: white;
   background: #111;
+  will-change: clip-path;
 }
 .manifesto::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(0,0,0,.82), rgba(0,0,0,.1)); }
 .manifesto > img { position: absolute; inset: 0; height: 100%; object-fit: cover; }
@@ -612,6 +617,8 @@ textarea:focus-visible {
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
+  opacity: var(--expand-copy);
+  transform: translateY(var(--expand-shift));
 }
 .manifesto h2 { margin: 0 0 28px; font-size: 42px; font-weight: 500; letter-spacing: -.03em; line-height: 1.2; }
 .manifesto p { max-width: 540px; margin-bottom: 32px; line-height: 1.5; }
@@ -818,11 +825,11 @@ textarea:focus-visible {
   }
   .service-list span { justify-self: end; }
 
-  .manifesto-track { margin-top: 0; }
+  .manifesto-track { margin-top: 100px; }
   .manifesto { margin-top: 0; }
   .manifesto > div {
-    justify-content: center;
-    padding-top: 0;
+    justify-content: flex-start;
+    padding-top: 300px;
   }
   .insights { margin-top: 0; padding-top: 108px; }
   .insight-grid { margin-top: 96px; }
@@ -988,11 +995,11 @@ textarea:focus-visible {
   .service-list h3 { font-size: 1.35rem; }
   .service-list img { height: 100px; }
   .manifesto, .manifesto > div { min-height: 620px; }
-  .manifesto-track { min-height: auto; padding: 44px 4px; }
+  .manifesto-track { min-height: 135svh; padding: 0; }
   .manifesto {
-    position: relative;
-    height: 620px;
-    top: auto;
+    position: sticky;
+    height: calc(100svh - 8px);
+    top: 4px;
   }
   .manifesto > div { padding-inline: 16px; }
   .manifesto h2 { font-size: 34px; }
