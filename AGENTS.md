@@ -25,6 +25,8 @@ Before making substantial visual changes, use the Product Design plugin's `get-c
 - The user requested a larger video-led opening and more rounded borders. Use a full-bleed collaborative-work video in the hero, generous card radii across major media and panels, and keep the locally hosted stock video clearly replaceable when a real Objeto 2A video becomes available.
 - The user clarified that the three-stage scroll narrative must remain. Keep its pinned transitions and progress behavior, while making the rest of the page shorter, removing repeated content, and using explicit wayfinding so the scroll mechanic feels intentional.
 - When improving real company photography with image generation, preserve documentary authenticity and exact identities. Prefer subtle expression, lighting, color, and resolution corrections; keep event context, visible wording, and evidence-bearing details intact. For Mônica's meeting screenshot, favor a warm, natural, closed-mouth smile rather than a serious expression.
+- The user authorized publishing the institutional WhatsApp `(21) 98628-7957`, Instagram `@objeto2a`, LinkedIn company page, the real `O2A_3min.mp4` workshop footage, and Red Balloon as an identified case. Keep testimonials attributed to the qualitative report unless a named testimonial is supplied.
+- The production site should remain on Vercel without a custom domain for now.
 
 When implementing from a selected generated mock, treat that image as the source of truth for layout, component anatomy, density, spacing, color, typography, visible content, and hierarchy.
 

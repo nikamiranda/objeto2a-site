@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { upload as uploadBlob } from "@vercel/blob/client";
 import "./admin.css";
 
 const pages = [
@@ -20,6 +21,8 @@ function clone(value) {
 }
 
 export function Admin() {
+  const [authState, setAuthState] = useState("checking");
+  const [authError, setAuthError] = useState("");
   const [page, setPage] = useState("/");
   const [content, setContent] = useState(emptyContent);
   const [savedContent, setSavedContent] = useState(emptyContent);
@@ -39,8 +42,15 @@ export function Admin() {
   const pageName = useMemo(() => pages.find(([path]) => path === page)?.[1] || "Página", [page]);
 
   useEffect(() => {
-    loadPage(page);
-  }, [page]);
+    fetch("/api/auth", { credentials: "same-origin" })
+      .then((response) => response.json())
+      .then((data) => setAuthState(data.authenticated ? "ok" : "login"))
+      .catch(() => setAuthState("login"));
+  }, []);
+
+  useEffect(() => {
+    if (authState === "ok") loadPage(page);
+  }, [page, authState]);
 
   useEffect(() => {
     const onMessage = (event) => {
@@ -57,6 +67,11 @@ export function Admin() {
         setSelected(event.data.element);
         setPanel("content");
       }
+      if (event.data.type === "replace-media") {
+        setSelected(event.data.element);
+        setPanel("content");
+        window.setTimeout(() => fileRef.current?.click(), 0);
+      }
       if (event.data.type === "change") updatePatch(event.data.element.id, { text: event.data.element.text });
     };
     window.addEventListener("message", onMessage);
@@ -64,8 +79,11 @@ export function Admin() {
   }, [content]);
 
   async function api(url, options) {
-    const response = await fetch(url, options);
-    if (response.status === 401) throw new Error("Acesso ao painel não autorizado.");
+    const response = await fetch(url, { credentials: "same-origin", ...options });
+    if (response.status === 401) {
+      setAuthState("login");
+      throw new Error("Sua sessão expirou. Entre novamente.");
+    }
     if (!response.ok) throw new Error((await response.json().catch(() => ({}))).error || "Não foi possível concluir.");
     return response.json();
   }
@@ -76,8 +94,8 @@ export function Admin() {
     try {
       const [document, mediaData, history] = await Promise.all([
         api(`/api/cms?path=${encodeURIComponent(path)}&mode=draft`),
-        api("/api/cms/media"),
-        api(`/api/cms/versions?path=${encodeURIComponent(path)}`),
+        api("/api/media"),
+        api(`/api/versions?path=${encodeURIComponent(path)}`),
       ]);
       const next = document.content || emptyContent;
       setContent(clone(next));
@@ -141,22 +159,26 @@ export function Admin() {
     if (!file) return;
     setStatus("Enviando mídia…");
     try {
-      const result = await api("/api/cms/media", {
-        method: "POST",
-        headers: {
-          "content-type": file.type || "application/octet-stream",
-          "x-filename": encodeURIComponent(file.name),
-        },
-        body: file,
+      const blob = await uploadBlob(`cms/media/${Date.now()}-${file.name}`, file, {
+        access: "public",
+        handleUploadUrl: "/api/upload",
       });
-      setMedia((items) => [result.item, ...items]);
+      const item = {
+        id: blob.pathname,
+        filename: file.name,
+        content_type: file.type,
+        byte_size: file.size,
+        created_at: new Date().toISOString(),
+        url: blob.url,
+      };
+      setMedia((items) => [item, ...items]);
       if (selected) {
-        updatePatch(selected.id, { src: result.item.url });
-        setSelected((current) => ({ ...current, src: result.item.url }));
+        updatePatch(selected.id, { src: item.url });
+        setSelected((current) => ({ ...current, src: item.url }));
         iframeRef.current?.contentWindow?.postMessage(
           { source: "objeto2a-admin", type: "apply", content: {
             ...content,
-            patches: { ...content.patches, [selected.id]: { ...(content.patches[selected.id] || {}), src: result.item.url } },
+            patches: { ...content.patches, [selected.id]: { ...(content.patches[selected.id] || {}), src: item.url } },
           } },
           window.location.origin,
         );
@@ -169,6 +191,32 @@ export function Admin() {
     } finally {
       if (fileRef.current) fileRef.current.value = "";
     }
+  }
+
+  async function login(event) {
+    event.preventDefault();
+    setAuthError("");
+    const password = new FormData(event.currentTarget).get("password");
+    try {
+      const response = await fetch("/api/auth", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ password }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Não foi possível entrar.");
+      event.currentTarget.reset();
+      setAuthState("ok");
+    } catch (error) {
+      setAuthError(error.message);
+    }
+  }
+
+  async function logout() {
+    await fetch("/api/auth", { method: "DELETE", credentials: "same-origin" });
+    setAuthState("login");
+    setContent(emptyContent);
   }
 
   function chooseMedia(item) {
@@ -202,7 +250,7 @@ export function Admin() {
   async function restore(version) {
     if (!window.confirm(`Restaurar a versão de ${new Date(version.created_at).toLocaleString("pt-BR")}?`)) return;
     try {
-      const result = await api("/api/cms/restore", {
+      const result = await api("/api/restore", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ path: page, versionId: version.id }),
@@ -219,6 +267,28 @@ export function Admin() {
     const order = content.order.length ? content.order : sections.map((item) => item.id);
     return order.indexOf(a.id) - order.indexOf(b.id);
   });
+
+  if (authState !== "ok") {
+    return (
+      <main className="admin-login">
+        <div className="admin-login__brand"><b>OBJETO</b><span>2A</span></div>
+        <form onSubmit={login}>
+          <small>PAINEL ADMINISTRATIVO</small>
+          <h1>{authState === "checking" ? "Verificando acesso…" : "Bem-vinda de volta."}</h1>
+          <p>Entre com sua senha para editar e publicar o site.</p>
+          {authState !== "checking" && (
+            <>
+              <label>Senha<input name="password" type="password" autoComplete="current-password" required autoFocus placeholder="Sua senha de acesso" /></label>
+              <button type="submit">Entrar no painel</button>
+              {authError && <div className="admin-login__error" role="alert">{authError}</div>}
+            </>
+          )}
+          <a href="/">← Voltar ao site</a>
+        </form>
+        <footer>Sessão protegida e expira automaticamente após 8 horas.</footer>
+      </main>
+    );
+  }
 
   return (
     <div className="admin-shell">
@@ -244,6 +314,7 @@ export function Admin() {
           </button>
         </nav>
         <a className="admin-view-site" href="/" target="_blank" rel="noreferrer"><Icon>↗</Icon><span>Ver site</span></a>
+        <button className="admin-logout" onClick={logout}><Icon>⇥</Icon><span>Sair</span></button>
       </aside>
 
       <aside className="admin-panel">
@@ -314,7 +385,12 @@ export function Admin() {
                   </label>
                 ) : (
                   <>
-                    <div className="media-current"><img src={content.patches[selected.id]?.src || selected.src} alt="" /></div>
+                    <div className="media-current">
+                      {selected.kind === "video"
+                        ? <video src={content.patches[selected.id]?.src || selected.src} muted controls playsInline />
+                        : <img src={content.patches[selected.id]?.src || selected.src} alt="" />}
+                    </div>
+                    <p className="media-direct-hint">Dica: dê dois cliques na mídia no preview para abrir o seletor de arquivos.</p>
                     <button className="primary-wide" onClick={() => fileRef.current?.click()}>Substituir imagem</button>
                     <button className="secondary-wide" onClick={() => setPanel("media")}>Escolher da biblioteca</button>
                     {selected.kind === "img" && (

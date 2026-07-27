@@ -25,6 +25,15 @@ export function prepareEditableDocument(root = document) {
     element.dataset.cmsId ||= `${path}:media:${index}`;
     element.dataset.cmsKind = element.tagName.toLowerCase();
   });
+  [...root.querySelectorAll("main *")]
+    .filter((element) => {
+      if (element.dataset.cmsId || element.closest("[data-cms-ui]")) return false;
+      return /^url\(/.test(getComputedStyle(element).backgroundImage || "");
+    })
+    .forEach((element, index) => {
+      element.dataset.cmsId ||= `${path}:background:${index}`;
+      element.dataset.cmsKind = "background";
+    });
   [...root.querySelectorAll("main > section")].forEach((element, index) => {
     element.dataset.cmsSection ||= `${path}:section:${index}`;
   });
@@ -69,6 +78,9 @@ export function applyCmsContent(content = {}, root = document) {
         element.src = patch.src;
       }
     }
+    if (patch.src && element.dataset.cmsKind === "background") {
+      element.style.backgroundImage = `url("${String(patch.src).replaceAll('"', "%22")}")`;
+    }
     if (patch.alt !== undefined && element.tagName === "IMG") element.alt = patch.alt;
     if (patch.styles) Object.assign(element.style, patch.styles);
   });
@@ -91,6 +103,8 @@ export function applyCmsContent(content = {}, root = document) {
 }
 
 function elementSummary(element) {
+  const backgroundImage = getComputedStyle(element).backgroundImage;
+  const backgroundSrc = /^url\(["']?(.*?)["']?\)$/.exec(backgroundImage)?.[1];
   return {
     id: element.dataset.cmsId,
     kind: element.dataset.cmsKind,
@@ -101,7 +115,7 @@ function elementSummary(element) {
     text: element.dataset.cmsKind === "text" ? element.innerText : undefined,
     src: ["img", "video"].includes(element.dataset.cmsKind)
       ? element.currentSrc || element.src || element.querySelector?.("source")?.src
-      : undefined,
+      : element.dataset.cmsKind === "background" ? backgroundSrc : undefined,
     alt: element.getAttribute("alt") || "",
     styles: {
       textAlign: element.style.textAlign,
@@ -125,8 +139,13 @@ function enableEditorBridge() {
   document.documentElement.classList.add("cms-preview-mode");
   prepareEditableDocument();
 
+  const mediaBelowPointer = (event) =>
+    document
+      .elementsFromPoint(event.clientX, event.clientY)
+      .find((candidate) => ["img", "video", "background"].includes(candidate.dataset?.cmsKind));
+
   const select = (event) => {
-    const element = event.target.closest("[data-cms-id]");
+    const element = event.target.closest("[data-cms-id]") || mediaBelowPointer(event);
     if (!element) return;
     event.preventDefault();
     event.stopPropagation();
@@ -139,6 +158,18 @@ function enableEditorBridge() {
     postToAdmin("select", { element: elementSummary(element) });
   };
 
+  const replaceMedia = (event) => {
+    const element = event.target.closest('[data-cms-kind="img"],[data-cms-kind="video"],[data-cms-kind="background"]')
+      || mediaBelowPointer(event);
+    if (!element) return;
+    event.preventDefault();
+    event.stopPropagation();
+    document.querySelectorAll(".cms-selected").forEach((item) => item.classList.remove("cms-selected"));
+    element.classList.add("cms-selected");
+    postToAdmin("select", { element: elementSummary(element) });
+    postToAdmin("replace-media", { element: elementSummary(element) });
+  };
+
   const input = (event) => {
     const element = event.target.closest('[data-cms-kind="text"]');
     if (!element) return;
@@ -148,6 +179,7 @@ function enableEditorBridge() {
   };
 
   document.addEventListener("click", select, true);
+  document.addEventListener("dblclick", replaceMedia, true);
   document.addEventListener("input", input, true);
   postToAdmin("ready", {
     path: pageKey(),
@@ -163,6 +195,7 @@ function enableEditorBridge() {
 
   return () => {
     document.removeEventListener("click", select, true);
+    document.removeEventListener("dblclick", replaceMedia, true);
     document.removeEventListener("input", input, true);
   };
 }

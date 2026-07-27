@@ -79,6 +79,16 @@ const solutionCards = [
     summary: "Construção coletiva para questões que não cabem em respostas prontas.",
     formats: ["Desenho de futuros", "Alinhamento de equipes", "Clínicas de ideias", "Learning sprints"],
   },
+  {
+    id: "lideranca-2026",
+    number: "05",
+    title: "Liderança sustentável 2026",
+    audience: "Organizações",
+    need: "Saúde relacional",
+    image: "/nexo-humano-hero.png",
+    summary: "Liderança, riscos psicossociais e autonomia humana no novo cenário organizacional.",
+    formats: ["Inteligência emocional", "Comunicação não violenta", "NR-1 e riscos psicossociais", "Pensamento crítico na era da IA"],
+  },
 ];
 
 function Brand({ inverse = false }) {
@@ -137,12 +147,16 @@ function ContactBand({ title = "Qual transformação está pedindo movimento?" }
       <p className="overline">PRÓXIMA CONVERSA</p>
       <div>
         <h2>{title}</h2>
-        <a className="button button--light" href="/#contato">CONTAR O CONTEXTO <span>↗</span></a>
+        <a className="button button--light" href="https://wa.me/5521986287957" target="_blank" rel="noreferrer">CONTAR O CONTEXTO <span>↗</span></a>
       </div>
       <footer>
         <Brand inverse />
-        <a href="mailto:contato@objeto2a.com.br">contato@objeto2a.com.br</a>
-        <span>Rio de Janeiro · Brasil</span>
+        <div className="sub-contact__links">
+          <a href="https://wa.me/5521986287957" target="_blank" rel="noreferrer">WhatsApp ↗</a>
+          <a href="https://www.instagram.com/objeto2a/" target="_blank" rel="noreferrer">Instagram ↗</a>
+          <a href="https://www.linkedin.com/company/objeto2a" target="_blank" rel="noreferrer">LinkedIn ↗</a>
+        </div>
+        <span>Rio de Janeiro · CNPJ 36.476.871/0001-23</span>
       </footer>
     </section>
   );
@@ -366,15 +380,17 @@ function AboutPage() {
   const people = {
     monica: {
       name: "Mônica Miranda",
-      role: "Fundadora · estratégia, comunicação e desenvolvimento",
+      role: "Cofundadora · jornalista · administradora · professora",
       image: "/case-redballoon-monica.png",
-      fields: ["Comunicação", "Gestão", "Liderança", "Aprendizagem"],
+      fields: ["Comunicação", "Inovação", "Formação de lideranças", "Design thinking"],
+      bio: "Doutora em Psicanálise e Sociedade, atua na interseção entre comunicação, inovação e formação de lideranças. Reúne experiência em cargos C-level, mercado audiovisual, educação corporativa, metodologias ágeis e desenvolvimento pessoal. É diretora de Comunicação da ABT e professora adjunta da UVA-RJ.",
     },
     katia: {
       name: "Kátia Puente",
-      role: "Fundadora · escuta clínica e desenvolvimento humano",
+      role: "Cofundadora · socióloga clínica · antropóloga · educadora",
       image: "/katia.jpg",
-      fields: ["Sociologia clínica", "Psicanálise aplicada", "Relações", "Facilitação"],
+      fields: ["Sociologia clínica", "Psicanálise e saúde", "Human leadership", "Neurodiversidade"],
+      bio: "Doutora em Psicanálise e Saúde, há 27 anos conecta diferentes áreas do conhecimento, subjetividade e inovação para ativar novas formas de aprender, liderar e conviver. É conselheira científica da ABT, professora adjunta da UVA-RJ e investigadora associada OBD/ESPLAI, em Barcelona.",
     },
   };
   const profile = people[person];
@@ -400,9 +416,21 @@ function AboutPage() {
             <p className="overline">{profile.role}</p>
             <h2>{profile.name}</h2>
             <div className="tag-cloud">{profile.fields.map((field) => <span key={field}>{field}</span>)}</div>
-            <p>Um olhar que combina profundidade humana, leitura organizacional e capacidade de transformar reflexão em experiência.</p>
+            <p>{profile.bio}</p>
           </div>
         </article>
+      </section>
+
+      <section className="origin-story section-pad">
+        <figure><img src="/workshop.jpg" alt="Experiência de aprendizagem facilitada pela Objeto 2A" /></figure>
+        <div>
+          <p className="overline">NOSSA HISTÓRIA</p>
+          <h2>Da Educriative<br />para a Objeto 2A.</h2>
+          <p>A empresa nasceu de um laboratório de ativação e criação para transformar autoconhecimento, estratégia e criatividade em impacto humano e organizacional.</p>
+          <div className="value-cloud">
+            {["Escuta ativa", "Nexialismo", "Singularidade ativa", "Diversidade", "Aprendizagem contínua", "Inovação humanizada", "Letramento humano"].map((value) => <span key={value}>{value}</span>)}
+          </div>
+        </div>
       </section>
 
       <section className="beliefs section-pad">

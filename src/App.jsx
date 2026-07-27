@@ -85,6 +85,12 @@ const services = [
     image: "/facilitation.jpg",
     points: ["Desenho de futuros", "Alinhamento de equipes", "Clínicas de ideias", "Learning sprints"],
   },
+  {
+    title: "Liderança sustentável 2026",
+    text: "Uma jornada para conectar saúde relacional, prevenção de riscos psicossociais e autonomia humana no trabalho.",
+    image: "/nexo-humano-hero.png",
+    points: ["Inteligência emocional", "Comunicação não violenta", "NR-1 e riscos psicossociais", "Pensamento crítico na era da IA"],
+  },
 ];
 
 const insights = [
@@ -375,12 +381,11 @@ function HomePage() {
     event.preventDefault();
     const form = event.currentTarget;
     const data = Object.fromEntries(new FormData(form));
-    const subject = encodeURIComponent(`Contato pelo site — ${data.name}`);
-    const body = encodeURIComponent(
+    const message = encodeURIComponent(
       `Nome: ${data.name}\nE-mail: ${data.email}\n\nContexto:\n${data.message}`,
     );
-    setFormState("email");
-    window.location.href = `mailto:contato@objeto2a.com.br?subject=${subject}&body=${body}`;
+    setFormState("whatsapp");
+    window.open(`https://wa.me/5521986287957?text=${message}`, "_blank", "noopener,noreferrer");
   }
 
   return (
@@ -423,7 +428,7 @@ function HomePage() {
           poster="/workshop.jpg"
           aria-label="Equipe colaborando durante uma reunião"
         >
-          <source src="/hero-collaboration.mp4" type="video/mp4" />
+          <source src="/hero-objeto2a.mp4" type="video/mp4" />
         </video>
         <div className="hero-scan" aria-hidden="true"></div>
         <div className="hero-shade"></div>
@@ -602,7 +607,7 @@ function HomePage() {
               Conte o que está pedindo movimento. A primeira conversa é para
               escutar, compreender e encontrar o melhor ponto de partida.
             </p>
-            <a className="button button--light" href="#contact-form">INICIAR CONVERSA</a>
+            <a className="button button--light" href="https://wa.me/5521986287957" target="_blank" rel="noreferrer">CONVERSAR NO WHATSAPP <span>↗</span></a>
           </div>
         </div>
 
@@ -610,8 +615,12 @@ function HomePage() {
           <div className="contact-brand">
             <Brand inverse />
             <p>Desenvolvimento humano,<br />uma relação por vez.</p>
-            <a href="mailto:contato@objeto2a.com.br">contato@objeto2a.com.br</a>
+            <a href="https://wa.me/5521986287957" target="_blank" rel="noreferrer">WhatsApp · (21) 98628-7957</a>
             <p>Rio de Janeiro · Brasil</p>
+            <div className="contact-socials">
+              <a href="https://www.instagram.com/objeto2a/" target="_blank" rel="noreferrer">Instagram ↗</a>
+              <a href="https://www.linkedin.com/company/objeto2a" target="_blank" rel="noreferrer">LinkedIn ↗</a>
+            </div>
           </div>
           <div className="footer-links">
             <div><b>Atuação</b><a href="/solucoes">Organizações</a><a href="/solucoes">Mentorias</a><a href="/solucoes">Experiências</a></div>
@@ -624,10 +633,10 @@ function HomePage() {
             <label>Contexto<textarea name="message" required rows="2" placeholder="Conte em poucas palavras"></textarea></label>
             <input name="organization" type="hidden" value="" />
             <button type="submit">
-              ENVIAR POR E-MAIL <span>↗</span>
+              ENVIAR PELO WHATSAPP <span>↗</span>
             </button>
             <p className={`form-status ${formState}`} role="status">
-              {formState === "email" && "Seu aplicativo de e-mail será aberto com a mensagem preenchida."}
+              {formState === "whatsapp" && "O WhatsApp será aberto com a mensagem preenchida."}
             </p>
           </form>
         </div>

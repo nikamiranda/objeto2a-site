@@ -641,6 +641,9 @@ textarea:focus-visible {
 .contact-body { padding: 65px 0; display: grid; grid-template-columns: 1.1fr .85fr 1fr; gap: 6vw; }
 .contact-brand > p { margin: 18px 0 28px; color: #b1b1b1; line-height: 1.5; }
 .contact-brand > a { font-size: .9rem; font-weight: 600; text-decoration: none; }
+.contact-socials { margin-top: 24px; display: flex; gap: 16px; flex-wrap: wrap; }
+.contact-socials a { color: #c8c8c8; font-size: .68rem; text-decoration: none; }
+.contact-socials a:hover { color: white; }
 .footer-links { display: grid; grid-template-columns: 1fr 1fr; gap: 45px; }
 .footer-links div { display: flex; flex-direction: column; gap: 15px; }
 .footer-links b { margin-bottom: 10px; font-size: .85rem; }
@@ -1475,6 +1478,20 @@ textarea:focus-visible {
 .tag-cloud { display: flex; gap: 8px; flex-wrap: wrap; }
 .tag-cloud span { padding: 9px 13px; border: 1px solid var(--line); border-radius: 999px; font-size: .63rem; }
 
+.origin-story {
+  display: grid;
+  grid-template-columns: 1.05fr .95fr;
+  gap: 7vw;
+  align-items: center;
+  background: var(--paper);
+}
+.origin-story figure { height: 620px; margin: 0; overflow: hidden; border-radius: 26px; }
+.origin-story figure img { height: 100%; object-fit: cover; }
+.origin-story h2 { margin: 0 0 28px; font-size: clamp(3rem, 5vw, 5.8rem); font-weight: 500; letter-spacing: -.06em; line-height: .92; }
+.origin-story > div > p:not(.overline) { max-width: 560px; color: #68635d; line-height: 1.6; }
+.value-cloud { margin-top: 40px; display: flex; gap: 9px; flex-wrap: wrap; }
+.value-cloud span { padding: 10px 14px; border: 1px solid var(--line); border-radius: 999px; font-size: .65rem; }
+
 .beliefs { background: var(--paper); }
 .belief-grid { display: grid; grid-template-columns: repeat(2, 1fr); border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
 .belief-grid article { min-height: 280px; padding: 30px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
@@ -1495,6 +1512,8 @@ textarea:focus-visible {
 .sub-contact h2 { max-width: 1020px; margin: 0; font-size: clamp(3.2rem, 6vw, 7rem); font-weight: 500; letter-spacing: -.06em; line-height: .93; }
 .sub-contact footer { padding-top: 28px; display: grid; grid-template-columns: 1fr auto auto; gap: 40px; align-items: center; color: #a09f9c; font-size: .68rem; }
 .sub-contact footer a { color: inherit; text-decoration: none; }
+.sub-contact__links { display: flex; gap: 22px; }
+.sub-contact__links a:hover { color: white; }
 
 .not-found {
   min-height: 100svh;
@@ -1541,6 +1560,8 @@ textarea:focus-visible {
   .work-mosaic > div:last-child { grid-template-columns: repeat(2, 1fr); }
   .founder-card { grid-template-columns: 1fr 1fr; }
   .founder-card > div { padding: 42px 32px; }
+  .origin-story { grid-template-columns: 1fr 1fr; }
+  .origin-story figure { height: 540px; }
 }
 
 @media (max-width: 680px) {
@@ -1595,6 +1616,8 @@ textarea:focus-visible {
   .founder-card { display: block; }
   .founder-card > img { min-height: 470px; height: 125vw; }
   .founder-card > div { padding: 36px 24px; }
+  .origin-story { display: block; }
+  .origin-story figure { height: 110vw; min-height: 430px; margin-bottom: 40px; }
   .belief-grid { grid-template-columns: 1fr; }
   .belief-grid article { min-height: 210px; }
   .belief-grid h3 { margin-top: 65px; }
@@ -1605,6 +1628,7 @@ textarea:focus-visible {
   .sub-contact > div { min-height: 390px; display: block; }
   .sub-contact .button { margin-top: 35px; }
   .sub-contact footer { grid-template-columns: 1fr; gap: 18px; }
+  .sub-contact__links { flex-wrap: wrap; }
 }
 /* Visual editing affordances only appear inside the admin preview iframe. */
 .cms-preview-mode [data-cms-id] {
@@ -1619,6 +1643,11 @@ textarea:focus-visible {
 .cms-preview-mode [data-cms-id].cms-selected {
   outline: 2px solid #2457df;
   box-shadow: 0 0 0 5px rgb(36 87 223 / 16%);
+}
+.cms-preview-mode [data-cms-kind="img"],
+.cms-preview-mode [data-cms-kind="video"],
+.cms-preview-mode [data-cms-kind="background"] {
+  cursor: zoom-in;
 }
 .cms-preview-mode [contenteditable="true"]:focus {
   cursor: text;
