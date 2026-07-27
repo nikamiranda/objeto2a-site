@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Subpage } from "./Subpages.jsx";
+import { Admin } from "./Admin.jsx";
+import { useCmsRuntime } from "./cmsRuntime.js";
 
 const testimonials = [
   {
@@ -641,5 +643,7 @@ function HomePage() {
 
 export function App() {
   const path = window.location.pathname.replace(/\/+$/, "") || "/";
+  useCmsRuntime();
+  if (path === "/admin") return <Admin />;
   return path === "/" ? <HomePage /> : <Subpage path={path} />;
 }

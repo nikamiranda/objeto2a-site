@@ -1606,3 +1606,20 @@ textarea:focus-visible {
   .sub-contact .button { margin-top: 35px; }
   .sub-contact footer { grid-template-columns: 1fr; gap: 18px; }
 }
+/* Visual editing affordances only appear inside the admin preview iframe. */
+.cms-preview-mode [data-cms-id] {
+  cursor: pointer;
+  outline: 1px solid transparent;
+  outline-offset: 4px;
+  transition: outline-color .16s ease, box-shadow .16s ease;
+}
+.cms-preview-mode [data-cms-id]:hover {
+  outline-color: #2457df;
+}
+.cms-preview-mode [data-cms-id].cms-selected {
+  outline: 2px solid #2457df;
+  box-shadow: 0 0 0 5px rgb(36 87 223 / 16%);
+}
+.cms-preview-mode [contenteditable="true"]:focus {
+  cursor: text;
+}
