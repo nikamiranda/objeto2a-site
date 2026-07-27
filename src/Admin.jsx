@@ -195,8 +195,9 @@ export function Admin() {
 
   async function login(event) {
     event.preventDefault();
+    const form = event.currentTarget;
     setAuthError("");
-    const password = new FormData(event.currentTarget).get("password");
+    const password = new FormData(form).get("password");
     try {
       const response = await fetch("/api/auth", {
         method: "POST",
@@ -206,7 +207,7 @@ export function Admin() {
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Não foi possível entrar.");
-      event.currentTarget.reset();
+      form.reset();
       setAuthState("ok");
     } catch (error) {
       setAuthError(error.message);
