@@ -27,6 +27,8 @@ Before making substantial visual changes, use the Product Design plugin's `get-c
 - When improving real company photography with image generation, preserve documentary authenticity and exact identities. Prefer subtle expression, lighting, color, and resolution corrections; keep event context, visible wording, and evidence-bearing details intact. For Mônica's meeting screenshot, favor a warm, natural, closed-mouth smile rather than a serious expression.
 - The user authorized publishing the institutional WhatsApp `(21) 98628-7957`, Instagram `@objeto2a`, LinkedIn company page, the real `O2A_3min.mp4` workshop footage, and Red Balloon as an identified case. Keep testimonials attributed to the qualitative report unless a named testimonial is supplied.
 - The production site should remain on Vercel without a custom domain for now.
+- The latest redesign request prioritizes an intentional, visually rich experience across mobile, desktop, and wide desktop. Every photo and video must remain fully visible rather than being cropped; use proportion-aware `object-fit: contain` media frames and let spacing/layout adapt around the source ratio.
+- The homepage should communicate the offer more directly through a strong editorial opening, a concise three-stage method narrative, visually led solution browsing, real work as proof, and a warmer founders section. Avoid long repeated copy and generic decorative imagery.
 
 When implementing from a selected generated mock, treat that image as the source of truth for layout, component anatomy, density, spacing, color, typography, visible content, and hierarchy.
 
