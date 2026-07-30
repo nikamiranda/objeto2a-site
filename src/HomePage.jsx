@@ -145,7 +145,7 @@ function MethodStory() {
           {methodStages.map((stage, index) => (
             <article className={activeStage === index ? "is-active" : ""} aria-hidden={activeStage !== index} key={stage.number}>
               <figure>
-                <img data-cms-key={`method-${stage.number}-image`} src={stage.image} alt={stage.alt} />
+                <img data-cms-key={`method-${stage.number}-image`} src={stage.image} alt={stage.alt} loading="lazy" decoding="async" />
               </figure>
               <div>
                 <span>{stage.number} / 03</span>
@@ -164,7 +164,7 @@ function MethodStory() {
         </header>
         {methodStages.map((stage) => (
           <article key={stage.number}>
-            <figure><img data-cms-key={`method-${stage.number}-image`} src={stage.image} alt={stage.alt} /></figure>
+            <figure><img data-cms-key={`method-${stage.number}-image`} src={stage.image} alt={stage.alt} loading="lazy" decoding="async" /></figure>
             <span>{stage.number} / 03 · {stage.eyebrow}</span>
             <h3>{stage.title}</h3>
             <p>{stage.text}</p>
@@ -284,7 +284,7 @@ export function HomePage() {
             ))}
           </div>
           <article className="o2-solution-browser__panel" role="tabpanel">
-            <figure><img data-cms-key={`solution-${activeService + 1}-image`} src={service.image} alt={service.alt} /></figure>
+            <figure><img data-cms-key={`solution-${activeService + 1}-image`} src={service.image} alt={service.alt} loading="lazy" decoding="async" /></figure>
             <div>
               <p>{service.text}</p>
               <span>{service.meta}</span>
@@ -301,7 +301,7 @@ export function HomePage() {
         </header>
         <div className="o2-case__body o2-reveal">
           <figure>
-            <img data-cms-key="red-balloon-case-image" src="/case-redballoon-dia2.jpg" alt="Lideranças da Red Balloon em atividade de desenvolvimento" />
+            <img data-cms-key="red-balloon-case-image" src="/case-redballoon-dia2.jpg" alt="Lideranças da Red Balloon em atividade de desenvolvimento" loading="lazy" decoding="async" />
           </figure>
           <div className="o2-case__copy">
             <span>Red Balloon · 2025</span>
@@ -327,7 +327,7 @@ export function HomePage() {
 
       <section className="o2-about" id="sobre" data-cms-section-key="sobre">
         <figure className="o2-about__photo o2-reveal">
-          <img data-cms-key="founders-image" src="/fundadoras-v2.png" alt="Mônica Miranda e Kátia Puente, fundadoras da Objeto 2A" />
+          <img data-cms-key="founders-image" src="/fundadoras-v2.png" alt="Mônica Miranda e Kátia Puente, fundadoras da Objeto 2A" loading="lazy" decoding="async" />
           <figcaption>Mônica Miranda + Kátia Puente</figcaption>
         </figure>
         <div className="o2-about__copy o2-reveal">
