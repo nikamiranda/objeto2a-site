@@ -12,10 +12,11 @@
   --o2-sans: "Plus Jakarta Sans", Arial, sans-serif;
 }
 
+:root { background: #0c1015; }
 html { scroll-behavior: smooth; scroll-padding-top: 76px; }
-body { margin: 0; color: var(--o2-ink); background: var(--o2-paper); font-family: var(--o2-sans); }
+body { min-height: 100dvh; margin: 0; color: var(--o2-ink); background: var(--o2-paper); font-family: var(--o2-sans); }
 * { box-sizing: border-box; }
-.o2-home { overflow: clip; background: var(--o2-paper); }
+.o2-home { min-height: 100dvh; overflow-x: clip; background: var(--o2-paper); }
 .o2-home img, .o2-home video { display: block; width: 100%; }
 .o2-home em { font-family: var(--o2-serif); font-weight: 400; }
 .o2-kicker { margin: 0 0 24px; color: inherit; font-size: .67rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
@@ -152,6 +153,19 @@ body { margin: 0; color: var(--o2-ink); background: var(--o2-paper); font-family
 
 .o2-reveal { opacity: 0; transform: translateY(30px); transition: opacity .8s, transform .8s; }
 .o2-reveal.is-visible { opacity: 1; transform: translateY(0); }
+
+/* The CMS preview favors direct access over scroll choreography. */
+.cms-preview-mode .o2-reveal { opacity: 1; transform: none; transition: none; }
+.cms-preview-mode .o2-method { height: auto; }
+.cms-preview-mode .o2-method__pin { display: none; }
+.cms-preview-mode .o2-method__mobile { padding: 100px 28px; display: block; }
+.cms-preview-mode .o2-method__mobile header { max-width: 760px; margin-bottom: 70px; }
+.cms-preview-mode .o2-method__mobile article { margin-bottom: 80px; display: grid; grid-template-columns: 1fr 1fr; gap: 34px 50px; align-items: start; }
+.cms-preview-mode .o2-method__mobile article figure { grid-row: span 4; margin: 0; overflow: hidden; border-radius: 28px; background: #0b131b; }
+.cms-preview-mode .o2-method__mobile article img { max-height: 580px; object-fit: contain; }
+.cms-preview-mode .o2-method__mobile article > span { color: var(--o2-coral); font-size: .61rem; text-transform: uppercase; }
+.cms-preview-mode .o2-method__mobile article h3 { margin: 0; font-family: var(--o2-serif); font-size: clamp(2.2rem, 5vw, 3.5rem); font-weight: 400; }
+.cms-preview-mode .o2-method__mobile article p { margin: 0; color: #aeb8c0; font-size: .83rem; line-height: 1.65; }
 
 /* Subpages share the new media policy: source images remain fully visible. */
 .subpage .page-hero img,

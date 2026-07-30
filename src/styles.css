@@ -1652,3 +1652,10 @@ textarea:focus-visible {
 .cms-preview-mode [contenteditable="true"]:focus {
   cursor: text;
 }
+.cms-preview-mode.cms-navigation-mode [data-cms-id],
+.cms-preview-mode.cms-navigation-mode [data-cms-id]:hover,
+.cms-preview-mode.cms-navigation-mode [data-cms-id].cms-selected {
+  outline-color: transparent;
+  box-shadow: none;
+  cursor: inherit;
+}

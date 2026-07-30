@@ -21,7 +21,8 @@ function clone(value) {
 }
 
 export function Admin() {
-  const [authState, setAuthState] = useState("checking");
+  const localPreview = import.meta.env.DEV && new URLSearchParams(window.location.search).has("cms_local_preview");
+  const [authState, setAuthState] = useState(localPreview ? "ok" : "checking");
   const [authError, setAuthError] = useState("");
   const [page, setPage] = useState("/");
   const [content, setContent] = useState(emptyContent);
@@ -30,6 +31,7 @@ export function Admin() {
   const [selected, setSelected] = useState(null);
   const [panel, setPanel] = useState("content");
   const [device, setDevice] = useState("desktop");
+  const [previewMode, setPreviewMode] = useState("edit");
   const [status, setStatus] = useState("Carregando…");
   const [media, setMedia] = useState([]);
   const [versions, setVersions] = useState([]);
@@ -37,20 +39,26 @@ export function Admin() {
   const [toast, setToast] = useState("");
   const iframeRef = useRef(null);
   const fileRef = useRef(null);
+  const contentRef = useRef(emptyContent);
   const dirty = JSON.stringify(content) !== JSON.stringify(savedContent);
 
   const pageName = useMemo(() => pages.find(([path]) => path === page)?.[1] || "Página", [page]);
 
   useEffect(() => {
+    if (localPreview) return;
     fetch("/api/auth", { credentials: "same-origin" })
       .then((response) => response.json())
       .then((data) => setAuthState(data.authenticated ? "ok" : "login"))
       .catch(() => setAuthState("login"));
-  }, []);
+  }, [localPreview]);
 
   useEffect(() => {
     if (authState === "ok") loadPage(page);
   }, [page, authState]);
+
+  useEffect(() => {
+    contentRef.current = content;
+  }, [content]);
 
   useEffect(() => {
     const onMessage = (event) => {
@@ -60,6 +68,10 @@ export function Admin() {
         setStatus("Preview ao vivo");
         iframeRef.current?.contentWindow?.postMessage(
           { source: "objeto2a-admin", type: "apply", content },
+          window.location.origin,
+        );
+        iframeRef.current?.contentWindow?.postMessage(
+          { source: "objeto2a-admin", type: "set-editor-mode", mode: previewMode },
           window.location.origin,
         );
       }
@@ -76,7 +88,14 @@ export function Admin() {
     };
     window.addEventListener("message", onMessage);
     return () => window.removeEventListener("message", onMessage);
-  }, [content]);
+  }, [content, previewMode]);
+
+  useEffect(() => {
+    iframeRef.current?.contentWindow?.postMessage(
+      { source: "objeto2a-admin", type: "set-editor-mode", mode: previewMode },
+      window.location.origin,
+    );
+  }, [previewMode]);
 
   async function api(url, options) {
     const response = await fetch(url, { credentials: "same-origin", ...options });
@@ -98,6 +117,7 @@ export function Admin() {
         api(`/api/versions?path=${encodeURIComponent(path)}`),
       ]);
       const next = document.content || emptyContent;
+      contentRef.current = clone(next);
       setContent(clone(next));
       setSavedContent(clone(next));
       setMedia(mediaData.items || []);
@@ -116,13 +136,17 @@ export function Admin() {
   }
 
   function updatePatch(id, patch) {
-    setContent((current) => ({
-      ...current,
-      patches: {
-        ...current.patches,
-        [id]: { ...(current.patches[id] || {}), ...patch },
-      },
-    }));
+    setContent((current) => {
+      const next = {
+        ...current,
+        patches: {
+          ...current.patches,
+          [id]: { ...(current.patches[id] || {}), ...patch },
+        },
+      };
+      contentRef.current = next;
+      return next;
+    });
   }
 
   function updateStyle(name, value) {
@@ -173,15 +197,7 @@ export function Admin() {
       };
       setMedia((items) => [item, ...items]);
       if (selected) {
-        updatePatch(selected.id, { src: item.url });
-        setSelected((current) => ({ ...current, src: item.url }));
-        iframeRef.current?.contentWindow?.postMessage(
-          { source: "objeto2a-admin", type: "apply", content: {
-            ...content,
-            patches: { ...content.patches, [selected.id]: { ...(content.patches[selected.id] || {}), src: item.url } },
-          } },
-          window.location.origin,
-        );
+        replaceSelectedMedia(item.url, selected);
       }
       setStatus("Preview ao vivo");
       notify(selected ? "Mídia substituída e adicionada à biblioteca" : "Mídia adicionada à biblioteca");
@@ -221,13 +237,25 @@ export function Admin() {
   }
 
   function chooseMedia(item) {
-    if (!selected) return;
-    updatePatch(selected.id, { src: item.url });
-    setSelected((current) => ({ ...current, src: item.url }));
+    replaceSelectedMedia(item.url);
+    notify("Mídia aplicada ao elemento selecionado");
+  }
+
+  function replaceSelectedMedia(src, target = selected) {
+    if (!target) return;
+    const current = contentRef.current;
     const next = {
-      ...content,
-      patches: { ...content.patches, [selected.id]: { ...(content.patches[selected.id] || {}), src: item.url } },
+      ...current,
+      patches: {
+        ...current.patches,
+        [target.id]: { ...(current.patches[target.id] || {}), src },
+      },
     };
+    contentRef.current = next;
+    setContent(next);
+    setSelected((currentSelection) => (
+      currentSelection?.id === target.id ? { ...currentSelection, src } : currentSelection
+    ));
     iframeRef.current?.contentWindow?.postMessage(
       { source: "objeto2a-admin", type: "apply", content: next },
       window.location.origin,
@@ -342,7 +370,7 @@ export function Admin() {
             {!selected ? (
               <>
                 <div className="panel-title"><h2>Conteúdo da página</h2><p>Clique em qualquer texto ou imagem no preview para editar.</p></div>
-                <div className="hint-card"><span>✦</span><div><strong>Edição direta</strong><p>Você verá o resultado imediatamente, exatamente no lugar em que ele aparece no site.</p></div></div>
+                <div className="hint-card"><span>✦</span><div><strong>Edição direta</strong><p>Use “Editar” para selecionar conteúdo e “Navegar” para abrir abas, links e controles da página.</p></div></div>
                 <div className="panel-section-head"><strong>Ordem das seções</strong><small>ARRASTE PARA REORDENAR</small></div>
                 <div className="section-list">
                   {orderedSections.map((section, index) => (
@@ -410,7 +438,7 @@ export function Admin() {
                   </>
                 ) : (
                   <>
-                    <label className="field"><span>Posição focal</span><select value={content.patches[selected.id]?.styles?.objectPosition || ""} onChange={(event) => updateStyle("objectPosition", event.target.value)}><option value="">Padrão</option><option value="center top">Topo</option><option value="center center">Centro</option><option value="center bottom">Base</option><option value="left center">Esquerda</option><option value="right center">Direita</option></select></label>
+                    <label className="field"><span>Posição focal</span><select value={content.patches[selected.id]?.styles?.objectPosition || ""} onChange={(event) => updateStyle("objectPosition", event.target.value)}><option value="">Padrão</option><option value="left top">Topo esquerdo</option><option value="center top">Topo centro</option><option value="right top">Topo direito</option><option value="left center">Meio esquerdo</option><option value="center center">Meio centro</option><option value="right center">Meio direito</option><option value="left bottom">Base esquerda</option><option value="center bottom">Base centro</option><option value="right bottom">Base direita</option></select></label>
                     <label className="field"><span>Largura</span><input placeholder="Ex.: 100% ou 640px" value={content.patches[selected.id]?.styles?.width || ""} onChange={(event) => updateStyle("width", event.target.value)} /></label>
                     <label className="field"><span>Arredondamento</span><input placeholder="Ex.: 24px" value={content.patches[selected.id]?.styles?.borderRadius || ""} onChange={(event) => updateStyle("borderRadius", event.target.value)} /></label>
                   </>
@@ -466,10 +494,16 @@ export function Admin() {
       <main className="admin-canvas">
         <header className="canvas-toolbar">
           <div className="breadcrumb"><span>Site</span><i>/</i><strong>{pageName}</strong><span className="live-dot"></span></div>
-          <div className="device-switcher" aria-label="Tamanho do preview">
-            <button className={device === "desktop" ? "is-active" : ""} onClick={() => setDevice("desktop")} title="Desktop">▰</button>
-            <button className={device === "tablet" ? "is-active" : ""} onClick={() => setDevice("tablet")} title="Tablet">▯</button>
-            <button className={device === "mobile" ? "is-active" : ""} onClick={() => setDevice("mobile")} title="Celular">▯</button>
+          <div className="preview-controls">
+            <div className="preview-mode-switcher" aria-label="Modo do preview">
+              <button className={previewMode === "edit" ? "is-active" : ""} onClick={() => setPreviewMode("edit")}>Editar</button>
+              <button className={previewMode === "navigate" ? "is-active" : ""} onClick={() => setPreviewMode("navigate")}>Navegar</button>
+            </div>
+            <div className="device-switcher" aria-label="Tamanho do preview">
+              <button className={device === "desktop" ? "is-active" : ""} onClick={() => setDevice("desktop")} title="Desktop">▰</button>
+              <button className={device === "tablet" ? "is-active" : ""} onClick={() => setDevice("tablet")} title="Tablet">▯</button>
+              <button className={device === "mobile" ? "is-active" : ""} onClick={() => setDevice("mobile")} title="Celular">▯</button>
+            </div>
           </div>
           <div className="canvas-status"><span>{status}</span><button onClick={() => { iframeRef.current.src = `${page}?cms_preview=1&v=${Date.now()}`; }}>↻</button></div>
         </header>
