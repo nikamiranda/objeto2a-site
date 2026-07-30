@@ -3,6 +3,12 @@ import { useEffect } from "react";
 const TEXT_SELECTOR = "h1,h2,h3,h4,p,span,a,button,small,strong,figcaption,label,li,blockquote";
 const MEDIA_SELECTOR = "img,video";
 const CMS_SCHEMA = "v2";
+const LEGACY_ID_ALIASES = {
+  "/": {
+    "/:media:6": "/:v2:metodo:img:method-03-image",
+    "/:media:7": "/:v2:solucoes:img:solution-1-image",
+  },
+};
 
 function pageKey() {
   return window.location.pathname.replace(/\/+$/, "") || "/";
@@ -38,6 +44,10 @@ function stableToken(value, fallback) {
 
 export function createCmsElementId({ path, scope, kind, key }) {
   return `${path}:${CMS_SCHEMA}:${stableToken(scope, "page")}:${kind}:${stableToken(key, stableHash(key))}`;
+}
+
+export function resolveCmsPatchId(path, id) {
+  return LEGACY_ID_ALIASES[path]?.[id] || id;
 }
 
 function scopeFor(element) {
@@ -136,7 +146,8 @@ function applyOrder(order = []) {
 export function applyCmsContent(content = {}, root = document) {
   prepareEditableDocument(root);
   Object.entries(content.patches || {}).forEach(([id, patch]) => {
-    const elements = root.querySelectorAll(`[data-cms-id="${CSS.escape(id)}"]`);
+    const resolvedId = resolveCmsPatchId(pageKey(), id);
+    const elements = root.querySelectorAll(`[data-cms-id="${CSS.escape(resolvedId)}"]`);
     elements.forEach((element) => {
       if (patch.text !== undefined && element.dataset.cmsKind === "text") safeText(element, patch.text);
       if (patch.src && ["img", "video"].includes(element.dataset.cmsKind)) {

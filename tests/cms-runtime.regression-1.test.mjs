@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { createCmsElementId } from "../src/cmsRuntime.js";
+import { createCmsElementId, resolveCmsPatchId } from "../src/cmsRuntime.js";
 
 // Regression: ISSUE-001 — imagens de abas diferentes compartilhavam o mesmo alvo numérico
 // Found by /qa on 2026-07-30
@@ -44,4 +44,10 @@ test("keeps the same semantic media key synchronized across responsive copies", 
   });
 
   assert.equal(desktop, mobile);
+});
+
+test("migrates the two published legacy photos to their intended semantic targets", () => {
+  assert.equal(resolveCmsPatchId("/", "/:media:6"), "/:v2:metodo:img:method-03-image");
+  assert.equal(resolveCmsPatchId("/", "/:media:7"), "/:v2:solucoes:img:solution-1-image");
+  assert.equal(resolveCmsPatchId("/", "/:text:3"), "/:text:3");
 });
