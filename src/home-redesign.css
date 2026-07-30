@@ -66,7 +66,7 @@ body { min-height: 100dvh; margin: 0; color: var(--o2-ink); background: var(--o2
 .o2-principles h3 { margin: 92px 0 15px; font-family: var(--o2-serif); font-size: clamp(1.75rem, 2.2vw, 2.65rem); font-weight: 400; letter-spacing: -.035em; }
 .o2-principles p { max-width: 390px; margin: 0; color: #666c6f; font-size: .8rem; line-height: 1.6; }
 
-.o2-method { position: relative; height: 290svh; color: #fff; background: var(--o2-ink); }
+.o2-method { position: relative; height: 250svh; color: #fff; background: var(--o2-ink); }
 .o2-method__pin { position: sticky; top: 0; height: 100svh; padding: clamp(100px, 11vh, 140px) clamp(24px, 4.5vw, 88px) clamp(40px, 6vh, 70px); display: grid; grid-template-columns: minmax(350px, .82fr) minmax(520px, 1.18fr); gap: clamp(50px, 7vw, 140px); }
 .o2-method__intro { align-self: center; }
 .o2-method__intro h2, .o2-method__mobile h2 { margin: 0; font-size: clamp(3.25rem, 5.2vw, 6.5rem); font-weight: 500; letter-spacing: -.065em; line-height: .94; }
@@ -228,23 +228,24 @@ body { min-height: 100dvh; margin: 0; color: var(--o2-ink); background: var(--o2
   .o2-header__cta { display: none; }
   .o2-menu { justify-self: end; }
   .o2-hero { padding: 108px 18px 32px; gap: 45px; }
-  .o2-hero__copy h1 { font-size: clamp(3.7rem, 17.5vw, 5.25rem); line-height: .81; }
+  .o2-hero__copy h1 { font-size: clamp(3.45rem, 15.8vw, 4.8rem); line-height: .84; }
   .o2-hero__summary { margin: 40px 0 0; }
   .o2-hero__summary > p { font-size: .85rem; }
   .o2-actions { align-items: flex-start; flex-direction: column; }
   .o2-hero__media video { border-radius: 20px; }
   .o2-hero__caption { font-size: .5rem; }
   .o2-intro { padding: 90px 18px 70px; display: block; }
-  .o2-intro h2, .o2-section-heading h2 { font-size: clamp(3.25rem, 14vw, 4.6rem); }
+  .o2-intro h2, .o2-section-heading h2 { font-size: clamp(3rem, 12.6vw, 4.2rem); }
   .o2-intro > p { margin-top: 42px; font-size: .84rem; }
   .o2-principles { margin: 0 18px 90px; grid-template-columns: 1fr; }
   .o2-principles article, .o2-principles article + article { min-height: 200px; padding: 22px 0 28px; border-right: 0; border-bottom: 1px solid var(--o2-line); }
   .o2-principles h3 { margin-top: 54px; }
   .o2-method__mobile { padding: 88px 18px 35px; }
-  .o2-method__mobile h2 { font-size: clamp(3.15rem, 14vw, 4.4rem); }
-  .o2-method__mobile article { margin-bottom: 78px; display: block; }
-  .o2-method__mobile article figure { margin-bottom: 25px; border-radius: 20px; }
-  .o2-method__mobile article img { max-height: none; object-fit: contain; }
+  .o2-method__mobile header { margin-bottom: 54px; }
+  .o2-method__mobile h2 { font-size: clamp(2.9rem, 12.5vw, 4rem); }
+  .o2-method__mobile article { margin-bottom: 58px; display: block; }
+  .o2-method__mobile article figure { max-height: 360px; margin-bottom: 25px; display: grid; place-items: center; border-radius: 20px; }
+  .o2-method__mobile article img { max-height: 360px; object-fit: contain; }
   .o2-method__mobile article h3 { margin: 13px 0 15px; font-size: 2.4rem; }
   .o2-solutions, .o2-case { padding: 90px 18px; }
   .o2-section-heading .o2-text-link { position: static; margin-top: 35px; }
@@ -263,10 +264,10 @@ body { min-height: 100dvh; margin: 0; color: var(--o2-ink); background: var(--o2
   .o2-case__stat strong { font-size: 5.5rem; }
   .o2-about { padding: 90px 18px; display: flex; flex-direction: column; gap: 55px; }
   .o2-about__photo, .o2-about__copy { width: 100%; }
-  .o2-about__photo img { max-height: none; }
-  .o2-about__copy h2 { font-size: clamp(3.5rem, 15vw, 5rem); }
-  .o2-cta { min-height: 68svh; padding: 90px 18px; }
-  .o2-cta h2 { margin-bottom: 42px; font-size: clamp(4rem, 18vw, 5.6rem); }
+  .o2-about__photo img { max-height: 560px; }
+  .o2-about__copy h2 { font-size: clamp(3.15rem, 13.2vw, 4.55rem); }
+  .o2-cta { min-height: 58svh; padding: 76px 18px; }
+  .o2-cta h2 { margin-bottom: 42px; font-size: clamp(3.6rem, 15.5vw, 5rem); }
   .o2-contact { padding: 78px 18px 26px; display: block; }
   .o2-contact form { margin-top: 75px; }
   .o2-contact__links { margin-top: 65px; }
