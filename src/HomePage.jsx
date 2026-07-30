@@ -12,17 +12,17 @@ const navItems = [
 const methodStages = [
   {
     number: "01",
-    eyebrow: "Escutar",
+    eyebrow: "Diagnosticar",
     title: "Entrar no contexto real.",
-    text: "Começamos pelas pessoas, pelas relações e pelo trabalho como ele realmente acontece — inclusive pelo que ainda não encontrou linguagem.",
+    text: "Escutamos pessoas, lemos indicadores e observamos o trabalho como ele realmente acontece.",
     image: "/fundadoras-v2.png",
     alt: "Mônica Miranda e Kátia Puente, fundadoras da Objeto 2A",
   },
   {
     number: "02",
-    eyebrow: "Compreender",
-    title: "Ler o sistema por inteiro.",
-    text: "Conectamos cultura, rotina, afetos e estratégia em um diagnóstico vivo, capaz de revelar padrões e pontos de movimento.",
+    eyebrow: "Desenhar",
+    title: "Definir o percurso certo.",
+    text: "Conectamos cultura, rotina, afetos e estratégia para desenhar uma intervenção própria para aquele contexto.",
     image: "/case-redballoon-reuniao-v2.png",
     alt: "Encontro de diagnóstico com a equipe Red Balloon",
   },
@@ -30,7 +30,7 @@ const methodStages = [
     number: "03",
     eyebrow: "Ativar",
     title: "Fazer a mudança ganhar corpo.",
-    text: "Desenhamos experiências que ampliam autonomia, repertório e inteligência relacional — com acompanhamento qualitativo do percurso.",
+    text: "Criamos experiências aplicáveis e acompanhamos qualitativamente o que muda nas relações e nas práticas.",
     image: "/case-redballoon-dia2.jpg",
     alt: "Experiência de desenvolvimento com lideranças",
   },
@@ -65,12 +65,6 @@ const services = [
     image: "/facilitation.jpg",
     alt: "Processo de facilitação com uma equipe",
   },
-];
-
-const principles = [
-  ["Escuta situada", "Lemos indicadores e relações para compreender o sistema em profundidade."],
-  ["Desenho singular", "Cada contexto pede uma combinação própria de repertórios, práticas e experiências."],
-  ["Mudança possível", "A transformação ganha corpo quando reflexão, relação e ação caminham juntas."],
 ];
 
 function Brand({ inverse = false }) {
@@ -121,9 +115,9 @@ function MethodStory() {
     <section className="o2-method" id="metodo" data-cms-section-key="metodo" ref={sectionRef}>
       <div className="o2-method__pin">
         <div className="o2-method__intro">
-          <p className="o2-kicker">Nosso método</p>
-          <h2>Mudança não se impõe.<br /><em>Ela se constrói.</em></h2>
-          <p>Um percurso para transformar leitura em movimento sem perder de vista quem sustenta o trabalho: as pessoas.</p>
+          <p className="o2-kicker">Como trabalhamos</p>
+          <h2>Da escuta à ação.<br /><em>Sem fórmulas prontas.</em></h2>
+          <p>Três etapas conectam diagnóstico, desenho e acompanhamento para transformar uma questão real em mudança possível.</p>
           <div className="o2-method__progress" aria-hidden="true">
             <i style={{ transform: `scaleX(${progress})` }} />
           </div>
@@ -165,8 +159,8 @@ function MethodStory() {
 
       <div className="o2-method__mobile">
         <header>
-          <p className="o2-kicker">Nosso método</p>
-          <h2>Mudança não se impõe. <em>Ela se constrói.</em></h2>
+          <p className="o2-kicker">Como trabalhamos</p>
+          <h2>Da escuta à ação. <em>Sem fórmulas prontas.</em></h2>
         </header>
         {methodStages.map((stage) => (
           <article key={stage.number}>
@@ -264,33 +258,11 @@ export function HomePage() {
         </div>
       </section>
 
-      <section className="o2-intro o2-reveal" data-cms-section-key="intro">
-        <div>
-          <p className="o2-kicker">O nexo humano</p>
-          <h2>O trabalho muda quando as relações <em>ganham consciência.</em></h2>
-        </div>
-        <p>
-          Unimos diagnóstico organizacional, sociologia clínica, psicanálise aplicada,
-          metodologias ativas e gestão para atuar no ponto em que desempenho e saúde relacional se encontram.
-        </p>
-      </section>
-
-      <section className="o2-principles o2-reveal" data-cms-section-key="principios" aria-label="Princípios de atuação">
-        {principles.map(([title, text], index) => (
-          <article key={title}>
-            <span>0{index + 1}</span>
-            <h3>{title}</h3>
-            <p>{text}</p>
-          </article>
-        ))}
-      </section>
-
-      <MethodStory />
-
       <section className="o2-solutions" id="solucoes" data-cms-section-key="solucoes">
         <header className="o2-section-heading o2-reveal">
-          <p className="o2-kicker">Como podemos ajudar</p>
-          <h2>Formatos diferentes.<br /><em>Uma mesma profundidade.</em></h2>
+          <p className="o2-kicker">Soluções</p>
+          <h2>Da questão real<br /><em>ao formato certo.</em></h2>
+          <p className="o2-section-heading__lede">Programas, mentorias, workshops e facilitação combinados de acordo com o contexto, as pessoas e o resultado esperado.</p>
           <a className="o2-text-link" href="/solucoes">Ver todas as soluções <Arrow /></a>
         </header>
 
@@ -345,6 +317,8 @@ export function HomePage() {
           </div>
         </div>
       </section>
+
+      <MethodStory />
 
       <section className="o2-about" id="sobre" data-cms-section-key="sobre">
         <figure className="o2-about__photo o2-reveal">
