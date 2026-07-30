@@ -118,7 +118,7 @@ function MethodStory() {
   }, []);
 
   return (
-    <section className="o2-method" id="metodo" ref={sectionRef}>
+    <section className="o2-method" id="metodo" data-cms-section-key="metodo" ref={sectionRef}>
       <div className="o2-method__pin">
         <div className="o2-method__intro">
           <p className="o2-kicker">Nosso método</p>
@@ -151,7 +151,7 @@ function MethodStory() {
           {methodStages.map((stage, index) => (
             <article className={activeStage === index ? "is-active" : ""} aria-hidden={activeStage !== index} key={stage.number}>
               <figure>
-                <img src={stage.image} alt={stage.alt} />
+                <img data-cms-key={`method-${stage.number}-image`} src={stage.image} alt={stage.alt} />
               </figure>
               <div>
                 <span>{stage.number} / 03</span>
@@ -170,7 +170,7 @@ function MethodStory() {
         </header>
         {methodStages.map((stage) => (
           <article key={stage.number}>
-            <figure><img src={stage.image} alt={stage.alt} /></figure>
+            <figure><img data-cms-key={`method-${stage.number}-image`} src={stage.image} alt={stage.alt} /></figure>
             <span>{stage.number} / 03 · {stage.eyebrow}</span>
             <h3>{stage.title}</h3>
             <p>{stage.text}</p>
@@ -240,7 +240,7 @@ export function HomePage() {
         </button>
       </header>
 
-      <section className="o2-hero">
+      <section className="o2-hero" data-cms-section-key="hero">
         <div className="o2-hero__copy">
           <p className="o2-kicker">Desenvolvimento humano + organizacional</p>
           <h1>Relações mais<br />saudáveis.<br /><em>Organizações</em><br /><em>mais vivas.</em></h1>
@@ -254,7 +254,7 @@ export function HomePage() {
         </div>
 
         <div className="o2-hero__media">
-          <video autoPlay muted loop playsInline preload="metadata" poster="/workshop.jpg" aria-label="Workshop colaborativo da Objeto 2A">
+          <video data-cms-key="hero-video" autoPlay muted loop playsInline preload="metadata" poster="/workshop.jpg" aria-label="Workshop colaborativo da Objeto 2A">
             <source src="/hero-objeto2a.mp4" type="video/mp4" />
           </video>
           <div className="o2-hero__caption">
@@ -264,7 +264,7 @@ export function HomePage() {
         </div>
       </section>
 
-      <section className="o2-intro o2-reveal">
+      <section className="o2-intro o2-reveal" data-cms-section-key="intro">
         <div>
           <p className="o2-kicker">O nexo humano</p>
           <h2>O trabalho muda quando as relações <em>ganham consciência.</em></h2>
@@ -275,7 +275,7 @@ export function HomePage() {
         </p>
       </section>
 
-      <section className="o2-principles o2-reveal" aria-label="Princípios de atuação">
+      <section className="o2-principles o2-reveal" data-cms-section-key="principios" aria-label="Princípios de atuação">
         {principles.map(([title, text], index) => (
           <article key={title}>
             <span>0{index + 1}</span>
@@ -287,7 +287,7 @@ export function HomePage() {
 
       <MethodStory />
 
-      <section className="o2-solutions" id="solucoes">
+      <section className="o2-solutions" id="solucoes" data-cms-section-key="solucoes">
         <header className="o2-section-heading o2-reveal">
           <p className="o2-kicker">Como podemos ajudar</p>
           <h2>Formatos diferentes.<br /><em>Uma mesma profundidade.</em></h2>
@@ -312,7 +312,7 @@ export function HomePage() {
             ))}
           </div>
           <article className="o2-solution-browser__panel" role="tabpanel">
-            <figure><img src={service.image} alt={service.alt} /></figure>
+            <figure><img data-cms-key={`solution-${activeService + 1}-image`} src={service.image} alt={service.alt} /></figure>
             <div>
               <p>{service.text}</p>
               <span>{service.meta}</span>
@@ -322,14 +322,14 @@ export function HomePage() {
         </div>
       </section>
 
-      <section className="o2-case" id="trabalhos">
+      <section className="o2-case" id="trabalhos" data-cms-section-key="trabalhos">
         <header className="o2-section-heading o2-reveal">
           <p className="o2-kicker">Trabalho em contexto real</p>
           <h2>Da escuta à<br /><em>maturidade tática.</em></h2>
         </header>
         <div className="o2-case__body o2-reveal">
           <figure>
-            <img src="/case-redballoon-dia2.jpg" alt="Lideranças da Red Balloon em atividade de desenvolvimento" />
+            <img data-cms-key="red-balloon-case-image" src="/case-redballoon-dia2.jpg" alt="Lideranças da Red Balloon em atividade de desenvolvimento" />
           </figure>
           <div className="o2-case__copy">
             <span>Red Balloon · 2025</span>
@@ -346,9 +346,9 @@ export function HomePage() {
         </div>
       </section>
 
-      <section className="o2-about" id="sobre">
+      <section className="o2-about" id="sobre" data-cms-section-key="sobre">
         <figure className="o2-about__photo o2-reveal">
-          <img src="/fundadoras-v2.png" alt="Mônica Miranda e Kátia Puente, fundadoras da Objeto 2A" />
+          <img data-cms-key="founders-image" src="/fundadoras-v2.png" alt="Mônica Miranda e Kátia Puente, fundadoras da Objeto 2A" />
           <figcaption>Mônica Miranda + Kátia Puente</figcaption>
         </figure>
         <div className="o2-about__copy o2-reveal">
@@ -366,13 +366,13 @@ export function HomePage() {
         </div>
       </section>
 
-      <section className="o2-cta">
+      <section className="o2-cta" data-cms-section-key="cta">
         <p className="o2-kicker">Próximo movimento</p>
         <h2>O que está pedindo<br /><em>mudança por aí?</em></h2>
         <a className="o2-button is-light" href={whatsapp} target="_blank" rel="noreferrer">Conversar no WhatsApp <Arrow /></a>
       </section>
 
-      <section className="o2-contact" id="contato">
+      <section className="o2-contact" id="contato" data-cms-section-key="contato">
         <div className="o2-contact__lead">
           <Brand inverse />
           <h2>Vamos conversar.</h2>
