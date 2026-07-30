@@ -222,7 +222,6 @@ export function HomePage() {
             <a href={item.href} onClick={() => setMenuOpen(false)} key={item.href}>{item.label}</a>
           ))}
         </nav>
-        <a className="o2-header__cta" href="#contato">Agendar conversa <Arrow /></a>
         <button
           className="o2-menu"
           type="button"
@@ -247,15 +246,18 @@ export function HomePage() {
           </div>
         </div>
 
-        <div className="o2-hero__media">
-          <video data-cms-key="hero-video" autoPlay muted loop playsInline preload="metadata" poster="/workshop.jpg" aria-label="Workshop colaborativo da Objeto 2A">
-            <source src="/hero-objeto2a.mp4" type="video/mp4" />
-          </video>
-          <div className="o2-hero__caption">
+        <figure className="o2-hero__media">
+          <img
+            src="/fundadoras-v2.png"
+            alt="Mônica Miranda e Kátia Puente, fundadoras da Objeto 2A"
+            fetchPriority="high"
+            decoding="async"
+          />
+          <figcaption className="o2-hero__caption">
             <span>Objeto 2A em campo</span>
-            <span>Rio de Janeiro · Brasil</span>
-          </div>
-        </div>
+            <span>Estrutura e propósito</span>
+          </figcaption>
+        </figure>
       </section>
 
       <section className="o2-solutions" id="solucoes" data-cms-section-key="solucoes">
