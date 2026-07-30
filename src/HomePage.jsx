@@ -3,9 +3,9 @@ import { useEffect, useRef, useState } from "react";
 const whatsapp = "https://wa.me/5521986287957";
 
 const navItems = [
-  { label: "Método", href: "#metodo" },
   { label: "Soluções", href: "#solucoes" },
   { label: "Trabalhos", href: "#trabalhos" },
+  { label: "Método", href: "#metodo" },
   { label: "Sobre", href: "#sobre" },
 ];
 
@@ -228,7 +228,7 @@ export function HomePage() {
             <a href={item.href} onClick={() => setMenuOpen(false)} key={item.href}>{item.label}</a>
           ))}
         </nav>
-        <a className="o2-header__cta" href="#contato">Vamos conversar <Arrow /></a>
+        <a className="o2-header__cta" href="#contato">Agendar conversa <Arrow /></a>
         <button
           className="o2-menu"
           type="button"
@@ -242,13 +242,13 @@ export function HomePage() {
 
       <section className="o2-hero" data-cms-section-key="hero">
         <div className="o2-hero__copy">
-          <p className="o2-kicker">Desenvolvimento humano + organizacional</p>
+          <p className="o2-kicker">Consultoria e desenvolvimento organizacional</p>
           <h1>Relações mais<br />saudáveis.<br /><em>Organizações</em><br /><em>mais vivas.</em></h1>
           <div className="o2-hero__summary">
-            <p>Conectamos escuta, estratégia e aprendizagem para transformar pessoas, equipes e culturas.</p>
+            <p>Diagnóstico organizacional, programas de liderança, mentorias, workshops e facilitação para equipes e culturas em transformação.</p>
             <div className="o2-actions">
-              <a className="o2-button is-coral" href="#contato">Começar uma conversa <Arrow /></a>
-              <a className="o2-text-link" href="#metodo">Conheça o método <Arrow down /></a>
+              <a className="o2-button is-coral" href="#contato">Agendar conversa de 30 min <Arrow /></a>
+              <a className="o2-text-link" href="#solucoes">Explorar soluções <Arrow down /></a>
             </div>
           </div>
         </div>
@@ -367,22 +367,22 @@ export function HomePage() {
       </section>
 
       <section className="o2-cta" data-cms-section-key="cta">
-        <p className="o2-kicker">Próximo movimento</p>
-        <h2>O que está pedindo<br /><em>mudança por aí?</em></h2>
-        <a className="o2-button is-light" href={whatsapp} target="_blank" rel="noreferrer">Conversar no WhatsApp <Arrow /></a>
+        <p className="o2-kicker">Próximo passo</p>
+        <h2>Traga o desafio.<br /><em>A gente começa pela escuta.</em></h2>
+        <a className="o2-button is-light" href={whatsapp} target="_blank" rel="noreferrer">Agendar conversa no WhatsApp <Arrow /></a>
       </section>
 
       <section className="o2-contact" id="contato" data-cms-section-key="contato">
         <div className="o2-contact__lead">
           <Brand inverse />
-          <h2>Vamos conversar.</h2>
-          <p>A primeira conversa é para escutar, compreender e encontrar o melhor ponto de partida.</p>
+          <h2>Conversa inicial, sem compromisso.</h2>
+          <p>Em 30 minutos, entendemos o contexto e identificamos juntos o melhor ponto de partida.</p>
           <a href={whatsapp} target="_blank" rel="noreferrer">(21) 98628-7957 <Arrow /></a>
           <span>Rio de Janeiro · Brasil</span>
         </div>
 
         <form onSubmit={handleSubmit}>
-          <h3>Conte um pouco do seu contexto</h3>
+          <h3>Qual desafio sua organização está vivendo?</h3>
           <label>Nome<input name="name" required autoComplete="name" placeholder="Seu nome" /></label>
           <label>E-mail<input name="email" required type="email" autoComplete="email" placeholder="voce@empresa.com" /></label>
           <label>O que precisa se mover?<textarea name="message" required rows="3" placeholder="Conte em poucas palavras" /></label>
