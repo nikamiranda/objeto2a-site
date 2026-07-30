@@ -30,6 +30,7 @@ Before making substantial visual changes, use the Product Design plugin's `get-c
 - The latest redesign request prioritizes an intentional, visually rich experience across mobile, desktop, and wide desktop. Every photo and video must remain fully visible rather than being cropped; use proportion-aware `object-fit: contain` media frames and let spacing/layout adapt around the source ratio.
 - The homepage should communicate the offer more directly through a strong editorial opening, a concise three-stage method narrative, visually led solution browsing, real work as proof, and a warmer founders section. Avoid long repeated copy and generic decorative imagery.
 - The user described the previous homepage as simultaneously too simple and confusing, then authorized a decisive redesign. Preserve the authored visual identity, but prioritize an explicit offer in the hero, solutions and verified proof before methodology, concrete CTAs, and a shorter mobile journey. Do not respond to perceived simplicity by adding decorative components.
+- The user explicitly rejected the hero that placed low-resolution vertical workshop footage inside a large blurred horizontal frame. The homepage opening must read as one editorial composition with one alignment system, one primary action, and crisp real human imagery; do not repeat that letterboxed-video treatment.
 
 When implementing from a selected generated mock, treat that image as the source of truth for layout, component anatomy, density, spacing, color, typography, visible content, and hierarchy.
 
