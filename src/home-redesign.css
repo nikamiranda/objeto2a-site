@@ -194,7 +194,7 @@ body { min-height: 100dvh; margin: 0; color: var(--o2-ink); background: var(--o2
   .o2-header nav { position: fixed; inset: 78px 0 auto; padding: 22px 30px 34px; display: none; flex-direction: column; gap: 0; color: var(--o2-ink); border-bottom: 1px solid var(--o2-line); background: var(--o2-paper); }
   .o2-header nav.is-open { display: flex; }
   .o2-header nav a { padding: 15px 0; border-bottom: 1px solid var(--o2-line); font-size: .82rem; }
-  .o2-menu { width: 42px; height: 42px; display: grid; place-content: center; gap: 6px; border: 1px solid currentColor; border-radius: 50%; color: inherit; background: transparent; }
+  .o2-menu { width: 44px; height: 44px; display: grid; place-content: center; gap: 6px; border: 1px solid currentColor; border-radius: 50%; color: inherit; background: transparent; }
   .o2-menu i { width: 16px; height: 1px; display: block; background: currentColor; }
   .o2-hero { min-height: auto; grid-template-columns: 1fr; gap: 60px; }
   .o2-hero__copy { padding-top: 30px; }
