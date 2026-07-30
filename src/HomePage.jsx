@@ -297,7 +297,7 @@ export function HomePage() {
       <section className="o2-case" id="trabalhos" data-cms-section-key="trabalhos">
         <header className="o2-section-heading o2-reveal">
           <p className="o2-kicker">Trabalho em contexto real</p>
-          <h2>Da escuta à<br /><em>maturidade tática.</em></h2>
+          <h2>Cinco unidades.<br /><em>Um percurso sob medida.</em></h2>
         </header>
         <div className="o2-case__body o2-reveal">
           <figure>
@@ -305,10 +305,15 @@ export function HomePage() {
           </figure>
           <div className="o2-case__copy">
             <span>Red Balloon · 2025</span>
-            <h3>Programa de desenvolvimento de lideranças</h3>
+            <h3>Diagnóstico e desenvolvimento de lideranças</h3>
             <p>Diagnóstico organizacional e desenvolvimento de soft skills com lideranças de cinco unidades no Rio de Janeiro.</p>
+            <ul className="o2-case__evidence" aria-label="Escopo verificado do projeto">
+              <li>5 unidades no Rio</li>
+              <li>Diagnóstico organizacional</li>
+              <li>Desenvolvimento de soft skills</li>
+            </ul>
+            <small>Resultado observado no relatório qualitativo</small>
             <blockquote>“O grupo demonstrou maturidade tática e inteligência relacional para lidar com os desafios.”</blockquote>
-            <small>Relatório qualitativo do ciclo</small>
             <a className="o2-text-link" href="/trabalhos">Conheça o trabalho <Arrow /></a>
           </div>
           <div className="o2-case__stat">

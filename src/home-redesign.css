@@ -115,7 +115,9 @@ body { min-height: 100dvh; margin: 0; color: var(--o2-ink); background: var(--o2
 .o2-case__copy > span, .o2-case__copy small { color: #62696d; font-size: .61rem; text-transform: uppercase; }
 .o2-case__copy h3 { margin: 30px 0 20px; font-family: var(--o2-serif); font-size: clamp(2.1rem, 3.2vw, 4rem); font-weight: 400; line-height: .98; }
 .o2-case__copy > p { color: #596064; font-size: .85rem; line-height: 1.65; }
-.o2-case__copy blockquote { margin: 46px 0 13px; padding-top: 25px; border-top: 1px solid rgb(17 26 36 / 23%); font-family: var(--o2-serif); font-size: clamp(1.25rem, 1.55vw, 1.8rem); line-height: 1.3; }
+.o2-case__evidence { margin: 28px 0 44px; padding: 0; display: flex; gap: 8px; flex-wrap: wrap; list-style: none; }
+.o2-case__evidence li { padding: 9px 12px; border: 1px solid rgb(17 26 36 / 23%); border-radius: 999px; color: #4e565b; font-size: .61rem; line-height: 1.2; }
+.o2-case__copy blockquote { margin: 12px 0 13px; padding-top: 25px; border-top: 1px solid rgb(17 26 36 / 23%); font-family: var(--o2-serif); font-size: clamp(1.25rem, 1.55vw, 1.8rem); line-height: 1.3; }
 .o2-case__copy .o2-text-link { margin-top: 37px; }
 .o2-case__stat { position: absolute; top: -118px; right: 0; display: flex; gap: 13px; align-items: end; }
 .o2-case__stat strong { font-family: var(--o2-serif); font-size: 6.6rem; font-weight: 400; letter-spacing: -.08em; line-height: .72; }
