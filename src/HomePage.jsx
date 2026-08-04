@@ -234,18 +234,6 @@ export function HomePage() {
       </header>
 
       <section className="o2-hero" data-cms-section-key="hero">
-        <div className="o2-hero__copy">
-          <p className="o2-kicker">Consultoria e desenvolvimento organizacional</p>
-          <h1>Relações mais<br />saudáveis.<br /><em>Organizações</em><br /><em>mais vivas.</em></h1>
-          <div className="o2-hero__summary">
-            <p>Diagnóstico organizacional, programas de liderança, mentorias, workshops e facilitação para equipes e culturas em transformação.</p>
-            <div className="o2-actions">
-              <a className="o2-button is-coral" href="#contato">Agendar conversa de 30 min <Arrow /></a>
-              <a className="o2-text-link" href="#solucoes">Explorar soluções <Arrow down /></a>
-            </div>
-          </div>
-        </div>
-
         <figure className="o2-hero__media">
           <img
             src="/fundadoras-v2.png"
@@ -254,10 +242,22 @@ export function HomePage() {
             decoding="async"
           />
           <figcaption className="o2-hero__caption">
+            <span>Mônica Miranda + Kátia Puente</span>
             <span>Objeto 2A em campo</span>
-            <span>Estrutura e propósito</span>
           </figcaption>
         </figure>
+
+        <div className="o2-hero__copy">
+          <p className="o2-kicker">Consultoria organizacional + desenvolvimento humano</p>
+          <h1>O trabalho muda quando <em>as relações mudam.</em></h1>
+          <div className="o2-hero__summary">
+            <p>A Objeto 2A combina diagnóstico organizacional e desenvolvimento humano para transformar desafios de liderança, cultura e colaboração em mudanças que ganham corpo no cotidiano.</p>
+            <div className="o2-actions">
+              <a className="o2-button is-coral" href="#contato">Agendar uma conversa <Arrow /></a>
+              <a className="o2-text-link" href="#solucoes">Conhecer as soluções <Arrow down /></a>
+            </div>
+          </div>
+        </div>
       </section>
 
       <section className="o2-solutions" id="solucoes" data-cms-section-key="solucoes">
