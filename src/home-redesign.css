@@ -208,6 +208,23 @@ body { min-height: 100dvh; margin: 0; color: var(--o2-ink); background: var(--o2
 .o2-about__copy h2 { margin: 0 0 42px; font-size: clamp(3.25rem, 4.75vw, 5.9rem); font-weight: 500; letter-spacing: -.045em; line-height: .95; }
 .o2-about__copy > p:not(.o2-kicker) { max-width: 620px; margin: 0 0 22px; color: #535d61; font-size: 1rem; line-height: 1.66; }
 .o2-about__copy .o2-button { margin-top: 24px; }
+.o2-about__lenses { max-width: 700px; margin-top: 38px; }
+.o2-about__lens-tabs { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--o2-line); border-bottom: 1px solid var(--o2-line); }
+.o2-about__lens-tabs button { position: relative; min-height: 62px; padding: 0 18px; display: flex; gap: 16px; align-items: center; border: 0; color: rgb(20 34 61 / 58%); background: transparent; font: inherit; font-size: .8rem; font-weight: 600; cursor: pointer; transition: color .25s ease, background-color .25s ease; }
+.o2-about__lens-tabs button + button { border-left: 1px solid var(--o2-line); }
+.o2-about__lens-tabs button::after { position: absolute; right: 0; bottom: -1px; left: 0; height: 2px; content: ""; background: var(--o2-terracotta); transform: scaleX(0); transform-origin: left; transition: transform .4s cubic-bezier(.22, 1, .36, 1); }
+.o2-about__lens-tabs button:is(:hover, :focus-visible), .o2-about__lens-tabs button.is-active { color: var(--o2-navy); background: rgb(231 220 200 / 30%); }
+.o2-about__lens-tabs button.is-active::after { transform: scaleX(1); }
+.o2-about__lens-tabs span { color: var(--o2-terracotta); font-size: .58rem; font-weight: 500; }
+.o2-about__lens { min-height: 190px; padding: 30px 32px; display: grid; grid-template-columns: minmax(90px, .32fr) minmax(0, 1fr); gap: clamp(26px, 4vw, 62px); align-items: start; background: rgb(231 220 200 / 44%); }
+.o2-about__lens > span { padding-top: 4px; color: rgb(20 34 61 / 55%); font-size: .58rem; font-weight: 500; letter-spacing: .09em; text-transform: uppercase; }
+.o2-about__lens strong { display: block; font-size: clamp(1.1rem, 1.25vw, 1.35rem); font-weight: 600; letter-spacing: -.025em; }
+.o2-about__lens small { margin-top: 8px; display: block; color: rgb(20 34 61 / 58%); font-size: .58rem; letter-spacing: .06em; line-height: 1.45; text-transform: uppercase; }
+.o2-about__lens p { max-width: 540px; margin: 20px 0 0; color: rgb(20 34 61 / 76%); font-size: .9rem; line-height: 1.55; }
+.o2-about__lens > * { animation: o2-founder-lens-in .5s cubic-bezier(.22, 1, .36, 1) both; }
+.o2-about__lens > div { animation-delay: .06s; }
+
+@keyframes o2-founder-lens-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
 .o2-cta { min-height: 68svh; padding: clamp(95px, 12vw, 190px) clamp(24px, 7vw, 140px); display: flex; flex-direction: column; justify-content: center; align-items: flex-start; color: var(--o2-offwhite); background: var(--o2-green); }
 .o2-cta h2 { max-width: 1280px; margin: 0 0 55px; font-size: clamp(3.8rem, 6.4vw, 7.8rem); font-weight: 500; letter-spacing: -.05em; line-height: .91; }
@@ -375,6 +392,9 @@ body { min-height: 100dvh; margin: 0; color: var(--o2-ink); background: var(--o2
   .o2-about__photo, .o2-about__copy { width: 100%; }
   .o2-about__photo img { max-height: 560px; }
   .o2-about__copy h2 { font-size: clamp(3.15rem, 13.2vw, 4.55rem); }
+  .o2-about__lens { min-height: 230px; padding: 26px 22px; display: block; }
+  .o2-about__lens > div { margin-top: 26px; }
+  .o2-about__lens-tabs button { padding: 0 12px; gap: 10px; }
   .o2-cta { min-height: 58svh; padding: 76px 18px; }
   .o2-cta h2 { margin-bottom: 42px; font-size: clamp(3.6rem, 15.5vw, 5rem); }
   .o2-contact { padding: 78px 18px 26px; display: block; }
@@ -390,4 +410,5 @@ body { min-height: 100dvh; margin: 0; color: var(--o2-ink); background: var(--o2
   .o2-opening__insight p { animation: none; }
   .o2-solution-browser__panel figure::after { display: none; animation: none; }
   .o2-solution-browser__panel img, .o2-solution-browser__panel > div > * { animation: none; }
+  .o2-about__lens > * { animation: none; }
 }

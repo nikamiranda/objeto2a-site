@@ -97,6 +97,19 @@ const approachMoments = [
   },
 ];
 
+const founderLenses = [
+  {
+    name: "Mônica Miranda",
+    fields: "Comunicação · inovação · formação de lideranças",
+    text: "Mônica observa como ideias ganham forma, circulam e mobilizam. Seu olhar conecta comunicação, inovação e formação de lideranças.",
+  },
+  {
+    name: "Kátia Puente",
+    fields: "Sociologia clínica · psicanálise e saúde · aprendizagem",
+    text: "Kátia escuta o que as relações dizem — inclusive quando as palavras ainda não dão conta. Seu olhar conecta sociologia clínica, psicanálise, saúde e aprendizagem.",
+  },
+];
+
 function Arrow({ down = false }) {
   return <span aria-hidden="true">{down ? "↓" : "↗"}</span>;
 }
@@ -265,6 +278,7 @@ export function HomePage() {
   const [activeService, setActiveService] = useState(0);
   const [serviceDirection, setServiceDirection] = useState("forward");
   const [activeApproach, setActiveApproach] = useState(0);
+  const [activeFounder, setActiveFounder] = useState(0);
   const [formState, setFormState] = useState("idle");
   const [isVideoPaused, setIsVideoPaused] = useState(false);
 
@@ -379,8 +393,21 @@ export function HomePage() {
     event.currentTarget.parentElement?.querySelectorAll("button")[nextIndex]?.focus();
   }
 
+  function handleFounderKeyDown(event, index) {
+    if (!["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End"].includes(event.key)) return;
+    event.preventDefault();
+    let nextIndex = index;
+    if (event.key === "Home") nextIndex = 0;
+    if (event.key === "End") nextIndex = founderLenses.length - 1;
+    if (event.key === "ArrowRight" || event.key === "ArrowDown") nextIndex = (index + 1) % founderLenses.length;
+    if (event.key === "ArrowLeft" || event.key === "ArrowUp") nextIndex = (index - 1 + founderLenses.length) % founderLenses.length;
+    setActiveFounder(nextIndex);
+    event.currentTarget.parentElement?.querySelectorAll("button")[nextIndex]?.focus();
+  }
+
   const service = services[activeService];
   const approach = approachMoments[activeApproach];
+  const founder = founderLenses[activeFounder];
 
   return (
     <main className="o2-home" id="inicio">
@@ -598,6 +625,42 @@ export function HomePage() {
             Por isso, entramos em cada projeto com método, presença e curiosidade — para criar
             experiências que façam sentido naquele contexto, para aquelas pessoas.
           </p>
+          <div className="o2-about__lenses">
+            <div className="o2-about__lens-tabs" role="tablist" aria-label="Olhares das fundadoras">
+              {founderLenses.map((item, index) => (
+                <button
+                  type="button"
+                  id={`founder-tab-${index}`}
+                  role="tab"
+                  aria-selected={activeFounder === index}
+                  aria-controls="founder-panel"
+                  tabIndex={activeFounder === index ? 0 : -1}
+                  className={activeFounder === index ? "is-active" : ""}
+                  onClick={() => setActiveFounder(index)}
+                  onKeyDown={(event) => handleFounderKeyDown(event, index)}
+                  key={item.name}
+                >
+                  <span>0{index + 1}</span>
+                  {item.name.split(" ")[0]}
+                </button>
+              ))}
+            </div>
+            <article
+              className="o2-about__lens"
+              id="founder-panel"
+              key={founder.name}
+              role="tabpanel"
+              aria-labelledby={`founder-tab-${activeFounder}`}
+              aria-live="polite"
+            >
+              <span>Olhar em foco</span>
+              <div>
+                <strong>{founder.name}</strong>
+                <small>{founder.fields}</small>
+                <p>{founder.text}</p>
+              </div>
+            </article>
+          </div>
           <a className="o2-button is-outline" href="/sobre">Conheça nossa história <Arrow /></a>
         </div>
       </section>
