@@ -40,7 +40,7 @@
 - **Light gray — `#F2F2EE`:** silêncio, espaço and respiro. Secondary neutral surface.
 - **Off-white — `#FAF9F6`:** pureza, foco and leveza. Primary light surface.
 - **Monochrome applications:** `#111111`, `#2B2B2B`, `#6E6A63`, `#BDB7AD`, `#F2EFEA`.
-- **Usage:** navy and off-white dominate. Green and sand create warmth. Terracotta marks action or direction and should not flood the interface.
+- **Usage:** navy and off-white dominate. Green creates warmth in interactive surfaces. Sand belongs to supporting media or quiet environmental fields, not active-control fills. Terracotta marks action or direction and should not flood the interface.
 
 ## Spacing and Layout
 
@@ -48,7 +48,7 @@
 - **Density:** spacious, with deliberate changes of rhythm between editorial statement, evidence and action.
 - **Grid:** 12-column desktop logic reduced to four visual columns in the hero; two columns on tablet; one column on mobile.
 - **Max content width:** 1760px for full compositions and 1580px for reading sections.
-- **Radius:** 0–2px for rules and controls; 12–18px for primary media; 24px only when source material benefits from a softer frame.
+- **Radius:** rules remain precise, but controls should usually be borderless and carried by the open-circle mark. Primary CTAs may use an asymmetric capsule with one cut corner. Interactive panels may use selective 48–80px curves on opposing corners; avoid applying the same radius everywhere.
 - **Brand line:** use the horizontal support line with a small downward curve and a terracotta continuation as a recurring divider.
 
 ## Media
@@ -72,3 +72,4 @@
 | 2026-08-05 | The supplied color identity is the primary digital system; the neutral board is the monochrome variant. | The color board contains explicit semantic roles for each hue and a broader application system. |
 | 2026-08-05 | Sora is the only public-site type family. | It is specified by the supplied identity and removes the artificial variation the user rejected. |
 | 2026-08-05 | The identity boards supersede earlier invented palettes and temporary logos. | The supplied brand system is now the source of truth. |
+| 2026-08-05 | Interaction styling should feel editorial and art-led rather than like product UI. | The user rejected beige segmented buttons, hard rectangular repetition and the telemetry-like chapter rail. |
