@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { upload as uploadBlob } from "@vercel/blob/client";
+import { Brand, BrandSymbol } from "./Brand.jsx";
 import "./admin.css";
 
 const pages = [
@@ -300,7 +301,7 @@ export function Admin() {
   if (authState !== "ok") {
     return (
       <main className="admin-login">
-        <div className="admin-login__brand"><b>OBJETO</b><span>2A</span></div>
+        <Brand inverse href="/" className="admin-login__brand" />
         <form onSubmit={login}>
           <small>PAINEL ADMINISTRATIVO</small>
           <h1>{authState === "checking" ? "Verificando acesso…" : "Bem-vinda de volta."}</h1>
@@ -322,8 +323,8 @@ export function Admin() {
   return (
     <div className="admin-shell">
       <aside className="admin-nav">
-        <a href="/" className="admin-logo" aria-label="Objeto 2A — ver site">
-          <b>OBJETO</b><span>2A</span>
+        <a href="/" className="admin-logo" aria-label="Objeto 2a — ver site">
+          <BrandSymbol className="admin-logo__symbol" />
         </a>
         <nav aria-label="Navegação do painel">
           <button className={panel === "content" ? "is-active" : ""} onClick={() => setPanel("content")}>
@@ -466,10 +467,10 @@ export function Admin() {
         {panel === "seo" && (
           <div className="panel-scroll">
             <div className="panel-title"><h2>SEO e compartilhamento</h2><p>Defina como esta página aparece no Google e nas redes.</p></div>
-            <label className="field"><span>Título da página</span><input value={content.seo?.title || ""} onChange={(event) => setContent((current) => ({ ...current, seo: { ...current.seo, title: event.target.value } }))} placeholder={`${pageName} — Objeto 2A`} /><small>{(content.seo?.title || "").length}/60</small></label>
+            <label className="field"><span>Título da página</span><input value={content.seo?.title || ""} onChange={(event) => setContent((current) => ({ ...current, seo: { ...current.seo, title: event.target.value } }))} placeholder={`${pageName} — Objeto 2a`} /><small>{(content.seo?.title || "").length}/60</small></label>
             <label className="field"><span>Descrição</span><textarea rows="5" value={content.seo?.description || ""} onChange={(event) => setContent((current) => ({ ...current, seo: { ...current.seo, description: event.target.value } }))} placeholder="Uma descrição curta e clara desta página." /><small>{(content.seo?.description || "").length}/160</small></label>
             <label className="field"><span>Imagem de compartilhamento</span><input value={content.seo?.image || ""} onChange={(event) => setContent((current) => ({ ...current, seo: { ...current.seo, image: event.target.value } }))} placeholder="/og.png" /></label>
-            <div className="search-preview"><small>PRÉVIA DO GOOGLE</small><a>{content.seo?.title || `${pageName} — Objeto 2A`}</a><span>objeto2a.com.br{page}</span><p>{content.seo?.description || "Conteúdo da Objeto 2A."}</p></div>
+            <div className="search-preview"><small>PRÉVIA DO GOOGLE</small><a>{content.seo?.title || `${pageName} — Objeto 2a`}</a><span>objeto2a.com.br{page}</span><p>{content.seo?.description || "Conteúdo da Objeto 2a."}</p></div>
           </div>
         )}
 

@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { Brand } from "./Brand.jsx";
 
 const navigation = [
   ["/", "Início"],
@@ -91,15 +92,6 @@ const solutionCards = [
   },
 ];
 
-function Brand({ inverse = false }) {
-  return (
-    <a className={`brand ${inverse ? "brand--inverse" : ""}`} href="/" aria-label="Objeto 2A — início">
-      <span className="brand-type">OBJETO</span>
-      <span className="brand-badge">2A</span>
-    </a>
-  );
-}
-
 function SubHeader({ path }) {
   const [open, setOpen] = useState(false);
   return (
@@ -135,7 +127,7 @@ function PageHero({ eyebrow, title, intro, image, children }) {
       </div>
       <figure>
         <img src={image} alt="" />
-        <figcaption>OBJETO 2A · RIO DE JANEIRO</figcaption>
+        <figcaption>OBJETO 2a · RIO DE JANEIRO</figcaption>
       </figure>
     </section>
   );
@@ -249,9 +241,9 @@ function SolutionsPage() {
     <>
       <PageHero
         eyebrow="SOLUÇÕES"
-        title={<>Formatos diferentes.<br />Uma mesma profundidade.</>}
-        intro="Escolha por contexto. Cada solução é redesenhada a partir da realidade, das pessoas e do movimento desejado."
-        image="/workshop.jpg"
+        title={<>A questão vem<br />antes do formato.</>}
+        intro="Programas, mentorias, workshops e laboratórios desenhados a partir do contexto, das pessoas e do movimento desejado."
+        image="/case-redballoon-dia2.jpg"
       />
       <section className="solution-finder section-pad">
         <div className="sub-section-head">
@@ -397,9 +389,9 @@ function AboutPage() {
   return (
     <>
       <PageHero
-        eyebrow="SOBRE A OBJETO 2A"
+        eyebrow="SOBRE A OBJETO 2a"
         title={<>Dois olhares.<br />Um campo de possibilidades.</>}
-        intro="A Objeto 2A conecta repertórios complementares para trabalhar o que existe entre estratégia e subjetividade, desempenho e saúde relacional."
+        intro="A Objeto 2a conecta repertórios complementares para trabalhar o que existe entre estratégia e subjetividade, desempenho e saúde relacional."
         image="/fundadoras-v2.png"
       />
       <section className="founder-studio section-pad">
@@ -422,10 +414,10 @@ function AboutPage() {
       </section>
 
       <section className="origin-story section-pad">
-        <figure><img src="/workshop.jpg" alt="Experiência de aprendizagem facilitada pela Objeto 2A" /></figure>
+        <figure><img src="/workshop.jpg" alt="Experiência de aprendizagem facilitada pela Objeto 2a" /></figure>
         <div>
           <p className="overline">NOSSA HISTÓRIA</p>
-          <h2>Da Educriative<br />para a Objeto 2A.</h2>
+          <h2>Da Educriative<br />para a Objeto 2a.</h2>
           <p>A empresa nasceu de um laboratório de ativação e criação para transformar autoconhecimento, estratégia e criatividade em impacto humano e organizacional.</p>
           <div className="value-cloud">
             {["Escuta ativa", "Nexialismo", "Singularidade ativa", "Diversidade", "Aprendizagem contínua", "Inovação humanizada", "Letramento humano"].map((value) => <span key={value}>{value}</span>)}
@@ -446,7 +438,7 @@ function AboutPage() {
       </section>
 
       <section className="about-photo-band">
-        <img src="/case-redballoon-dia2.jpg" alt="Encontro de desenvolvimento facilitado pela Objeto 2A" />
+        <img src="/case-redballoon-dia2.jpg" alt="Encontro de desenvolvimento facilitado pela Objeto 2a" />
         <div><p className="overline">O NEXO HUMANO</p><h2>Entre o técnico e o relacional, existe o lugar onde o trabalho realmente acontece.</h2></div>
       </section>
       <ContactBand title="Boas conversas mudam o desenho das possibilidades." />

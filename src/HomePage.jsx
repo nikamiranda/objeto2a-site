@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Brand, BrandLine, BrandSymbol } from "./Brand.jsx";
 
 const whatsapp = "https://wa.me/5521986287957";
 
@@ -16,7 +17,7 @@ const methodStages = [
     title: "Entrar no contexto real.",
     text: "Escutamos pessoas, lemos indicadores e observamos o trabalho como ele realmente acontece.",
     image: "/fundadoras-v2.png",
-    alt: "Mônica Miranda e Kátia Puente, fundadoras da Objeto 2A",
+    alt: "Mônica Miranda e Kátia Puente, fundadoras da Objeto 2a",
   },
   {
     number: "02",
@@ -66,15 +67,6 @@ const services = [
     alt: "Processo de facilitação com uma equipe",
   },
 ];
-
-function Brand({ inverse = false }) {
-  return (
-    <a className={`o2-brand ${inverse ? "is-inverse" : ""}`} href="#inicio" aria-label="Objeto 2A — início">
-      <span>OBJETO</span>
-      <b>2A</b>
-    </a>
-  );
-}
 
 function Arrow({ down = false }) {
   return <span aria-hidden="true">{down ? "↓" : "↗"}</span>;
@@ -236,7 +228,7 @@ export function HomePage() {
   return (
     <main className="o2-home" id="inicio">
       <header className={`o2-header ${scrolled || menuOpen ? "is-solid" : ""}`}>
-        <Brand inverse={!scrolled && !menuOpen} />
+        <Brand inverse={!scrolled && !menuOpen} href="#inicio" />
         <nav className={menuOpen ? "is-open" : ""} aria-label="Navegação principal">
           {navItems.map((item) => (
             <a href={item.href} onClick={() => setMenuOpen(false)} key={item.href}>{item.label}</a>
@@ -255,6 +247,7 @@ export function HomePage() {
 
       <section className="o2-hero" data-cms-section-key="hero" aria-labelledby="hero-title">
         <div className="o2-hero__grid" aria-hidden="true"><i /><i /><i /></div>
+        <BrandSymbol className="o2-hero__symbol" />
 
         <figure className="o2-hero__film">
           <video
@@ -265,42 +258,44 @@ export function HomePage() {
             loop
             playsInline
             preload="auto"
-            aria-label="Objeto 2A conduzindo uma experiência de desenvolvimento em campo"
+            aria-label="Objeto 2a conduzindo uma experiência de desenvolvimento em campo"
           />
           <figcaption>
-            <span>Em campo</span>
-            <span>Desenvolvimento organizacional</span>
+            <span>Escuta em campo</span>
+            <span>Objeto 2a · Rio de Janeiro</span>
           </figcaption>
         </figure>
 
         <div className="o2-hero__copy">
-          <p className="o2-hero__eyebrow">Consultoria organizacional · Desenvolvimento humano</p>
-          <h1 id="hero-title">O que move<br />uma organização <span>acontece entre pessoas.</span></h1>
+          <p className="o2-hero__eyebrow">Psicanálise · linguagem · sujeito</p>
+          <h1 id="hero-title">Escuta que <span>produz direção.</span></h1>
         </div>
 
         <div className="o2-hero__aside">
-          <p>Diagnóstico organizacional e percursos de desenvolvimento para lideranças, equipes e culturas que precisam mudar de verdade.</p>
-          <a className="o2-hero__cta" href="#contato">Conte o que precisa mudar <Arrow /></a>
+          <p>Consultoria fundamentada na psicanálise lacaniana. Trabalhamos com linguagem, sujeito e desejo para produzir escuta, leitura e direção.</p>
+          <a className="o2-hero__cta" href="#contato">Começar pela escuta <Arrow /></a>
         </div>
 
         <a className="o2-hero__scroll" href="#abertura">
           <span>01</span>
-          <span>Conheça a abordagem</span>
+          <span>Forma mínima, linguagem máxima</span>
           <Arrow down />
         </a>
+        <BrandLine className="o2-hero__brand-line" />
       </section>
 
       <section className="o2-opening" id="abertura" aria-labelledby="opening-title">
-        <p className="o2-kicker">A abordagem Objeto 2A</p>
+        <p className="o2-kicker">A abordagem Objeto 2a</p>
         <div className="o2-opening__statement">
-          <h2 id="opening-title">Diagnóstico para enxergar o que trava. Desenvolvimento para fazer a mudança acontecer.</h2>
-          <p>Entramos pela questão real da organização, desenhamos um percurso próprio e acompanhamos como a transformação aparece nas relações e no trabalho.</p>
+          <h2 id="opening-title">Ler o que está em jogo para dar direção ao que precisa mudar.</h2>
+          <p>Entramos pela questão real, escutamos o que se repete e desenhamos um percurso próprio. A mudança é acompanhada onde ela ganha corpo: nas relações e no trabalho.</p>
         </div>
         <ol className="o2-opening__sequence" aria-label="Etapas da abordagem">
-          <li><span>01</span><strong>Ler o contexto</strong><small>A questão por trás da questão</small></li>
-          <li><span>02</span><strong>Desenhar o percurso</strong><small>Sem soluções de prateleira</small></li>
-          <li><span>03</span><strong>Acompanhar a mudança</strong><small>No cotidiano, não só no discurso</small></li>
+          <li><span>01</span><strong>Escutar</strong><small>O singular de cada situação</small></li>
+          <li><span>02</span><strong>Ler</strong><small>O que organiza e o que se repete</small></li>
+          <li><span>03</span><strong>Produzir direção</strong><small>Movimento no cotidiano, não só no discurso</small></li>
         </ol>
+        <BrandLine className="o2-opening__brand-line" />
       </section>
 
       <section className="o2-solutions" id="solucoes" data-cms-section-key="solucoes">
@@ -312,7 +307,7 @@ export function HomePage() {
         </header>
 
         <div className="o2-solution-browser o2-reveal">
-          <div className="o2-solution-browser__tabs" role="tablist" aria-label="Soluções Objeto 2A">
+          <div className="o2-solution-browser__tabs" role="tablist" aria-label="Soluções Objeto 2a">
             {services.map((item, index) => (
               <button
                 type="button"
@@ -372,14 +367,14 @@ export function HomePage() {
 
       <section className="o2-about" id="sobre" data-cms-section-key="sobre">
         <figure className="o2-about__photo o2-reveal">
-          <img data-cms-key="founders-image" src="/fundadoras-v2.png" alt="Mônica Miranda e Kátia Puente, fundadoras da Objeto 2A" loading="lazy" decoding="async" />
+          <img data-cms-key="founders-image" src="/fundadoras-v2.png" alt="Mônica Miranda e Kátia Puente, fundadoras da Objeto 2a" loading="lazy" decoding="async" />
           <figcaption>Mônica Miranda + Kátia Puente</figcaption>
         </figure>
         <div className="o2-about__copy o2-reveal">
-          <p className="o2-kicker">Sobre a Objeto 2A</p>
+          <p className="o2-kicker">Sobre a Objeto 2a</p>
           <h2>Dois olhares.<br /><em>Uma leitura inteira.</em></h2>
           <p>
-            A Objeto 2A nasce do encontro entre repertórios complementares e de uma convicção:
+            A Objeto 2a nasce do encontro entre repertórios complementares e de uma convicção:
             nenhuma transformação se sustenta sem escutar as relações que dão forma ao trabalho.
           </p>
           <p>
@@ -429,7 +424,7 @@ export function HomePage() {
         </div>
 
         <footer>
-          <span>© {new Date().getFullYear()} Objeto 2A</span>
+          <span>© {new Date().getFullYear()} Objeto 2a</span>
           <a href="#inicio">Voltar ao início ↑</a>
         </footer>
       </section>
