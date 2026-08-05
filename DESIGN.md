@@ -48,7 +48,8 @@
 - **Density:** spacious, with deliberate changes of rhythm between editorial statement, evidence and action.
 - **Grid:** 12-column desktop logic reduced to four visual columns in the hero; two columns on tablet; one column on mobile.
 - **Max content width:** 1760px for full compositions and 1580px for reading sections.
-- **Radius:** rules remain precise, but controls should usually be borderless and carried by the open-circle mark. Primary CTAs may use an asymmetric capsule with one cut corner. Interactive panels may use selective 48–80px curves on opposing corners; avoid applying the same radius everywhere.
+- **Radius:** controls may use restrained asymmetric rounding, while major interactive panels may use selective 48–80px curves on opposing corners. Avoid applying the same radius everywhere.
+- **Brand-symbol boundary:** the open-circle mark belongs to the logo and official identity applications. Do not repeat it as a button, tab, progress or navigation affordance.
 - **Brand line:** use the horizontal support line with a small downward curve and a terracotta continuation as a recurring divider.
 
 ## Media
@@ -61,7 +62,7 @@
 ## Motion
 
 - **Approach:** intentional and quiet.
-- **Duration:** micro 100–160ms; short 200–280ms; section reveal 500–700ms.
+- **Duration:** micro 100–160ms; short 200–280ms; narrative transitions 500–700ms.
 - **Easing:** `cubic-bezier(.22, 1, .36, 1)` for entrances and natural `ease` for UI states.
 - Motion must clarify progression or focus. It must not decorate empty space.
 
@@ -73,3 +74,5 @@
 | 2026-08-05 | Sora is the only public-site type family. | It is specified by the supplied identity and removes the artificial variation the user rejected. |
 | 2026-08-05 | The identity boards supersede earlier invented palettes and temporary logos. | The supplied brand system is now the source of truth. |
 | 2026-08-05 | Interaction styling should feel editorial and art-led rather than like product UI. | The user rejected beige segmented buttons, hard rectangular repetition and the telemetry-like chapter rail. |
+| 2026-08-05 | Reserve the open-circle symbol for the identity and keep page content visible without scroll observers. | Repeating the mark across controls fragmented the composition, while observer-dependent reveals produced broken blank sections. |
+| 2026-08-05 | Keep the chapter guide nearly invisible until interaction. | A narrow tick rail with labels on hover/focus preserves wayfinding without becoming a second visual subject. |
