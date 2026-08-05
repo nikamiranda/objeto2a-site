@@ -240,11 +240,13 @@ function MethodStory() {
 }
 
 export function HomePage() {
+  const heroRef = useRef(null);
   const heroVideoRef = useRef(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeService, setActiveService] = useState(0);
   const [formState, setFormState] = useState("idle");
+  const [isVideoPaused, setIsVideoPaused] = useState(false);
 
   useEffect(() => {
     const update = () => setScrolled(window.scrollY > 48);
@@ -262,9 +264,10 @@ export function HomePage() {
       if (preference.matches) {
         video.pause();
         video.currentTime = 2;
+        setIsVideoPaused(true);
         return;
       }
-      video.play().catch(() => undefined);
+      video.play().then(() => setIsVideoPaused(false)).catch(() => setIsVideoPaused(true));
     };
 
     syncPlayback();
@@ -295,6 +298,37 @@ export function HomePage() {
     window.open(`${whatsapp}?text=${message}`, "_blank", "noopener,noreferrer");
   }
 
+  function handleHeroPointerMove(event) {
+    const hero = heroRef.current;
+    if (!hero || window.matchMedia("(pointer: coarse)").matches || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const rect = hero.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / rect.width - 0.5;
+    const y = (event.clientY - rect.top) / rect.height - 0.5;
+    hero.style.setProperty("--hero-film-x", `${x * 16}px`);
+    hero.style.setProperty("--hero-film-y", `${y * 10}px`);
+    hero.style.setProperty("--hero-symbol-x", `${x * -28}px`);
+    hero.style.setProperty("--hero-symbol-y", `${y * -18}px`);
+  }
+
+  function resetHeroPointer() {
+    const hero = heroRef.current;
+    if (!hero) return;
+    hero.style.setProperty("--hero-film-x", "0px");
+    hero.style.setProperty("--hero-film-y", "0px");
+    hero.style.setProperty("--hero-symbol-x", "0px");
+    hero.style.setProperty("--hero-symbol-y", "0px");
+  }
+
+  function toggleHeroVideo() {
+    const video = heroVideoRef.current;
+    if (!video) return;
+    if (video.paused) {
+      video.play().catch(() => setIsVideoPaused(true));
+    } else {
+      video.pause();
+    }
+  }
+
   const service = services[activeService];
 
   return (
@@ -318,7 +352,14 @@ export function HomePage() {
       </header>
       <ChapterNav />
 
-      <section className="o2-hero" data-cms-section-key="hero" aria-labelledby="hero-title">
+      <section
+        className="o2-hero"
+        data-cms-section-key="hero"
+        aria-labelledby="hero-title"
+        ref={heroRef}
+        onPointerMove={handleHeroPointerMove}
+        onPointerLeave={resetHeroPointer}
+      >
         <div className="o2-hero__grid" aria-hidden="true"><i /><i /><i /></div>
         <BrandSymbol className="o2-hero__symbol" />
 
@@ -332,7 +373,18 @@ export function HomePage() {
             playsInline
             preload="auto"
             aria-label="Objeto 2a conduzindo uma experiência de desenvolvimento em campo"
+            onPlay={() => setIsVideoPaused(false)}
+            onPause={() => setIsVideoPaused(true)}
           />
+          <button
+            className="o2-hero__video-toggle"
+            type="button"
+            onClick={toggleHeroVideo}
+            aria-label={isVideoPaused ? "Reproduzir vídeo da Objeto 2a" : "Pausar vídeo da Objeto 2a"}
+          >
+            <i aria-hidden="true">{isVideoPaused ? "▶" : "Ⅱ"}</i>
+            <span>{isVideoPaused ? "Reproduzir" : "Pausar"}</span>
+          </button>
           <figcaption>
             <span>Escuta em campo</span>
             <span>Objeto 2a · Rio de Janeiro</span>
