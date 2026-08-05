@@ -41,7 +41,7 @@ const services = [
     title: "Programas para organizações",
     text: "Jornadas completas para lideranças, equipes e culturas em movimento. Do diagnóstico ao acompanhamento qualitativo.",
     meta: "Diagnóstico · Liderança · Cultura · NR-1",
-    image: "/case-redballoon-reuniao-v2.png",
+    image: "/case-redballoon-dia2.jpg",
     alt: "Equipe reunida em uma jornada de desenvolvimento",
   },
   {
@@ -346,7 +346,7 @@ export function HomePage() {
         </header>
         <div className="o2-case__body o2-reveal">
           <figure>
-            <img data-cms-key="red-balloon-case-image" src="/case-redballoon-dia2.jpg" alt="Lideranças da Red Balloon em atividade de desenvolvimento" loading="lazy" decoding="async" />
+            <img data-cms-key="red-balloon-case-image" src="/case-redballoon-reuniao-v2.png" alt="Encontro de diagnóstico com lideranças da Red Balloon" loading="lazy" decoding="async" />
           </figure>
           <div className="o2-case__copy">
             <span>Red Balloon · 2025</span>
