@@ -5,10 +5,10 @@ import { getActiveChapter, getPageProgress } from "./interactionState.js";
 const whatsapp = "https://wa.me/5521986287957";
 
 const navItems = [
-  { label: "Soluções", href: "#solucoes" },
-  { label: "Trabalhos", href: "#trabalhos" },
-  { label: "Método", href: "#metodo" },
   { label: "Sobre", href: "#sobre" },
+  { label: "Atuação", href: "#solucoes" },
+  { label: "Pensamento", href: "#abertura" },
+  { label: "Contato", href: "#contato" },
 ];
 
 const chapterItems = [
@@ -114,18 +114,10 @@ function Arrow({ down = false }) {
   return <span aria-hidden="true">{down ? "↓" : "↗"}</span>;
 }
 
-function HeroSignal() {
+function HeroTrace() {
   return (
-    <svg
-      className="o2-hero__signal"
-      viewBox="0 0 1600 1000"
-      preserveAspectRatio="xMidYMid slice"
-      aria-hidden="true"
-    >
-      <path
-        className="o2-signal__portrait"
-        d="M878 42C966 47 1034 110 1060 181C1078 229 1073 266 1061 300C1054 319 1062 336 1085 355L1115 381C1129 394 1126 407 1109 420L1092 432C1083 439 1082 449 1091 458L1098 465C1104 472 1101 480 1093 487C1085 494 1087 503 1096 511C1106 520 1104 531 1094 540C1083 550 1085 560 1094 571C1104 584 1098 601 1084 615C1068 631 1044 639 1015 639H985C949 639 922 653 901 680C876 714 859 763 847 815C837 857 829 909 818 970"
-      />
+    <svg className="o2-hero__trace" viewBox="0 0 1600 900" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M600 480C720 450 790 520 900 500C1020 475 1090 445 1150 535C1210 625 1300 590 1360 510C1430 430 1510 470 1640 535" />
     </svg>
   );
 }
@@ -288,7 +280,6 @@ function MethodStory() {
 
 export function HomePage() {
   const heroRef = useRef(null);
-  const heroVideoRef = useRef(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeService, setActiveService] = useState(0);
@@ -296,33 +287,12 @@ export function HomePage() {
   const [activeApproach, setActiveApproach] = useState(0);
   const [activeFounder, setActiveFounder] = useState(0);
   const [formState, setFormState] = useState("idle");
-  const [isVideoPaused, setIsVideoPaused] = useState(false);
 
   useEffect(() => {
     const update = () => setScrolled(window.scrollY > 48);
     update();
     window.addEventListener("scroll", update, { passive: true });
     return () => window.removeEventListener("scroll", update);
-  }, []);
-
-  useEffect(() => {
-    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const video = heroVideoRef.current;
-    if (!video) return undefined;
-
-    const syncPlayback = () => {
-      if (preference.matches) {
-        video.pause();
-        video.currentTime = 36.2;
-        setIsVideoPaused(true);
-        return;
-      }
-      video.play().then(() => setIsVideoPaused(false)).catch(() => setIsVideoPaused(true));
-    };
-
-    syncPlayback();
-    preference.addEventListener("change", syncPlayback);
-    return () => preference.removeEventListener("change", syncPlayback);
   }, []);
 
   function handleSubmit(event) {
@@ -337,27 +307,15 @@ export function HomePage() {
     const hero = heroRef.current;
     if (!hero || window.matchMedia("(pointer: coarse)").matches || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const rect = hero.getBoundingClientRect();
-    const x = (event.clientX - rect.left) / rect.width - 0.5;
-    const y = (event.clientY - rect.top) / rect.height - 0.5;
-    hero.style.setProperty("--hero-media-x", `${x * -18}px`);
-    hero.style.setProperty("--hero-media-y", `${y * -10}px`);
+    hero.style.setProperty("--trace-x", `${((event.clientX - rect.left) / rect.width - 0.5) * 16}px`);
+    hero.style.setProperty("--trace-y", `${((event.clientY - rect.top) / rect.height - 0.5) * 12}px`);
   }
 
   function resetHeroPointer() {
     const hero = heroRef.current;
     if (!hero) return;
-    hero.style.setProperty("--hero-media-x", "0px");
-    hero.style.setProperty("--hero-media-y", "0px");
-  }
-
-  function toggleHeroVideo() {
-    const video = heroVideoRef.current;
-    if (!video) return;
-    if (video.paused) {
-      video.play().catch(() => setIsVideoPaused(true));
-    } else {
-      video.pause();
-    }
+    hero.style.setProperty("--trace-x", "0px");
+    hero.style.setProperty("--trace-y", "0px");
   }
 
   function handleApproachKeyDown(event, index) {
@@ -414,7 +372,9 @@ export function HomePage() {
           {navItems.map((item) => (
             <a href={item.href} onClick={() => setMenuOpen(false)} key={item.href}>{item.label}</a>
           ))}
+          <a className="o2-nav__mobile-cta" href="#contato" onClick={() => setMenuOpen(false)}>Agende uma conversa</a>
         </nav>
+        <a className="o2-header__cta" href="#contato">Agende uma conversa</a>
         <button
           className="o2-menu"
           type="button"
@@ -435,51 +395,28 @@ export function HomePage() {
         onPointerMove={handleHeroPointerMove}
         onPointerLeave={resetHeroPointer}
       >
-        <figure className="o2-hero__media">
-          <video
-            ref={heroVideoRef}
-            src="/hero-objeto2a.mp4"
-            poster="/hero-objeto2a-poster.jpg"
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="auto"
-            aria-label="Objeto 2a conduzindo uma experiência de desenvolvimento em campo"
-            onPlay={() => setIsVideoPaused(false)}
-            onPause={() => setIsVideoPaused(true)}
-            onEnded={(event) => {
-              event.currentTarget.currentTime = 0;
-              event.currentTarget.play().catch(() => setIsVideoPaused(true));
-            }}
-          />
-        </figure>
-        <div className="o2-hero__fade" aria-hidden="true" />
         <BrandSymbol className="o2-hero__watermark" />
-        <HeroSignal />
-
-        <button
-          className="o2-hero__video-toggle"
-          type="button"
-          onClick={toggleHeroVideo}
-          aria-label={isVideoPaused ? "Reproduzir vídeo da Objeto 2a" : "Pausar vídeo da Objeto 2a"}
-        >
-          <i aria-hidden="true">{isVideoPaused ? "▶" : "Ⅱ"}</i>
-          <span>{isVideoPaused ? "Reproduzir filme" : "Pausar filme"}</span>
-        </button>
-
-        <div className="o2-hero__copy">
-          <p className="o2-hero__eyebrow">Psicanálise aplicada às organizações</p>
-          <h1 id="hero-title">Escuta que <span>produz direção<span className="o2-hero__title-dot">.</span></span></h1>
-        </div>
-
-        <div className="o2-hero__aside">
-          <p>Psicanálise aplicada à leitura do que move pessoas, relações e trabalho.</p>
-          <div className="o2-hero__actions">
-            <a className="o2-hero__cta" href="#contato">Começar pela escuta <Arrow /></a>
-            <a className="o2-hero__secondary" href="#abertura">Entenda nossa abordagem <Arrow /></a>
+        <div className="o2-hero__inner">
+          <div className="o2-hero__copy">
+            <p className="o2-hero__eyebrow">Psicanálise aplicada às organizações</p>
+            <h1 id="hero-title">Escuta que<br />produz direção<span className="o2-hero__title-dot">.</span></h1>
+            <p className="o2-hero__lede">Psicanálise aplicada à leitura do que move pessoas, relações e trabalho.</p>
+            <div className="o2-hero__actions">
+              <a className="o2-hero__cta" href="#contato">Agende uma conversa <Arrow /></a>
+              <a className="o2-hero__secondary" href="#abertura">Conheça nossa abordagem <Arrow down /></a>
+            </div>
+            <p className="o2-hero__note"><i aria-hidden="true" />O simbólico nunca se fecha.</p>
           </div>
+          <figure className="o2-hero__media">
+            <img
+              src="/hero-architecture-clean.png"
+              alt="Ambiente arquitetônico circular com camadas que evocam linguagem, sujeito e desejo"
+              decoding="async"
+              fetchPriority="high"
+            />
+          </figure>
         </div>
+        <HeroTrace />
       </section>
 
       <section className="o2-opening" id="abertura" aria-labelledby="opening-title">
@@ -488,6 +425,18 @@ export function HomePage() {
           <h2 id="opening-title">Ler o que está em jogo para dar direção ao que precisa mudar.</h2>
           <p>Entramos pela questão real, escutamos o que se repete e desenhamos um percurso próprio. A mudança é acompanhada onde ela ganha corpo: nas relações e no trabalho.</p>
         </div>
+        <figure className="o2-opening__film">
+          <video
+            src="/hero-objeto2a.mp4"
+            poster="/hero-objeto2a-poster.jpg"
+            controls
+            muted
+            playsInline
+            preload="metadata"
+            aria-label="Objeto 2a conduzindo uma experiência de desenvolvimento em campo"
+          />
+          <figcaption><span>Objeto 2a em campo</span><p>Escuta, leitura e direção ganhando forma no trabalho real.</p></figcaption>
+        </figure>
         <ol className="o2-opening__sequence" aria-label="Etapas da abordagem" role="tablist">
           {approachMoments.map((moment, index) => (
             <li key={moment.title} role="presentation">
