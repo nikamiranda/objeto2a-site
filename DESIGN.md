@@ -20,7 +20,7 @@
 - **Decoration:** intencional e contida. A própria marca, a linha de apoio e a fotografia documental sustentam a composição.
 - **Mood:** silencioso, preciso e acolhedor, com tensão entre estrutura e subjetividade.
 - **Avoid:** gradientes decorativos, cartões genéricos, excesso de pílulas, tipografia ornamental, mudanças de família tipográfica e padrões típicos de landing pages geradas.
-- **Hero budget:** tratar o primeiro quadro como um cartaz de marca: lockup oficial, uma frase, uma presença humana, uma frase curta de apoio e uma ação. Não empilhar grade, símbolo ampliado, trilho de progresso, linhas inferiores e metadados no mesmo quadro.
+- **Hero budget:** tratar o primeiro quadro como um cartaz de marca: lockup oficial, uma frase, uma presença humana, uma frase curta de apoio e uma ação. Um único símbolo oficial ampliado pode existir como assinatura de fundo em baixa opacidade; não o empilhar com grade, trilho de progresso, linhas inferiores e metadados.
 
 ## Typography
 
@@ -78,3 +78,4 @@
 | 2026-08-05 | Reserve the open-circle symbol for the identity and keep page content visible without scroll observers. | Repeating the mark across controls fragmented the composition, while observer-dependent reveals produced broken blank sections. |
 | 2026-08-05 | Keep the chapter guide nearly invisible until interaction. | A narrow tick rail with labels on hover/focus preserves wayfinding without becoming a second visual subject. |
 | 2026-08-05 | Let the hero express the brand through composition, not repeated diagrams and labels. | The user found the layered grid, lines, watermark, rail and metadata confusing; the official lockup, palette, typography and authentic video are enough to carry the identity. |
+| 2026-08-05 | Retain one enlarged official symbol as a quiet hero background. | The user clarified that the symbol itself was a successful brand gesture; the problem was the combined excess around it. |
