@@ -79,6 +79,24 @@ const services = [
   },
 ];
 
+const approachMoments = [
+  {
+    title: "Escutar",
+    subtitle: "O singular de cada situação",
+    text: "Antes de propor qualquer formato, escutamos a questão como ela chega — inclusive aquilo que ainda não encontrou palavra.",
+  },
+  {
+    title: "Ler",
+    subtitle: "O que organiza e o que se repete",
+    text: "Separamos sintoma de causa. Lemos as repetições, as tensões e as possibilidades que organizam cada situação.",
+  },
+  {
+    title: "Produzir direção",
+    subtitle: "Movimento no cotidiano, não só no discurso",
+    text: "A leitura volta para o cotidiano em forma de decisões, experiências e acordos que as pessoas conseguem sustentar.",
+  },
+];
+
 function Arrow({ down = false }) {
   return <span aria-hidden="true">{down ? "↓" : "↗"}</span>;
 }
@@ -245,6 +263,7 @@ export function HomePage() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeService, setActiveService] = useState(0);
+  const [activeApproach, setActiveApproach] = useState(0);
   const [formState, setFormState] = useState("idle");
   const [isVideoPaused, setIsVideoPaused] = useState(false);
 
@@ -329,7 +348,20 @@ export function HomePage() {
     }
   }
 
+  function handleApproachKeyDown(event, index) {
+    if (!["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End"].includes(event.key)) return;
+    event.preventDefault();
+    let nextIndex = index;
+    if (event.key === "Home") nextIndex = 0;
+    if (event.key === "End") nextIndex = approachMoments.length - 1;
+    if (event.key === "ArrowRight" || event.key === "ArrowDown") nextIndex = (index + 1) % approachMoments.length;
+    if (event.key === "ArrowLeft" || event.key === "ArrowUp") nextIndex = (index - 1 + approachMoments.length) % approachMoments.length;
+    setActiveApproach(nextIndex);
+    event.currentTarget.parentElement?.parentElement?.querySelectorAll("button")[nextIndex]?.focus();
+  }
+
   const service = services[activeService];
+  const approach = approachMoments[activeApproach];
 
   return (
     <main className="o2-home" id="inicio">
@@ -415,12 +447,42 @@ export function HomePage() {
           <h2 id="opening-title">Ler o que está em jogo para dar direção ao que precisa mudar.</h2>
           <p>Entramos pela questão real, escutamos o que se repete e desenhamos um percurso próprio. A mudança é acompanhada onde ela ganha corpo: nas relações e no trabalho.</p>
         </div>
-        <ol className="o2-opening__sequence" aria-label="Etapas da abordagem">
-          <li><span>01</span><strong>Escutar</strong><small>O singular de cada situação</small></li>
-          <li><span>02</span><strong>Ler</strong><small>O que organiza e o que se repete</small></li>
-          <li><span>03</span><strong>Produzir direção</strong><small>Movimento no cotidiano, não só no discurso</small></li>
+        <ol className="o2-opening__sequence" aria-label="Etapas da abordagem" role="tablist">
+          {approachMoments.map((moment, index) => (
+            <li key={moment.title} role="presentation">
+              <button
+                type="button"
+                id={`approach-tab-${index}`}
+                role="tab"
+                aria-selected={activeApproach === index}
+                aria-controls="approach-panel"
+                tabIndex={activeApproach === index ? 0 : -1}
+                className={activeApproach === index ? "is-active" : ""}
+                onClick={() => setActiveApproach(index)}
+                onKeyDown={(event) => handleApproachKeyDown(event, index)}
+              >
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <strong>{moment.title}</strong>
+                <small>{moment.subtitle}</small>
+              </button>
+            </li>
+          ))}
         </ol>
-        <BrandLine className="o2-opening__brand-line" />
+        <div
+          className="o2-opening__insight"
+          id="approach-panel"
+          role="tabpanel"
+          aria-labelledby={`approach-tab-${activeApproach}`}
+          aria-live="polite"
+        >
+          <span>Em foco · {String(activeApproach + 1).padStart(2, "0")}/03</span>
+          <p key={approach.title}>{approach.text}</p>
+          <small>Explore os três movimentos</small>
+        </div>
+        <div className="o2-opening__line" style={{ "--approach-index": activeApproach }} aria-hidden="true">
+          <BrandLine className="o2-opening__brand-line" />
+          <i />
+        </div>
       </section>
 
       <section className="o2-solutions" id="solucoes" data-cms-section-key="solucoes">
