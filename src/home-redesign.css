@@ -254,8 +254,7 @@ body { min-height: 100dvh; margin: 0; color: var(--o2-ink); background: var(--o2
 .o2-contact footer { grid-column: 1 / -1; margin-top: 40px; padding-top: 25px; display: flex; justify-content: space-between; border-top: 1px solid #2c3339; color: #667078; font-size: .6rem; }
 .o2-contact footer a { min-height: 44px; display: flex; align-items: center; color: inherit; text-decoration: none; }
 
-.o2-reveal { opacity: 0; transform: translateY(18px); transition: opacity .65s cubic-bezier(.22,1,.36,1), transform .65s cubic-bezier(.22,1,.36,1); }
-.o2-reveal.is-visible { opacity: 1; transform: translateY(0); }
+.o2-reveal { opacity: 1; transform: none; }
 
 /* The CMS preview favors direct access over scroll choreography. */
 .cms-preview-mode .o2-reveal { opacity: 1; transform: none; transition: none; }

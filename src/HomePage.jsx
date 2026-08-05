@@ -309,21 +309,6 @@ export function HomePage() {
     return () => preference.removeEventListener("change", syncPlayback);
   }, []);
 
-  useEffect(() => {
-    const items = document.querySelectorAll(".o2-reveal");
-    const observer = new IntersectionObserver(
-      (entries) => entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("is-visible");
-          observer.unobserve(entry.target);
-        }
-      }),
-      { threshold: 0.12 },
-    );
-    items.forEach((item) => observer.observe(item));
-    return () => observer.disconnect();
-  }, []);
-
   function handleSubmit(event) {
     event.preventDefault();
     const data = Object.fromEntries(new FormData(event.currentTarget));
