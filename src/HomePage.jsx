@@ -263,6 +263,7 @@ export function HomePage() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeService, setActiveService] = useState(0);
+  const [serviceDirection, setServiceDirection] = useState("forward");
   const [activeApproach, setActiveApproach] = useState(0);
   const [formState, setFormState] = useState("idle");
   const [isVideoPaused, setIsVideoPaused] = useState(false);
@@ -358,6 +359,24 @@ export function HomePage() {
     if (event.key === "ArrowLeft" || event.key === "ArrowUp") nextIndex = (index - 1 + approachMoments.length) % approachMoments.length;
     setActiveApproach(nextIndex);
     event.currentTarget.parentElement?.parentElement?.querySelectorAll("button")[nextIndex]?.focus();
+  }
+
+  function selectService(index) {
+    if (index === activeService) return;
+    setServiceDirection(index > activeService ? "forward" : "back");
+    setActiveService(index);
+  }
+
+  function handleServiceKeyDown(event, index) {
+    if (!["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End"].includes(event.key)) return;
+    event.preventDefault();
+    let nextIndex = index;
+    if (event.key === "Home") nextIndex = 0;
+    if (event.key === "End") nextIndex = services.length - 1;
+    if (event.key === "ArrowRight" || event.key === "ArrowDown") nextIndex = (index + 1) % services.length;
+    if (event.key === "ArrowLeft" || event.key === "ArrowUp") nextIndex = (index - 1 + services.length) % services.length;
+    selectService(nextIndex);
+    event.currentTarget.parentElement?.querySelectorAll("button")[nextIndex]?.focus();
   }
 
   const service = services[activeService];
@@ -498,10 +517,14 @@ export function HomePage() {
             {services.map((item, index) => (
               <button
                 type="button"
+                id={`service-tab-${index}`}
                 role="tab"
                 aria-selected={index === activeService}
+                aria-controls="service-panel"
+                tabIndex={index === activeService ? 0 : -1}
                 className={index === activeService ? "is-active" : ""}
-                onClick={() => setActiveService(index)}
+                onClick={() => selectService(index)}
+                onKeyDown={(event) => handleServiceKeyDown(event, index)}
                 key={item.title}
               >
                 <span>0{index + 1}</span>
@@ -510,7 +533,14 @@ export function HomePage() {
               </button>
             ))}
           </div>
-          <article className="o2-solution-browser__panel" role="tabpanel">
+          <article
+            className={`o2-solution-browser__panel is-${serviceDirection}`}
+            id="service-panel"
+            key={service.title}
+            role="tabpanel"
+            aria-labelledby={`service-tab-${activeService}`}
+            aria-live="polite"
+          >
             <figure><img data-cms-key={`solution-${activeService + 1}-image`} src={service.image} alt={service.alt} loading="lazy" decoding="async" /></figure>
             <div>
               <p>{service.text}</p>
