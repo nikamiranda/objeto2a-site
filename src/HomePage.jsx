@@ -114,6 +114,22 @@ function Arrow({ down = false }) {
   return <span aria-hidden="true">{down ? "↓" : "↗"}</span>;
 }
 
+function HeroSignal() {
+  return (
+    <svg
+      className="o2-hero__signal"
+      viewBox="0 0 1600 1000"
+      preserveAspectRatio="xMidYMid slice"
+      aria-hidden="true"
+    >
+      <path
+        className="o2-signal__portrait"
+        d="M878 42C966 47 1034 110 1060 181C1078 229 1073 266 1061 300C1054 319 1062 336 1085 355L1115 381C1129 394 1126 407 1109 420L1092 432C1083 439 1082 449 1091 458L1098 465C1104 472 1101 480 1093 487C1085 494 1087 503 1096 511C1106 520 1104 531 1094 540C1083 550 1085 560 1094 571C1104 584 1098 601 1084 615C1068 631 1044 639 1015 639H985C949 639 922 653 901 680C876 714 859 763 847 815C837 857 829 909 818 970"
+      />
+    </svg>
+  );
+}
+
 function ChapterNav() {
   const [activeId, setActiveId] = useState("inicio");
   const [progress, setProgress] = useState(0);
@@ -297,7 +313,7 @@ export function HomePage() {
     const syncPlayback = () => {
       if (preference.matches) {
         video.pause();
-        video.currentTime = 2;
+        video.currentTime = 36.2;
         setIsVideoPaused(true);
         return;
       }
@@ -323,19 +339,15 @@ export function HomePage() {
     const rect = hero.getBoundingClientRect();
     const x = (event.clientX - rect.left) / rect.width - 0.5;
     const y = (event.clientY - rect.top) / rect.height - 0.5;
-    hero.style.setProperty("--hero-film-x", `${x * 16}px`);
-    hero.style.setProperty("--hero-film-y", `${y * 10}px`);
-    hero.style.setProperty("--hero-symbol-x", `${x * -16}px`);
-    hero.style.setProperty("--hero-symbol-y", `${y * -10}px`);
+    hero.style.setProperty("--hero-media-x", `${x * -18}px`);
+    hero.style.setProperty("--hero-media-y", `${y * -10}px`);
   }
 
   function resetHeroPointer() {
     const hero = heroRef.current;
     if (!hero) return;
-    hero.style.setProperty("--hero-film-x", "0px");
-    hero.style.setProperty("--hero-film-y", "0px");
-    hero.style.setProperty("--hero-symbol-x", "0px");
-    hero.style.setProperty("--hero-symbol-y", "0px");
+    hero.style.setProperty("--hero-media-x", "0px");
+    hero.style.setProperty("--hero-media-y", "0px");
   }
 
   function toggleHeroVideo() {
@@ -423,12 +435,11 @@ export function HomePage() {
         onPointerMove={handleHeroPointerMove}
         onPointerLeave={resetHeroPointer}
       >
-        <BrandSymbol className="o2-hero__symbol" />
-
-        <figure className="o2-hero__film">
+        <figure className="o2-hero__media">
           <video
             ref={heroVideoRef}
-            src="/hero-objeto2a.mp4#t=2"
+            src="/hero-objeto2a.mp4"
+            poster="/hero-objeto2a-poster.jpg"
             autoPlay
             muted
             loop
@@ -437,29 +448,37 @@ export function HomePage() {
             aria-label="Objeto 2a conduzindo uma experiência de desenvolvimento em campo"
             onPlay={() => setIsVideoPaused(false)}
             onPause={() => setIsVideoPaused(true)}
+            onEnded={(event) => {
+              event.currentTarget.currentTime = 0;
+              event.currentTarget.play().catch(() => setIsVideoPaused(true));
+            }}
           />
-          <button
-            className="o2-hero__video-toggle"
-            type="button"
-            onClick={toggleHeroVideo}
-            aria-label={isVideoPaused ? "Reproduzir vídeo da Objeto 2a" : "Pausar vídeo da Objeto 2a"}
-          >
-            <i aria-hidden="true">{isVideoPaused ? "▶" : "Ⅱ"}</i>
-            <span>{isVideoPaused ? "Reproduzir" : "Pausar"}</span>
-          </button>
-          <figcaption>
-            <span>Objeto 2a · escuta em campo</span>
-          </figcaption>
         </figure>
+        <div className="o2-hero__fade" aria-hidden="true" />
+        <BrandSymbol className="o2-hero__watermark" />
+        <HeroSignal />
+
+        <button
+          className="o2-hero__video-toggle"
+          type="button"
+          onClick={toggleHeroVideo}
+          aria-label={isVideoPaused ? "Reproduzir vídeo da Objeto 2a" : "Pausar vídeo da Objeto 2a"}
+        >
+          <i aria-hidden="true">{isVideoPaused ? "▶" : "Ⅱ"}</i>
+          <span>{isVideoPaused ? "Reproduzir filme" : "Pausar filme"}</span>
+        </button>
 
         <div className="o2-hero__copy">
-          <p className="o2-hero__eyebrow">Psicanálise · linguagem · sujeito</p>
-          <h1 id="hero-title">Escuta que <span>produz direção.</span></h1>
+          <p className="o2-hero__eyebrow">Psicanálise aplicada às organizações</p>
+          <h1 id="hero-title">Escuta que <span>produz direção<span className="o2-hero__title-dot">.</span></span></h1>
         </div>
 
         <div className="o2-hero__aside">
           <p>Psicanálise aplicada à leitura do que move pessoas, relações e trabalho.</p>
-          <a className="o2-hero__cta" href="#contato">Começar pela escuta <Arrow /></a>
+          <div className="o2-hero__actions">
+            <a className="o2-hero__cta" href="#contato">Começar pela escuta <Arrow /></a>
+            <a className="o2-hero__secondary" href="#abertura">Entenda nossa abordagem <Arrow /></a>
+          </div>
         </div>
       </section>
 

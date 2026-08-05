@@ -34,7 +34,7 @@
 
 ## Color
 
-- **Deep navy — `#14223D`:** profundidade, confiança and razão. Primary ink and dark surfaces.
+- **Deep navy — `#041833`:** profundidade, confiança e razão. Primary ink and dark surfaces.
 - **Green — `#496859`:** equilíbrio, crescimento and cuidado. Supporting surface and state color.
 - **Terracotta — `#D46A4A`:** desejo, energia and movimento. Rare directional accent and interaction color.
 - **Sand — `#E7DCC8`:** acolhimento, clareza and neutralidade. Warm section and media surface.

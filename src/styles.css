@@ -2,12 +2,12 @@
 
 :root {
   font-family: "Sora", sans-serif;
-  color: #14223d;
+  color: #041833;
   background: #faf9f6;
   font-synthesis: none;
   --paper: #faf9f6;
   --gray: #f2f2ee;
-  --ink: #14223d;
+  --ink: #041833;
   --accent: #d46a4a;
   --line: rgba(20, 34, 61, .18);
 }
