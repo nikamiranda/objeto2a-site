@@ -259,7 +259,7 @@ export function HomePage() {
         <figure className="o2-hero__film">
           <video
             ref={heroVideoRef}
-            src="/hero-objeto2a.mp4"
+            src="/hero-objeto2a.mp4#t=2"
             autoPlay
             muted
             loop
