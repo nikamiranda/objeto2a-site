@@ -176,6 +176,7 @@ function MethodStory() {
 }
 
 export function HomePage() {
+  const heroVideoRef = useRef(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeService, setActiveService] = useState(0);
@@ -186,6 +187,25 @@ export function HomePage() {
     update();
     window.addEventListener("scroll", update, { passive: true });
     return () => window.removeEventListener("scroll", update);
+  }, []);
+
+  useEffect(() => {
+    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const video = heroVideoRef.current;
+    if (!video) return undefined;
+
+    const syncPlayback = () => {
+      if (preference.matches) {
+        video.pause();
+        video.currentTime = 2;
+        return;
+      }
+      video.play().catch(() => undefined);
+    };
+
+    syncPlayback();
+    preference.addEventListener("change", syncPlayback);
+    return () => preference.removeEventListener("change", syncPlayback);
   }, []);
 
   useEffect(() => {
@@ -233,31 +253,54 @@ export function HomePage() {
         </button>
       </header>
 
-      <section className="o2-hero" data-cms-section-key="hero">
-        <figure className="o2-hero__media">
-          <img
-            src="/fundadoras-v2.png"
-            alt="Mônica Miranda e Kátia Puente, fundadoras da Objeto 2A"
-            fetchPriority="high"
-            decoding="async"
+      <section className="o2-hero" data-cms-section-key="hero" aria-labelledby="hero-title">
+        <div className="o2-hero__grid" aria-hidden="true"><i /><i /><i /></div>
+
+        <figure className="o2-hero__film">
+          <video
+            ref={heroVideoRef}
+            src="/hero-objeto2a.mp4"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            aria-label="Objeto 2A conduzindo uma experiência de desenvolvimento em campo"
           />
-          <figcaption className="o2-hero__caption">
-            <span>Mônica Miranda + Kátia Puente</span>
-            <span>Objeto 2A em campo</span>
+          <figcaption>
+            <span>Em campo</span>
+            <span>Desenvolvimento organizacional</span>
           </figcaption>
         </figure>
 
         <div className="o2-hero__copy">
-          <p className="o2-kicker">Consultoria organizacional + desenvolvimento humano</p>
-          <h1>O trabalho muda quando <em>as relações mudam.</em></h1>
-          <div className="o2-hero__summary">
-            <p>A Objeto 2A combina diagnóstico organizacional e desenvolvimento humano para transformar desafios de liderança, cultura e colaboração em mudanças que ganham corpo no cotidiano.</p>
-            <div className="o2-actions">
-              <a className="o2-button is-coral" href="#contato">Agendar uma conversa <Arrow /></a>
-              <a className="o2-text-link" href="#solucoes">Conhecer as soluções <Arrow down /></a>
-            </div>
-          </div>
+          <p className="o2-hero__eyebrow">Consultoria organizacional · Desenvolvimento humano</p>
+          <h1 id="hero-title">O que move<br />uma organização <span>acontece entre pessoas.</span></h1>
         </div>
+
+        <div className="o2-hero__aside">
+          <p>Diagnóstico organizacional e percursos de desenvolvimento para lideranças, equipes e culturas que precisam mudar de verdade.</p>
+          <a className="o2-hero__cta" href="#contato">Conte o que precisa mudar <Arrow /></a>
+        </div>
+
+        <a className="o2-hero__scroll" href="#abertura">
+          <span>01</span>
+          <span>Conheça a abordagem</span>
+          <Arrow down />
+        </a>
+      </section>
+
+      <section className="o2-opening" id="abertura" aria-labelledby="opening-title">
+        <p className="o2-kicker">A abordagem Objeto 2A</p>
+        <div className="o2-opening__statement">
+          <h2 id="opening-title">Diagnóstico para enxergar o que trava. Desenvolvimento para fazer a mudança acontecer.</h2>
+          <p>Entramos pela questão real da organização, desenhamos um percurso próprio e acompanhamos como a transformação aparece nas relações e no trabalho.</p>
+        </div>
+        <ol className="o2-opening__sequence" aria-label="Etapas da abordagem">
+          <li><span>01</span><strong>Ler o contexto</strong><small>A questão por trás da questão</small></li>
+          <li><span>02</span><strong>Desenhar o percurso</strong><small>Sem soluções de prateleira</small></li>
+          <li><span>03</span><strong>Acompanhar a mudança</strong><small>No cotidiano, não só no discurso</small></li>
+        </ol>
       </section>
 
       <section className="o2-solutions" id="solucoes" data-cms-section-key="solucoes">
