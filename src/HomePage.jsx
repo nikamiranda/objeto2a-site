@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Brand, BrandLine, BrandSymbol } from "./Brand.jsx";
+import { getActiveChapter, getPageProgress } from "./interactionState.js";
 
 const whatsapp = "https://wa.me/5521986287957";
 
@@ -8,6 +9,16 @@ const navItems = [
   { label: "Trabalhos", href: "#trabalhos" },
   { label: "Método", href: "#metodo" },
   { label: "Sobre", href: "#sobre" },
+];
+
+const chapterItems = [
+  { id: "inicio", label: "Início" },
+  { id: "abertura", label: "Abordagem" },
+  { id: "solucoes", label: "Soluções" },
+  { id: "trabalhos", label: "Trabalho" },
+  { id: "metodo", label: "Método" },
+  { id: "sobre", label: "Sobre" },
+  { id: "contato", label: "Contato" },
 ];
 
 const methodStages = [
@@ -70,6 +81,67 @@ const services = [
 
 function Arrow({ down = false }) {
   return <span aria-hidden="true">{down ? "↓" : "↗"}</span>;
+}
+
+function ChapterNav() {
+  const [activeId, setActiveId] = useState("inicio");
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    let frame = 0;
+
+    const update = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const offsets = chapterItems
+          .map((chapter) => ({ ...chapter, top: document.getElementById(chapter.id)?.offsetTop ?? Number.POSITIVE_INFINITY }))
+          .filter((chapter) => Number.isFinite(chapter.top));
+        const marker = window.scrollY + window.innerHeight * 0.42;
+
+        setProgress(getPageProgress(window.scrollY, window.innerHeight, document.documentElement.scrollHeight));
+        setActiveId(getActiveChapter(offsets, marker));
+      });
+    };
+
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
+  }, []);
+
+  const activeIndex = Math.max(0, chapterItems.findIndex((chapter) => chapter.id === activeId));
+  const activeChapter = chapterItems[activeIndex];
+  const darkSection = ["inicio", "metodo", "contato"].includes(activeId);
+
+  return (
+    <nav
+      className={`o2-chapters ${darkSection ? "is-on-dark" : ""}`}
+      style={{ "--chapter-progress": progress }}
+      aria-label="Progresso pelos capítulos da página"
+    >
+      <span className="o2-chapters__current" aria-live="polite">
+        <i>{String(activeIndex + 1).padStart(2, "0")} / {String(chapterItems.length).padStart(2, "0")}</i>
+        <b>{activeChapter.label}</b>
+      </span>
+      <span className="o2-chapters__rail">
+        {chapterItems.map((chapter) => (
+          <a
+            className={chapter.id === activeId ? "is-active" : ""}
+            href={`#${chapter.id}`}
+            aria-label={`Ir para ${chapter.label}`}
+            aria-current={chapter.id === activeId ? "location" : undefined}
+            key={chapter.id}
+          >
+            <span>{chapter.label}</span>
+          </a>
+        ))}
+      </span>
+    </nav>
+  );
 }
 
 function MethodStory() {
@@ -244,6 +316,7 @@ export function HomePage() {
           <i /><i />
         </button>
       </header>
+      <ChapterNav />
 
       <section className="o2-hero" data-cms-section-key="hero" aria-labelledby="hero-title">
         <div className="o2-hero__grid" aria-hidden="true"><i /><i /><i /></div>
