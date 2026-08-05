@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Brand, BrandLine, BrandSymbol } from "./Brand.jsx";
+import { Brand, BrandLine } from "./Brand.jsx";
 import { getActiveChapter, getPageProgress } from "./interactionState.js";
 
 const whatsapp = "https://wa.me/5521986287957";
@@ -150,7 +150,7 @@ function ChapterNav() {
 
   return (
     <nav
-      className={`o2-chapters ${darkSection ? "is-on-dark" : ""}`}
+      className={`o2-chapters ${darkSection ? "is-on-dark" : ""} ${activeId === "inicio" ? "is-in-hero" : ""}`}
       style={{ "--chapter-progress": progress }}
       aria-label="Progresso pelos capítulos da página"
     >
@@ -325,8 +325,6 @@ export function HomePage() {
     const y = (event.clientY - rect.top) / rect.height - 0.5;
     hero.style.setProperty("--hero-film-x", `${x * 16}px`);
     hero.style.setProperty("--hero-film-y", `${y * 10}px`);
-    hero.style.setProperty("--hero-symbol-x", `${x * -28}px`);
-    hero.style.setProperty("--hero-symbol-y", `${y * -18}px`);
   }
 
   function resetHeroPointer() {
@@ -334,8 +332,6 @@ export function HomePage() {
     if (!hero) return;
     hero.style.setProperty("--hero-film-x", "0px");
     hero.style.setProperty("--hero-film-y", "0px");
-    hero.style.setProperty("--hero-symbol-x", "0px");
-    hero.style.setProperty("--hero-symbol-y", "0px");
   }
 
   function toggleHeroVideo() {
@@ -423,9 +419,6 @@ export function HomePage() {
         onPointerMove={handleHeroPointerMove}
         onPointerLeave={resetHeroPointer}
       >
-        <div className="o2-hero__grid" aria-hidden="true"><i /><i /><i /></div>
-        <BrandSymbol className="o2-hero__symbol" />
-
         <figure className="o2-hero__film">
           <video
             ref={heroVideoRef}
@@ -449,8 +442,7 @@ export function HomePage() {
             <span>{isVideoPaused ? "Reproduzir" : "Pausar"}</span>
           </button>
           <figcaption>
-            <span>Escuta em campo</span>
-            <span>Objeto 2a · Rio de Janeiro</span>
+            <span>Objeto 2a · escuta em campo</span>
           </figcaption>
         </figure>
 
@@ -460,16 +452,9 @@ export function HomePage() {
         </div>
 
         <div className="o2-hero__aside">
-          <p>Consultoria fundamentada na psicanálise lacaniana. Trabalhamos com linguagem, sujeito e desejo para produzir escuta, leitura e direção.</p>
+          <p>Psicanálise aplicada à leitura do que move pessoas, relações e trabalho.</p>
           <a className="o2-hero__cta" href="#contato">Começar pela escuta <Arrow /></a>
         </div>
-
-        <a className="o2-hero__scroll" href="#abertura">
-          <span>01</span>
-          <span>Forma mínima, linguagem máxima</span>
-          <Arrow down />
-        </a>
-        <BrandLine className="o2-hero__brand-line" />
       </section>
 
       <section className="o2-opening" id="abertura" aria-labelledby="opening-title">
