@@ -60,7 +60,8 @@ body { min-height: 100dvh; margin: 0; color: var(--o2-ink); background: var(--o2
 .o2-chapters__rail a:is(:hover, :focus-visible)::after { width: 14px; opacity: .72; }
 .o2-chapters__rail a.is-active::after { width: 20px; height: 2px; opacity: 1; background: var(--o2-terracotta); }
 
-.o2-hero { --hero-film-x: 0px; --hero-film-y: 0px; position: relative; min-height: max(100svh, 780px); padding: 0 clamp(24px, 3.2vw, 62px); overflow: hidden; isolation: isolate; color: var(--o2-offwhite); background: var(--o2-navy); }
+.o2-hero { --hero-film-x: 0px; --hero-film-y: 0px; --hero-symbol-x: 0px; --hero-symbol-y: 0px; position: relative; min-height: max(100svh, 780px); padding: 0 clamp(24px, 3.2vw, 62px); overflow: hidden; isolation: isolate; color: var(--o2-offwhite); background: var(--o2-navy); }
+.o2-hero__symbol { position: absolute; z-index: 1; top: 16%; right: -7%; width: min(38vw, 610px); height: auto; color: var(--o2-offwhite); opacity: .05; pointer-events: none; transform: translate3d(var(--hero-symbol-x), var(--hero-symbol-y), 0); transition: transform .55s cubic-bezier(.22, 1, .36, 1); }
 .o2-hero__copy { position: absolute; z-index: 4; top: 22%; right: clamp(24px, 3.2vw, 62px); left: clamp(24px, 3.2vw, 62px); }
 .o2-hero__eyebrow { width: min(30vw, 390px); margin: 0 0 clamp(48px, 6vh, 68px); color: rgb(250 249 246 / 62%); font-size: .65rem; font-weight: 500; letter-spacing: .12em; line-height: 1.45; text-transform: uppercase; }
 .o2-hero__copy h1 { width: min(64vw, 1040px); margin: 0; font-size: clamp(4.2rem, 5.75vw, 7.2rem); font-weight: 600; letter-spacing: -.058em; line-height: .9; text-wrap: balance; }
@@ -330,6 +331,7 @@ body { min-height: 100dvh; margin: 0; color: var(--o2-ink); background: var(--o2
   .o2-header nav { inset: 68px 0 auto; padding: 16px 18px 26px; }
   .o2-menu { justify-self: end; }
   .o2-hero { min-height: 920px; padding: 0 18px; }
+  .o2-hero__symbol { top: 142px; right: -86px; width: 78vw; opacity: .045; }
   .o2-hero__copy { top: 112px; right: 18px; left: 18px; }
   .o2-hero__eyebrow { width: 74%; margin-bottom: 42px; font-size: .6rem; }
   .o2-hero__copy h1 { width: 100%; font-size: clamp(2.8rem, 12.2vw, 3.5rem); line-height: .91; }
@@ -397,7 +399,7 @@ body { min-height: 100dvh; margin: 0; color: var(--o2-ink); background: var(--o2
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .o2-reveal { opacity: 1; transform: none; transition: none; }
-  .o2-button, .o2-method__visual article, .o2-hero__film, .o2-opening__line i { transition: none; }
+  .o2-button, .o2-method__visual article, .o2-hero__film, .o2-hero__symbol, .o2-opening__line i { transition: none; }
   .o2-opening__insight p { animation: none; }
   .o2-solution-browser__panel figure::after { display: none; animation: none; }
   .o2-solution-browser__panel img, .o2-solution-browser__panel > div > * { animation: none; }

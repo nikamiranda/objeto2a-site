@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Brand, BrandLine } from "./Brand.jsx";
+import { Brand, BrandLine, BrandSymbol } from "./Brand.jsx";
 import { getActiveChapter, getPageProgress } from "./interactionState.js";
 
 const whatsapp = "https://wa.me/5521986287957";
@@ -325,6 +325,8 @@ export function HomePage() {
     const y = (event.clientY - rect.top) / rect.height - 0.5;
     hero.style.setProperty("--hero-film-x", `${x * 16}px`);
     hero.style.setProperty("--hero-film-y", `${y * 10}px`);
+    hero.style.setProperty("--hero-symbol-x", `${x * -16}px`);
+    hero.style.setProperty("--hero-symbol-y", `${y * -10}px`);
   }
 
   function resetHeroPointer() {
@@ -332,6 +334,8 @@ export function HomePage() {
     if (!hero) return;
     hero.style.setProperty("--hero-film-x", "0px");
     hero.style.setProperty("--hero-film-y", "0px");
+    hero.style.setProperty("--hero-symbol-x", "0px");
+    hero.style.setProperty("--hero-symbol-y", "0px");
   }
 
   function toggleHeroVideo() {
@@ -419,6 +423,8 @@ export function HomePage() {
         onPointerMove={handleHeroPointerMove}
         onPointerLeave={resetHeroPointer}
       >
+        <BrandSymbol className="o2-hero__symbol" />
+
         <figure className="o2-hero__film">
           <video
             ref={heroVideoRef}
