@@ -9,3 +9,7 @@ export function getActiveChapter(offsets, marker) {
     offsets[0]?.id || "inicio",
   );
 }
+
+export function isHeaderOverLightSection(heroBottom, headerRestingBottom) {
+  return heroBottom <= headerRestingBottom;
+}

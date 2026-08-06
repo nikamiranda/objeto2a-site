@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Brand, BrandSymbol } from "./Brand.jsx";
-import { getActiveChapter, getPageProgress } from "./interactionState.js";
+import { getActiveChapter, getPageProgress, isHeaderOverLightSection } from "./interactionState.js";
 
 const whatsapp = "https://wa.me/5521986287957";
 
@@ -114,10 +114,144 @@ function Arrow({ down = false }) {
   return <span aria-hidden="true">{down ? "↓" : "↗"}</span>;
 }
 
-function HeroTrace() {
+function tracePath(points) {
+  if (!points.length) return "";
+  return points.slice(1).reduce((path, point, index) => {
+    const previous = points[index];
+    const midpoint = (previous.x + point.x) / 2;
+    return `${path}C${midpoint.toFixed(1)} ${previous.y.toFixed(1)} ${midpoint.toFixed(1)} ${point.y.toFixed(1)} ${point.x.toFixed(1)} ${point.y.toFixed(1)}`;
+  }, `M${points[0].x.toFixed(1)} ${points[0].y.toFixed(1)}`);
+}
+
+function HeroTrace({ heroRef }) {
+  const svgRef = useRef(null);
+  const pathRef = useRef(null);
+  const echoRef = useRef(null);
+  const cursorRef = useRef(null);
+
+  useEffect(() => {
+    const hero = heroRef.current;
+    const svg = svgRef.current;
+    const path = pathRef.current;
+    const echo = echoRef.current;
+    const cursor = cursorRef.current;
+    if (!hero || !svg || !path || !echo || !cursor) return undefined;
+
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (reducedMotion.matches) return undefined;
+
+    const pointCount = 15;
+    const points = Array.from({ length: pointCount }, (_, index) => ({
+      x: 600 + (1060 * index) / (pointCount - 1),
+      y: 500,
+      offsetX: 0,
+      offsetY: 0,
+      velocityX: 0,
+      velocityY: 0,
+    }));
+    const pointer = { x: 0, y: 0, active: false, pressed: false, moved: false };
+    let frame = 0;
+    let previousTime = performance.now();
+
+    const locatePointer = (event) => {
+      const rect = svg.getBoundingClientRect();
+      pointer.x = ((event.clientX - rect.left) / rect.width) * 1600;
+      pointer.y = ((event.clientY - rect.top) / rect.height) * 900;
+      pointer.active = pointer.x > 510 && pointer.x < 1660 && pointer.y > 160 && pointer.y < 820;
+      pointer.moved = true;
+    };
+
+    const onPointerMove = (event) => locatePointer(event);
+    const onPointerDown = (event) => {
+      if (event.target.closest("a, button, input, textarea, select")) return;
+      locatePointer(event);
+      pointer.pressed = pointer.active;
+      svg.classList.toggle("is-engaged", pointer.pressed);
+    };
+    const onPointerUp = () => {
+      if (pointer.pressed) {
+        points.forEach((point) => {
+          const influence = Math.exp(-Math.pow((point.x - pointer.x) / 250, 2));
+          point.velocityY += (point.y + point.offsetY - pointer.y) * influence * 0.055;
+        });
+      }
+      pointer.pressed = false;
+      svg.classList.remove("is-engaged");
+    };
+    const onPointerLeave = () => {
+      pointer.active = false;
+      onPointerUp();
+    };
+
+    const animate = (time) => {
+      const delta = Math.min(1.8, Math.max(0.6, (time - previousTime) / 16.67));
+      previousTime = time;
+      const idleTime = time * 0.001;
+
+      points.forEach((point, index) => {
+        const edgeLock = Math.sin((Math.PI * index) / (pointCount - 1));
+        const idleY = (Math.sin(idleTime * 0.72 + index * 0.68) * 13
+          + Math.sin(idleTime * 0.31 - index * 0.42) * 7) * edgeLock;
+        let targetX = 0;
+        let targetY = idleY;
+
+        if (pointer.active) {
+          const distanceX = point.x - pointer.x;
+          const distanceY = point.y + point.offsetY - pointer.y;
+          const horizontalPull = Math.exp(-Math.pow(distanceX / (pointer.pressed ? 330 : 270), 2));
+          const verticalReach = Math.max(0, 1 - Math.abs(distanceY) / (pointer.pressed ? 390 : 280));
+          const influence = horizontalPull * verticalReach * edgeLock;
+          const strength = pointer.pressed ? 0.92 : 0.56;
+          targetY += Math.max(-180, Math.min(180, pointer.y - point.y)) * influence * strength;
+          targetX += Math.max(-95, Math.min(95, pointer.x - point.x)) * influence * (pointer.pressed ? 0.2 : 0.08);
+        }
+
+        const spring = pointer.pressed ? 0.09 : 0.052;
+        point.velocityX = (point.velocityX + (targetX - point.offsetX) * spring * delta) * Math.pow(0.82, delta);
+        point.velocityY = (point.velocityY + (targetY - point.offsetY) * spring * delta) * Math.pow(0.84, delta);
+        point.offsetX += point.velocityX * delta;
+        point.offsetY += point.velocityY * delta;
+      });
+
+      const renderedPoints = points.map((point) => ({ x: point.x + point.offsetX, y: point.y + point.offsetY }));
+      const nextPath = tracePath(renderedPoints);
+      path.setAttribute("d", nextPath);
+      echo.setAttribute("d", nextPath);
+
+      if (pointer.active && pointer.moved) {
+        const nearest = renderedPoints.reduce((best, point) => (
+          Math.abs(point.x - pointer.x) < Math.abs(best.x - pointer.x) ? point : best
+        ));
+        cursor.setAttribute("cx", nearest.x.toFixed(1));
+        cursor.setAttribute("cy", nearest.y.toFixed(1));
+        cursor.style.opacity = pointer.pressed ? "1" : ".72";
+      } else {
+        cursor.style.opacity = "0";
+      }
+
+      frame = requestAnimationFrame(animate);
+    };
+
+    hero.addEventListener("pointermove", onPointerMove, { passive: true });
+    hero.addEventListener("pointerdown", onPointerDown, { passive: true });
+    hero.addEventListener("pointerleave", onPointerLeave);
+    window.addEventListener("pointerup", onPointerUp, { passive: true });
+    frame = requestAnimationFrame(animate);
+
+    return () => {
+      cancelAnimationFrame(frame);
+      hero.removeEventListener("pointermove", onPointerMove);
+      hero.removeEventListener("pointerdown", onPointerDown);
+      hero.removeEventListener("pointerleave", onPointerLeave);
+      window.removeEventListener("pointerup", onPointerUp);
+    };
+  }, [heroRef]);
+
   return (
-    <svg className="o2-hero__trace" viewBox="0 0 1600 900" preserveAspectRatio="none" aria-hidden="true">
-      <path d="M600 480C720 450 790 520 900 500C1020 475 1090 445 1150 535C1210 625 1300 590 1360 510C1430 430 1510 470 1640 535" />
+    <svg ref={svgRef} className="o2-hero__trace" viewBox="0 0 1600 900" preserveAspectRatio="none" aria-hidden="true">
+      <path ref={echoRef} className="o2-hero__trace-echo" d="M600 500C800 500 920 500 1040 500C1280 500 1450 500 1660 500" />
+      <path ref={pathRef} className="o2-hero__trace-line" d="M600 500C800 500 920 500 1040 500C1280 500 1450 500 1660 500" />
+      <circle ref={cursorRef} className="o2-hero__trace-cursor" cx="1000" cy="500" r="5" />
     </svg>
   );
 }
@@ -281,7 +415,7 @@ function MethodStory() {
 export function HomePage() {
   const heroRef = useRef(null);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const [headerOnLight, setHeaderOnLight] = useState(false);
   const [activeService, setActiveService] = useState(0);
   const [serviceDirection, setServiceDirection] = useState("forward");
   const [activeApproach, setActiveApproach] = useState(0);
@@ -289,10 +423,25 @@ export function HomePage() {
   const [formState, setFormState] = useState("idle");
 
   useEffect(() => {
-    const update = () => setScrolled(window.scrollY > 48);
+    let frame = 0;
+    const update = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const heroBottom = heroRef.current?.getBoundingClientRect().bottom ?? Number.POSITIVE_INFINITY;
+        const trigger = Number.parseFloat(
+          getComputedStyle(document.documentElement).getPropertyValue("--o2-header-resting-bottom"),
+        ) || 108;
+        setHeaderOnLight(isHeaderOverLightSection(heroBottom, trigger));
+      });
+    };
     update();
     window.addEventListener("scroll", update, { passive: true });
-    return () => window.removeEventListener("scroll", update);
+    window.addEventListener("resize", update);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
   }, []);
 
   function handleSubmit(event) {
@@ -301,21 +450,6 @@ export function HomePage() {
     const message = encodeURIComponent(`Nome: ${data.name}\nE-mail: ${data.email}\n\nContexto:\n${data.message}`);
     setFormState("sent");
     window.open(`${whatsapp}?text=${message}`, "_blank", "noopener,noreferrer");
-  }
-
-  function handleHeroPointerMove(event) {
-    const hero = heroRef.current;
-    if (!hero || window.matchMedia("(pointer: coarse)").matches || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const rect = hero.getBoundingClientRect();
-    hero.style.setProperty("--trace-x", `${((event.clientX - rect.left) / rect.width - 0.5) * 16}px`);
-    hero.style.setProperty("--trace-y", `${((event.clientY - rect.top) / rect.height - 0.5) * 12}px`);
-  }
-
-  function resetHeroPointer() {
-    const hero = heroRef.current;
-    if (!hero) return;
-    hero.style.setProperty("--trace-x", "0px");
-    hero.style.setProperty("--trace-y", "0px");
   }
 
   function handleApproachKeyDown(event, index) {
@@ -366,8 +500,8 @@ export function HomePage() {
 
   return (
     <main className="o2-home" id="inicio">
-      <header className={`o2-header ${scrolled || menuOpen ? "is-solid" : ""}`}>
-        <Brand inverse={!scrolled && !menuOpen} href="#inicio" />
+      <header className={`o2-header ${headerOnLight || menuOpen ? "is-solid" : ""}`}>
+        <Brand inverse={!headerOnLight && !menuOpen} href="#inicio" />
         <nav className={menuOpen ? "is-open" : ""} aria-label="Navegação principal">
           {navItems.map((item) => (
             <a href={item.href} onClick={() => setMenuOpen(false)} key={item.href}>{item.label}</a>
@@ -392,8 +526,6 @@ export function HomePage() {
         data-cms-section-key="hero"
         aria-labelledby="hero-title"
         ref={heroRef}
-        onPointerMove={handleHeroPointerMove}
-        onPointerLeave={resetHeroPointer}
       >
         <BrandSymbol className="o2-hero__watermark" />
         <div className="o2-hero__inner">
@@ -416,7 +548,7 @@ export function HomePage() {
             />
           </figure>
         </div>
-        <HeroTrace />
+        <HeroTrace heroRef={heroRef} />
       </section>
 
       <section className="o2-opening" id="abertura" aria-labelledby="opening-title">

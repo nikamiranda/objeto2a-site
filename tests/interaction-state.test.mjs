@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { getActiveChapter, getPageProgress } from "../src/interactionState.js";
+import { getActiveChapter, getPageProgress, isHeaderOverLightSection } from "../src/interactionState.js";
 
 // Regression: FINDING-014 — long pages had no persistent wayfinding state.
 // Found by /design-review on 2026-08-05.
@@ -25,4 +25,11 @@ test("selects the latest chapter crossed by the viewport marker", () => {
 
 test("falls back safely when chapter offsets are unavailable", () => {
   assert.equal(getActiveChapter([], 500), "inicio");
+});
+
+test("keeps the header transparent until the light section reaches it", () => {
+  assert.equal(isHeaderOverLightSection(820, 108), false);
+  assert.equal(isHeaderOverLightSection(109, 108), false);
+  assert.equal(isHeaderOverLightSection(108, 108), true);
+  assert.equal(isHeaderOverLightSection(72, 108), true);
 });
