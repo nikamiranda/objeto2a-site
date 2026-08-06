@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <style>
+    :root { color: #041833; }
+    @media (prefers-color-scheme: dark) { :root { color: #FAF9F6; } }
+  </style>
+  <path
+    d="M18.5 51.5A24 24 0 1 1 52 37"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="5.5"
+    stroke-linecap="butt"
+  />
+  <text
+    x="35.5"
+    y="56"
+    fill="currentColor"
+    font-family="Sora, Arial, sans-serif"
+    font-size="21"
+    font-weight="600"
+    letter-spacing="-1.5"
+  >2a</text>
+</svg>

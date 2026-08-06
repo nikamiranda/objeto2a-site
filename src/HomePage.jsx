@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Brand, BrandLine, BrandSymbol } from "./Brand.jsx";
+import { Brand, BrandSymbol } from "./Brand.jsx";
 import { getActiveChapter, getPageProgress } from "./interactionState.js";
 
 const whatsapp = "https://wa.me/5521986287957";
@@ -425,53 +425,69 @@ export function HomePage() {
           <h2 id="opening-title">Ler o que está em jogo para dar direção ao que precisa mudar.</h2>
           <p>Entramos pela questão real, escutamos o que se repete e desenhamos um percurso próprio. A mudança é acompanhada onde ela ganha corpo: nas relações e no trabalho.</p>
         </div>
-        <figure className="o2-opening__film">
-          <video
-            src="/hero-objeto2a.mp4"
-            poster="/hero-objeto2a-poster.jpg"
-            controls
-            muted
-            playsInline
-            preload="metadata"
-            aria-label="Objeto 2a conduzindo uma experiência de desenvolvimento em campo"
-          />
-          <figcaption><span>Objeto 2a em campo</span><p>Escuta, leitura e direção ganhando forma no trabalho real.</p></figcaption>
-        </figure>
-        <ol className="o2-opening__sequence" aria-label="Etapas da abordagem" role="tablist">
-          {approachMoments.map((moment, index) => (
-            <li key={moment.title} role="presentation">
-              <button
-                type="button"
-                id={`approach-tab-${index}`}
-                role="tab"
-                aria-selected={activeApproach === index}
-                aria-controls="approach-panel"
-                tabIndex={activeApproach === index ? 0 : -1}
-                className={activeApproach === index ? "is-active" : ""}
-                onClick={() => setActiveApproach(index)}
-                onKeyDown={(event) => handleApproachKeyDown(event, index)}
-              >
-                <span>{String(index + 1).padStart(2, "0")}</span>
-                <strong>{moment.title}</strong>
-                <small>{moment.subtitle}</small>
-              </button>
-            </li>
-          ))}
-        </ol>
-        <div
-          className="o2-opening__insight"
-          id="approach-panel"
-          role="tabpanel"
-          aria-labelledby={`approach-tab-${activeApproach}`}
-          aria-live="polite"
-        >
-          <span>Em foco · {String(activeApproach + 1).padStart(2, "0")}/03</span>
-          <p key={approach.title}>{approach.text}</p>
-          <small>Explore os três movimentos</small>
-        </div>
-        <div className="o2-opening__line" style={{ "--approach-index": activeApproach }} aria-hidden="true">
-          <BrandLine className="o2-opening__brand-line" />
-          <i />
+        <div className="o2-opening__field">
+          <figure className="o2-opening__film">
+            <div className="o2-opening__film-frame">
+              <video
+                src="/hero-objeto2a.mp4"
+                poster="/hero-objeto2a-poster.jpg"
+                autoPlay
+                loop
+                controls
+                muted
+                playsInline
+                preload="auto"
+                aria-label="Objeto 2a conduzindo uma experiência de desenvolvimento em campo"
+              />
+              <span aria-hidden="true">01 · Em campo</span>
+            </div>
+            <figcaption>
+              <span>Objeto 2a em campo</span>
+              <p>Escuta, leitura e direção ganhando forma no trabalho real.</p>
+            </figcaption>
+          </figure>
+
+          <div className="o2-opening__path">
+            <p className="o2-kicker">Três movimentos</p>
+            <h3>Da escuta à direção.</h3>
+            <div className="o2-opening__path-body">
+              <svg className="o2-opening__thread" viewBox="0 0 48 390" preserveAspectRatio="none" aria-hidden="true">
+                <path d="M24 0C8 58 42 95 24 146C6 198 43 242 24 292C8 334 22 365 24 390" />
+              </svg>
+              <ol className="o2-opening__sequence" aria-label="Etapas da abordagem" role="tablist">
+                {approachMoments.map((moment, index) => (
+                  <li key={moment.title} role="presentation">
+                    <button
+                      type="button"
+                      id={`approach-tab-${index}`}
+                      role="tab"
+                      aria-selected={activeApproach === index}
+                      aria-controls="approach-panel"
+                      tabIndex={activeApproach === index ? 0 : -1}
+                      className={activeApproach === index ? "is-active" : ""}
+                      onClick={() => setActiveApproach(index)}
+                      onKeyDown={(event) => handleApproachKeyDown(event, index)}
+                    >
+                      <i aria-hidden="true" />
+                      <span>{String(index + 1).padStart(2, "0")}</span>
+                      <strong>{moment.title}</strong>
+                      <small>{moment.subtitle}</small>
+                    </button>
+                  </li>
+                ))}
+              </ol>
+            </div>
+            <div
+              className="o2-opening__insight"
+              id="approach-panel"
+              role="tabpanel"
+              aria-labelledby={`approach-tab-${activeApproach}`}
+              aria-live="polite"
+            >
+              <span>Em foco · {String(activeApproach + 1).padStart(2, "0")}/03</span>
+              <p key={approach.title}>{approach.text}</p>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -609,23 +625,19 @@ export function HomePage() {
         </div>
       </section>
 
-      <section className="o2-cta" data-cms-section-key="cta">
-        <p className="o2-kicker">Próximo passo</p>
-        <h2>Traga o desafio.<br /><em>A gente começa pela escuta.</em></h2>
-        <a className="o2-button is-light" href={whatsapp} target="_blank" rel="noreferrer">Agendar conversa no WhatsApp <Arrow /></a>
-      </section>
-
       <section className="o2-contact" id="contato" data-cms-section-key="contato">
         <div className="o2-contact__lead">
-          <Brand inverse />
-          <h2>Conversa inicial, sem compromisso.</h2>
-          <p>Em 30 minutos, entendemos o contexto e identificamos juntos o melhor ponto de partida.</p>
-          <a href={whatsapp} target="_blank" rel="noreferrer">(21) 98628-7957 <Arrow /></a>
-          <span>Rio de Janeiro · Brasil</span>
+          <p className="o2-kicker">Uma conversa para começar</p>
+          <h2>Traga o desafio.<br /><em>A gente começa pela escuta.</em></h2>
+          <p>Conte o que está pedindo movimento. A partir da questão real, pensamos juntos no melhor ponto de partida.</p>
+          <a href={whatsapp} target="_blank" rel="noreferrer">Conversar direto no WhatsApp <Arrow /></a>
         </div>
 
-        <form onSubmit={handleSubmit}>
-          <h3>Qual desafio sua organização está vivendo?</h3>
+        <form className="o2-contact__form" onSubmit={handleSubmit}>
+          <div className="o2-contact__form-heading">
+            <span>Mensagem</span>
+            <h3>Qual desafio sua organização está vivendo?</h3>
+          </div>
           <label>Nome<input name="name" required autoComplete="name" placeholder="Seu nome" /></label>
           <label>E-mail<input name="email" required type="email" autoComplete="email" placeholder="voce@empresa.com" /></label>
           <label>O que precisa se mover?<textarea name="message" required rows="3" placeholder="Conte em poucas palavras" /></label>
@@ -634,24 +646,23 @@ export function HomePage() {
             {formState === "sent" ? "O WhatsApp será aberto com a mensagem preenchida." : " "}
           </p>
         </form>
-
-        <div className="o2-contact__links">
-          <div>
-            <b>Navegação</b>
-            {navItems.map((item) => <a href={item.href} key={item.href}>{item.label}</a>)}
-          </div>
-          <div>
-            <b>Social</b>
-            <a href="https://www.instagram.com/objeto2a/" target="_blank" rel="noreferrer">Instagram <Arrow /></a>
-            <a href="https://www.linkedin.com/company/objeto2a" target="_blank" rel="noreferrer">LinkedIn <Arrow /></a>
-          </div>
-        </div>
-
-        <footer>
-          <span>© {new Date().getFullYear()} Objeto 2a</span>
-          <a href="#inicio">Voltar ao início ↑</a>
-        </footer>
       </section>
+
+      <footer className="o2-footer">
+        <Brand inverse />
+        <nav aria-label="Navegação do rodapé">
+          {navItems.map((item) => <a href={item.href} key={item.href}>{item.label}</a>)}
+        </nav>
+        <div className="o2-footer__social">
+          <a href="https://www.instagram.com/objeto2a/" target="_blank" rel="noreferrer">Instagram <Arrow /></a>
+          <a href="https://www.linkedin.com/company/objeto2a" target="_blank" rel="noreferrer">LinkedIn <Arrow /></a>
+        </div>
+        <div className="o2-footer__meta">
+          <span>© {new Date().getFullYear()} Objeto 2a</span>
+          <span>Rio de Janeiro · Brasil</span>
+          <a href="#inicio">Voltar ao início ↑</a>
+        </div>
+      </footer>
     </main>
   );
 }
