@@ -833,6 +833,7 @@ body { min-height: 100dvh; margin: 0; color: var(--o2-ink); background: var(--o2
     box-shadow: none;
     backdrop-filter: none;
   }
+  .o2-header:not(.is-solid) { border-width: 0; }
   .o2-header.is-solid {
     top: max(8px, env(safe-area-inset-top));
     width: calc(100% - 16px);
