@@ -198,7 +198,7 @@ function HeroTrace({ heroRef }) {
           const release = Math.min(1, ratio * 3.6);
           const easedRelease = release * release * (3 - 2 * release);
           point.x = anchorX + ((1660 - anchorX) * ratio);
-          point.y = anchorY + ((500 - anchorY) * easedRelease);
+          point.y = anchorY + ((390 - anchorY) * easedRelease);
         }
       });
     };
@@ -316,9 +316,11 @@ function HeroTrace({ heroRef }) {
     <svg ref={svgRef} className="o2-hero__trace" viewBox="0 0 1600 900" preserveAspectRatio="none" aria-hidden="true">
       <defs>
         <linearGradient id="hero-trace-gradient" x1="0" x2="1">
-          <stop offset="0" stopColor="#d46a4a" stopOpacity=".2" />
-          <stop offset=".32" stopColor="#d46a4a" />
-          <stop offset="1" stopColor="#e7dcc8" stopOpacity=".72" />
+          <stop offset="0" stopColor="#d46a4a" stopOpacity=".42" />
+          <stop offset=".28" stopColor="#d46a4a" />
+          <stop offset=".67" stopColor="#d46a4a" stopOpacity=".72" />
+          <stop offset=".88" stopColor="#e7dcc8" stopOpacity=".18" />
+          <stop offset="1" stopColor="#e7dcc8" stopOpacity="0" />
         </linearGradient>
       </defs>
       <path ref={echoRef} className="o2-hero__trace-echo" d="M620 400C720 420 780 500 900 500C1180 500 1420 500 1660 500" />

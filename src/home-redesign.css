@@ -813,6 +813,7 @@ body { min-height: 100dvh; margin: 0; color: var(--o2-ink); background: var(--o2
 .o2-hero__trace path { shape-rendering: geometricPrecision; }
 .o2-hero__trace-line { stroke-width: 1.65; filter: drop-shadow(0 0 2px rgb(212 106 74 / 35%)); }
 .o2-hero__trace-echo { stroke-width: 12; opacity: .055; filter: blur(1.5px); }
+.o2-hero__trace-echo { stroke: url(#hero-trace-gradient); }
 .o2-hero__trace-sheen {
   fill: none;
   stroke: var(--o2-sand);
