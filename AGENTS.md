@@ -4,6 +4,10 @@ Run the local server yourself and open the preview in the browser available to t
 
 Before making substantial visual changes, use the Product Design plugin's `get-context` skill when the visual source is unclear or no longer matches the current goal. When the user gives durable prototype-specific design feedback, preferences, or decisions, record them in `AGENTS.md`.
 
+## Workflow preference
+
+- When the user asks to “subir” or “colocar” changes on `main`, completion includes pushing `main` to `origin/main` on GitHub; a local commit alone is not sufficient.
+
 ## Durable design direction
 
 - The user selected direction 1 as a compositional starting point, not as a fixed brand system.
