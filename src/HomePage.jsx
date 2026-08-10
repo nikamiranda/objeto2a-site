@@ -136,8 +136,6 @@ function HeroTrace({ heroRef }) {
   const pathRef = useRef(null);
   const echoRef = useRef(null);
   const sheenRef = useRef(null);
-  const cursorRef = useRef(null);
-  const ringRef = useRef(null);
 
   useEffect(() => {
     const hero = heroRef.current;
@@ -145,18 +143,16 @@ function HeroTrace({ heroRef }) {
     const path = pathRef.current;
     const echo = echoRef.current;
     const sheen = sheenRef.current;
-    const cursor = cursorRef.current;
-    const ring = ringRef.current;
-    if (!hero || !svg || !path || !echo || !sheen || !cursor || !ring) return undefined;
+    if (!hero || !svg || !path || !echo || !sheen) return undefined;
 
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (reducedMotion.matches) return undefined;
 
-    const pointCount = 24;
-    const titleAnchorIndex = 9;
+    const pointCount = 28;
     const points = Array.from({ length: pointCount }, (_, index) => ({
-      x: 80 + (1580 * index) / (pointCount - 1),
-      y: 500,
+      x: 650 + (1010 * index) / (pointCount - 1),
+      y: 445 + Math.sin((Math.PI * index) / (pointCount - 1)) * 35
+        + Math.sin((Math.PI * 2 * index) / (pointCount - 1)) * 48,
       offsetX: 0,
       offsetY: 0,
       velocityX: 0,
@@ -174,33 +170,8 @@ function HeroTrace({ heroRef }) {
         pointer.smoothX = pointer.x;
         pointer.smoothY = pointer.y;
       }
-      pointer.active = pointer.x > 20 && pointer.x < 1660 && pointer.y > 80 && pointer.y < 840;
+      pointer.active = pointer.x > 560 && pointer.x < 1660 && pointer.y > 130 && pointer.y < 840;
       pointer.moved = true;
-    };
-
-    const alignToTitle = () => {
-      const svgRect = svg.getBoundingClientRect();
-      const dotRect = hero.querySelector(".o2-hero__title-dot")?.getBoundingClientRect();
-      const titleRect = hero.querySelector(".o2-hero__title-line.is-second")?.getBoundingClientRect();
-      if (!dotRect || !titleRect || !svgRect.width || !svgRect.height) return;
-      const toSvgX = (value) => ((value - svgRect.left) / svgRect.width) * 1600;
-      const toSvgY = (value) => ((value - svgRect.top) / svgRect.height) * 900;
-      const anchorX = ((dotRect.right - svgRect.left) / svgRect.width) * 1600;
-      const anchorY = (((dotRect.top + dotRect.height * .66) - svgRect.top) / svgRect.height) * 900;
-      points.forEach((point, index) => {
-        if (index <= titleAnchorIndex) {
-          const ratio = index / titleAnchorIndex;
-          point.x = toSvgX(titleRect.left - 7) + ((anchorX - toSvgX(titleRect.left - 7)) * ratio);
-          point.y = toSvgY(titleRect.bottom + 7 + Math.sin(ratio * Math.PI * 2) * 2.5);
-          if (index === titleAnchorIndex) point.y = anchorY;
-        } else {
-          const ratio = (index - titleAnchorIndex) / (pointCount - 1 - titleAnchorIndex);
-          const release = Math.min(1, ratio * 3.6);
-          const easedRelease = release * release * (3 - 2 * release);
-          point.x = anchorX + ((1660 - anchorX) * ratio);
-          point.y = anchorY + ((390 - anchorY) * easedRelease);
-        }
-      });
     };
 
     const onPointerMove = (event) => locatePointer(event);
@@ -241,23 +212,24 @@ function HeroTrace({ heroRef }) {
       pointer.smoothY += (pointer.y - pointer.smoothY) * (pointer.pressed ? .2 : .11);
 
       points.forEach((point, index) => {
-        const edgeLock = index === titleAnchorIndex ? 0 : Math.sin((Math.PI * index) / (pointCount - 1));
-        const idleY = (Math.sin(idleTime * .62 + index * .52) * 7
-          + Math.sin(idleTime * .27 - index * .34) * 4) * edgeLock;
-        let targetX = 0;
+        const edgeLock = Math.sin((Math.PI * index) / (pointCount - 1));
+        const idleY = (Math.sin(idleTime * .62 + index * .52) * 18
+          + Math.sin(idleTime * .27 - index * .34) * 11) * edgeLock;
+        const idleX = Math.sin(idleTime * .31 + index * .43) * 6 * edgeLock;
+        let targetX = idleX;
         let targetY = idleY;
 
         if (pointer.active) {
           const distanceX = point.x + point.offsetX - pointer.smoothX;
           const distanceY = point.y + point.offsetY - pointer.smoothY;
-          const radius = pointer.pressed ? 390 : 245;
+          const radius = pointer.pressed ? 480 : 310;
           const influence = Math.exp(-Math.pow(Math.hypot(distanceX, distanceY) / radius, 2)) * edgeLock;
-          const strength = pointer.pressed ? .9 : .42;
-          targetY += Math.max(-210, Math.min(210, pointer.smoothY - point.y)) * influence * strength;
-          targetX += Math.max(-150, Math.min(150, pointer.smoothX - point.x)) * influence * strength * .24;
+          const strength = pointer.pressed ? 1.18 : .68;
+          targetY += Math.max(-300, Math.min(300, pointer.smoothY - point.y)) * influence * strength;
+          targetX += Math.max(-210, Math.min(210, pointer.smoothX - point.x)) * influence * strength * .34;
         }
 
-        const spring = pointer.pressed ? .072 : .038;
+        const spring = pointer.pressed ? .062 : .03;
         point.velocityX = (point.velocityX + (targetX - point.offsetX) * spring * delta) * Math.pow(.87, delta);
         point.velocityY = (point.velocityY + (targetY - point.offsetY) * spring * delta) * Math.pow(.885, delta);
         point.offsetX += point.velocityX * delta;
@@ -270,34 +242,15 @@ function HeroTrace({ heroRef }) {
       echo.setAttribute("d", nextPath);
       sheen.setAttribute("d", nextPath);
 
-      if (pointer.active && pointer.moved) {
-        const nearest = renderedPoints.reduce((best, point) => (
-          Math.hypot(point.x - pointer.smoothX, point.y - pointer.smoothY)
-            < Math.hypot(best.x - pointer.smoothX, best.y - pointer.smoothY) ? point : best
-        ));
-        const proximity = Math.max(0, 1 - Math.hypot(nearest.x - pointer.smoothX, nearest.y - pointer.smoothY) / 220);
-        cursor.setAttribute("cx", nearest.x.toFixed(1));
-        cursor.setAttribute("cy", nearest.y.toFixed(1));
-        ring.setAttribute("cx", nearest.x.toFixed(1));
-        ring.setAttribute("cy", nearest.y.toFixed(1));
-        cursor.style.opacity = pointer.pressed ? "1" : String(proximity * .72);
-        ring.style.opacity = pointer.pressed ? ".72" : String(proximity * .34);
-      } else {
-        cursor.style.opacity = "0";
-        ring.style.opacity = "0";
-      }
-
       frame = requestAnimationFrame(animate);
     };
 
     const stopNativeDrag = (event) => event.preventDefault();
 
-    alignToTitle();
     hero.addEventListener("pointermove", onPointerMove, { passive: true });
     hero.addEventListener("pointerdown", onPointerDown);
     hero.addEventListener("pointerleave", onPointerLeave);
     hero.addEventListener("dragstart", stopNativeDrag);
-    window.addEventListener("resize", alignToTitle);
     window.addEventListener("pointerup", onPointerUp, { passive: true });
     frame = requestAnimationFrame(animate);
 
@@ -307,7 +260,6 @@ function HeroTrace({ heroRef }) {
       hero.removeEventListener("pointerdown", onPointerDown);
       hero.removeEventListener("pointerleave", onPointerLeave);
       hero.removeEventListener("dragstart", stopNativeDrag);
-      window.removeEventListener("resize", alignToTitle);
       window.removeEventListener("pointerup", onPointerUp);
     };
   }, [heroRef]);
@@ -323,11 +275,9 @@ function HeroTrace({ heroRef }) {
           <stop offset="1" stopColor="#e7dcc8" stopOpacity="0" />
         </linearGradient>
       </defs>
-      <path ref={echoRef} className="o2-hero__trace-echo" d="M620 400C720 420 780 500 900 500C1180 500 1420 500 1660 500" />
-      <path ref={pathRef} className="o2-hero__trace-line" d="M620 400C720 420 780 500 900 500C1180 500 1420 500 1660 500" />
-      <path ref={sheenRef} className="o2-hero__trace-sheen" d="M620 400C720 420 780 500 900 500C1180 500 1420 500 1660 500" />
-      <circle ref={ringRef} className="o2-hero__trace-ring" cx="1000" cy="500" r="12" />
-      <circle ref={cursorRef} className="o2-hero__trace-cursor" cx="1000" cy="500" r="5" />
+      <path ref={echoRef} className="o2-hero__trace-echo" d="M650 445C790 470 860 535 1010 500C1180 460 1260 400 1400 420C1510 435 1590 452 1660 445" />
+      <path ref={pathRef} className="o2-hero__trace-line" d="M650 445C790 470 860 535 1010 500C1180 460 1260 400 1400 420C1510 435 1590 452 1660 445" />
+      <path ref={sheenRef} className="o2-hero__trace-sheen" d="M650 445C790 470 860 535 1010 500C1180 460 1260 400 1400 420C1510 435 1590 452 1660 445" />
     </svg>
   );
 }
