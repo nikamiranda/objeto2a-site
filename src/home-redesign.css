@@ -939,3 +939,31 @@ body { min-height: 100dvh; margin: 0; color: var(--o2-ink); background: var(--o2
   .o2-hero__copy h1 { font-size: 3rem; }
   .o2-hero__lede { font-size: .88rem; }
 }
+
+/* Mobile solution browser: both the choices and the active answer stay in view. */
+@media (max-width: 720px) {
+  .o2-solution-browser {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+  }
+  .o2-solution-browser__tabs { width: 100%; }
+  .o2-solution-browser__tabs button {
+    min-height: 64px;
+    padding: 12px 0;
+    grid-template-columns: 34px minmax(0, 1fr);
+    gap: 10px;
+  }
+  .o2-solution-browser__tabs button:is(:hover, :focus-visible),
+  .o2-solution-browser__tabs button.is-active { padding-left: 0; }
+  .o2-solution-browser__tabs i { display: none; }
+  .o2-solution-browser__panel {
+    width: 100%;
+    min-width: 0;
+    border-radius: 30px 3px 30px 3px;
+  }
+  .o2-solution-browser__media { min-height: 260px !important; }
+  .o2-solution-browser__copy { padding: 28px 22px 32px !important; }
+  .o2-solution-browser__panel p { font-size: 1.35rem; }
+  .o2-solution-browser__panel > div > span { margin: 18px 0 24px; }
+}
