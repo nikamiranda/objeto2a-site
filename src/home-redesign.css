@@ -843,3 +843,22 @@ body { min-height: 100dvh; margin: 0; color: var(--o2-ink); background: var(--o2
 @media (max-width: 720px) {
   .o2-hero__note { display: none; }
 }
+
+/* FINDING-001: rebalance the hero as one poster instead of four competing focal points. */
+@media (min-width: 1121px) {
+  .o2-header {
+    top: 20px;
+    width: min(calc(100% - 80px), 1360px);
+    height: 70px;
+    padding-right: 14px;
+    padding-left: 22px;
+  }
+  .o2-header nav { gap: clamp(22px, 2.5vw, 38px); }
+  .o2-header__cta { min-height: 44px; padding-right: 21px; padding-left: 21px; }
+  .o2-hero__copy { padding-top: clamp(72px, 9vh, 92px); }
+  .o2-hero__copy h1 { font-size: clamp(4.25rem, 5.35vw, 5.65rem); line-height: .94; }
+  .o2-hero__eyebrow { margin-bottom: clamp(26px, 3.5vh, 36px); }
+  .o2-hero__lede { margin-top: clamp(25px, 3vh, 32px); }
+  .o2-hero__actions { margin-top: 26px; }
+  .o2-hero__note { display: none; }
+}
