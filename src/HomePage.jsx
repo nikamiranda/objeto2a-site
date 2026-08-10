@@ -116,40 +116,53 @@ function Arrow({ down = false }) {
 
 function tracePath(points) {
   if (!points.length) return "";
-  return points.slice(1).reduce((path, point, index) => {
-    const previous = points[index];
-    const midpoint = (previous.x + point.x) / 2;
-    return `${path}C${midpoint.toFixed(1)} ${previous.y.toFixed(1)} ${midpoint.toFixed(1)} ${point.y.toFixed(1)} ${point.x.toFixed(1)} ${point.y.toFixed(1)}`;
-  }, `M${points[0].x.toFixed(1)} ${points[0].y.toFixed(1)}`);
+  let path = `M${points[0].x.toFixed(1)} ${points[0].y.toFixed(1)}`;
+  for (let index = 0; index < points.length - 1; index += 1) {
+    const before = points[Math.max(0, index - 1)];
+    const current = points[index];
+    const next = points[index + 1];
+    const after = points[Math.min(points.length - 1, index + 2)];
+    const control1X = current.x + (next.x - before.x) / 6;
+    const control1Y = current.y + (next.y - before.y) / 6;
+    const control2X = next.x - (after.x - current.x) / 6;
+    const control2Y = next.y - (after.y - current.y) / 6;
+    path += `C${control1X.toFixed(1)} ${control1Y.toFixed(1)} ${control2X.toFixed(1)} ${control2Y.toFixed(1)} ${next.x.toFixed(1)} ${next.y.toFixed(1)}`;
+  }
+  return path;
 }
 
 function HeroTrace({ heroRef }) {
   const svgRef = useRef(null);
   const pathRef = useRef(null);
   const echoRef = useRef(null);
+  const sheenRef = useRef(null);
   const cursorRef = useRef(null);
+  const ringRef = useRef(null);
 
   useEffect(() => {
     const hero = heroRef.current;
     const svg = svgRef.current;
     const path = pathRef.current;
     const echo = echoRef.current;
+    const sheen = sheenRef.current;
     const cursor = cursorRef.current;
-    if (!hero || !svg || !path || !echo || !cursor) return undefined;
+    const ring = ringRef.current;
+    if (!hero || !svg || !path || !echo || !sheen || !cursor || !ring) return undefined;
 
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (reducedMotion.matches) return undefined;
 
-    const pointCount = 15;
+    const pointCount = 24;
+    const titleAnchorIndex = 9;
     const points = Array.from({ length: pointCount }, (_, index) => ({
-      x: 600 + (1060 * index) / (pointCount - 1),
+      x: 80 + (1580 * index) / (pointCount - 1),
       y: 500,
       offsetX: 0,
       offsetY: 0,
       velocityX: 0,
       velocityY: 0,
     }));
-    const pointer = { x: 0, y: 0, active: false, pressed: false, moved: false };
+    const pointer = { x: 0, y: 0, smoothX: 0, smoothY: 0, active: false, pressed: false, moved: false };
     let frame = 0;
     let previousTime = performance.now();
 
@@ -157,18 +170,51 @@ function HeroTrace({ heroRef }) {
       const rect = svg.getBoundingClientRect();
       pointer.x = ((event.clientX - rect.left) / rect.width) * 1600;
       pointer.y = ((event.clientY - rect.top) / rect.height) * 900;
-      pointer.active = pointer.x > 510 && pointer.x < 1660 && pointer.y > 160 && pointer.y < 820;
+      if (!pointer.moved) {
+        pointer.smoothX = pointer.x;
+        pointer.smoothY = pointer.y;
+      }
+      pointer.active = pointer.x > 20 && pointer.x < 1660 && pointer.y > 80 && pointer.y < 840;
       pointer.moved = true;
+    };
+
+    const alignToTitle = () => {
+      const svgRect = svg.getBoundingClientRect();
+      const dotRect = hero.querySelector(".o2-hero__title-dot")?.getBoundingClientRect();
+      const titleRect = hero.querySelector(".o2-hero__title-line.is-second")?.getBoundingClientRect();
+      if (!dotRect || !titleRect || !svgRect.width || !svgRect.height) return;
+      const toSvgX = (value) => ((value - svgRect.left) / svgRect.width) * 1600;
+      const toSvgY = (value) => ((value - svgRect.top) / svgRect.height) * 900;
+      const anchorX = ((dotRect.right - svgRect.left) / svgRect.width) * 1600;
+      const anchorY = (((dotRect.top + dotRect.height * .66) - svgRect.top) / svgRect.height) * 900;
+      points.forEach((point, index) => {
+        if (index <= titleAnchorIndex) {
+          const ratio = index / titleAnchorIndex;
+          point.x = toSvgX(titleRect.left - 7) + ((anchorX - toSvgX(titleRect.left - 7)) * ratio);
+          point.y = toSvgY(titleRect.bottom + 7 + Math.sin(ratio * Math.PI * 2) * 2.5);
+          if (index === titleAnchorIndex) point.y = anchorY;
+        } else {
+          const ratio = (index - titleAnchorIndex) / (pointCount - 1 - titleAnchorIndex);
+          const release = Math.min(1, ratio * 3.6);
+          const easedRelease = release * release * (3 - 2 * release);
+          point.x = anchorX + ((1660 - anchorX) * ratio);
+          point.y = anchorY + ((500 - anchorY) * easedRelease);
+        }
+      });
     };
 
     const onPointerMove = (event) => locatePointer(event);
     const onPointerDown = (event) => {
       if (event.target.closest("a, button, input, textarea, select")) return;
       locatePointer(event);
+      if (!pointer.active) return;
+      event.preventDefault();
       pointer.pressed = pointer.active;
+      hero.setPointerCapture?.(event.pointerId);
+      hero.classList.add("is-trace-engaged");
       svg.classList.toggle("is-engaged", pointer.pressed);
     };
-    const onPointerUp = () => {
+    const onPointerUp = (event) => {
       if (pointer.pressed) {
         points.forEach((point) => {
           const influence = Math.exp(-Math.pow((point.x - pointer.x) / 250, 2));
@@ -176,6 +222,10 @@ function HeroTrace({ heroRef }) {
         });
       }
       pointer.pressed = false;
+      if (event?.pointerId !== undefined && hero.hasPointerCapture?.(event.pointerId)) {
+        hero.releasePointerCapture(event.pointerId);
+      }
+      hero.classList.remove("is-trace-engaged");
       svg.classList.remove("is-engaged");
     };
     const onPointerLeave = () => {
@@ -187,28 +237,29 @@ function HeroTrace({ heroRef }) {
       const delta = Math.min(1.8, Math.max(0.6, (time - previousTime) / 16.67));
       previousTime = time;
       const idleTime = time * 0.001;
+      pointer.smoothX += (pointer.x - pointer.smoothX) * (pointer.pressed ? .2 : .11);
+      pointer.smoothY += (pointer.y - pointer.smoothY) * (pointer.pressed ? .2 : .11);
 
       points.forEach((point, index) => {
-        const edgeLock = Math.sin((Math.PI * index) / (pointCount - 1));
-        const idleY = (Math.sin(idleTime * 0.72 + index * 0.68) * 13
-          + Math.sin(idleTime * 0.31 - index * 0.42) * 7) * edgeLock;
+        const edgeLock = index === titleAnchorIndex ? 0 : Math.sin((Math.PI * index) / (pointCount - 1));
+        const idleY = (Math.sin(idleTime * .62 + index * .52) * 7
+          + Math.sin(idleTime * .27 - index * .34) * 4) * edgeLock;
         let targetX = 0;
         let targetY = idleY;
 
         if (pointer.active) {
-          const distanceX = point.x - pointer.x;
-          const distanceY = point.y + point.offsetY - pointer.y;
-          const horizontalPull = Math.exp(-Math.pow(distanceX / (pointer.pressed ? 330 : 270), 2));
-          const verticalReach = Math.max(0, 1 - Math.abs(distanceY) / (pointer.pressed ? 390 : 280));
-          const influence = horizontalPull * verticalReach * edgeLock;
-          const strength = pointer.pressed ? 0.92 : 0.56;
-          targetY += Math.max(-180, Math.min(180, pointer.y - point.y)) * influence * strength;
-          targetX += Math.max(-95, Math.min(95, pointer.x - point.x)) * influence * (pointer.pressed ? 0.2 : 0.08);
+          const distanceX = point.x + point.offsetX - pointer.smoothX;
+          const distanceY = point.y + point.offsetY - pointer.smoothY;
+          const radius = pointer.pressed ? 390 : 245;
+          const influence = Math.exp(-Math.pow(Math.hypot(distanceX, distanceY) / radius, 2)) * edgeLock;
+          const strength = pointer.pressed ? .9 : .42;
+          targetY += Math.max(-210, Math.min(210, pointer.smoothY - point.y)) * influence * strength;
+          targetX += Math.max(-150, Math.min(150, pointer.smoothX - point.x)) * influence * strength * .24;
         }
 
-        const spring = pointer.pressed ? 0.09 : 0.052;
-        point.velocityX = (point.velocityX + (targetX - point.offsetX) * spring * delta) * Math.pow(0.82, delta);
-        point.velocityY = (point.velocityY + (targetY - point.offsetY) * spring * delta) * Math.pow(0.84, delta);
+        const spring = pointer.pressed ? .072 : .038;
+        point.velocityX = (point.velocityX + (targetX - point.offsetX) * spring * delta) * Math.pow(.87, delta);
+        point.velocityY = (point.velocityY + (targetY - point.offsetY) * spring * delta) * Math.pow(.885, delta);
         point.offsetX += point.velocityX * delta;
         point.offsetY += point.velocityY * delta;
       });
@@ -217,24 +268,36 @@ function HeroTrace({ heroRef }) {
       const nextPath = tracePath(renderedPoints);
       path.setAttribute("d", nextPath);
       echo.setAttribute("d", nextPath);
+      sheen.setAttribute("d", nextPath);
 
       if (pointer.active && pointer.moved) {
         const nearest = renderedPoints.reduce((best, point) => (
-          Math.abs(point.x - pointer.x) < Math.abs(best.x - pointer.x) ? point : best
+          Math.hypot(point.x - pointer.smoothX, point.y - pointer.smoothY)
+            < Math.hypot(best.x - pointer.smoothX, best.y - pointer.smoothY) ? point : best
         ));
+        const proximity = Math.max(0, 1 - Math.hypot(nearest.x - pointer.smoothX, nearest.y - pointer.smoothY) / 220);
         cursor.setAttribute("cx", nearest.x.toFixed(1));
         cursor.setAttribute("cy", nearest.y.toFixed(1));
-        cursor.style.opacity = pointer.pressed ? "1" : ".72";
+        ring.setAttribute("cx", nearest.x.toFixed(1));
+        ring.setAttribute("cy", nearest.y.toFixed(1));
+        cursor.style.opacity = pointer.pressed ? "1" : String(proximity * .72);
+        ring.style.opacity = pointer.pressed ? ".72" : String(proximity * .34);
       } else {
         cursor.style.opacity = "0";
+        ring.style.opacity = "0";
       }
 
       frame = requestAnimationFrame(animate);
     };
 
+    const stopNativeDrag = (event) => event.preventDefault();
+
+    alignToTitle();
     hero.addEventListener("pointermove", onPointerMove, { passive: true });
-    hero.addEventListener("pointerdown", onPointerDown, { passive: true });
+    hero.addEventListener("pointerdown", onPointerDown);
     hero.addEventListener("pointerleave", onPointerLeave);
+    hero.addEventListener("dragstart", stopNativeDrag);
+    window.addEventListener("resize", alignToTitle);
     window.addEventListener("pointerup", onPointerUp, { passive: true });
     frame = requestAnimationFrame(animate);
 
@@ -243,14 +306,25 @@ function HeroTrace({ heroRef }) {
       hero.removeEventListener("pointermove", onPointerMove);
       hero.removeEventListener("pointerdown", onPointerDown);
       hero.removeEventListener("pointerleave", onPointerLeave);
+      hero.removeEventListener("dragstart", stopNativeDrag);
+      window.removeEventListener("resize", alignToTitle);
       window.removeEventListener("pointerup", onPointerUp);
     };
   }, [heroRef]);
 
   return (
     <svg ref={svgRef} className="o2-hero__trace" viewBox="0 0 1600 900" preserveAspectRatio="none" aria-hidden="true">
-      <path ref={echoRef} className="o2-hero__trace-echo" d="M600 500C800 500 920 500 1040 500C1280 500 1450 500 1660 500" />
-      <path ref={pathRef} className="o2-hero__trace-line" d="M600 500C800 500 920 500 1040 500C1280 500 1450 500 1660 500" />
+      <defs>
+        <linearGradient id="hero-trace-gradient" x1="0" x2="1">
+          <stop offset="0" stopColor="#d46a4a" stopOpacity=".2" />
+          <stop offset=".32" stopColor="#d46a4a" />
+          <stop offset="1" stopColor="#e7dcc8" stopOpacity=".72" />
+        </linearGradient>
+      </defs>
+      <path ref={echoRef} className="o2-hero__trace-echo" d="M620 400C720 420 780 500 900 500C1180 500 1420 500 1660 500" />
+      <path ref={pathRef} className="o2-hero__trace-line" d="M620 400C720 420 780 500 900 500C1180 500 1420 500 1660 500" />
+      <path ref={sheenRef} className="o2-hero__trace-sheen" d="M620 400C720 420 780 500 900 500C1180 500 1420 500 1660 500" />
+      <circle ref={ringRef} className="o2-hero__trace-ring" cx="1000" cy="500" r="12" />
       <circle ref={cursorRef} className="o2-hero__trace-cursor" cx="1000" cy="500" r="5" />
     </svg>
   );
@@ -414,11 +488,12 @@ function MethodStory() {
 
 export function HomePage() {
   const heroRef = useRef(null);
+  const serviceTimerRef = useRef(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [headerOnLight, setHeaderOnLight] = useState(false);
   const [activeService, setActiveService] = useState(0);
   const [serviceDirection, setServiceDirection] = useState("forward");
-  const [activeApproach, setActiveApproach] = useState(0);
+  const [servicePhase, setServicePhase] = useState("idle");
   const [activeFounder, setActiveFounder] = useState(0);
   const [formState, setFormState] = useState("idle");
 
@@ -444,6 +519,13 @@ export function HomePage() {
     };
   }, []);
 
+  useEffect(() => {
+    services.forEach((item) => {
+      const image = new Image();
+      image.src = item.image;
+    });
+  }, []);
+
   function handleSubmit(event) {
     event.preventDefault();
     const data = Object.fromEntries(new FormData(event.currentTarget));
@@ -452,23 +534,19 @@ export function HomePage() {
     window.open(`${whatsapp}?text=${message}`, "_blank", "noopener,noreferrer");
   }
 
-  function handleApproachKeyDown(event, index) {
-    if (!["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End"].includes(event.key)) return;
-    event.preventDefault();
-    let nextIndex = index;
-    if (event.key === "Home") nextIndex = 0;
-    if (event.key === "End") nextIndex = approachMoments.length - 1;
-    if (event.key === "ArrowRight" || event.key === "ArrowDown") nextIndex = (index + 1) % approachMoments.length;
-    if (event.key === "ArrowLeft" || event.key === "ArrowUp") nextIndex = (index - 1 + approachMoments.length) % approachMoments.length;
-    setActiveApproach(nextIndex);
-    event.currentTarget.parentElement?.parentElement?.querySelectorAll("button")[nextIndex]?.focus();
+  function selectService(index) {
+    if (index === activeService || servicePhase !== "idle") return;
+    setServiceDirection(index > activeService ? "forward" : "back");
+    setServicePhase("covering");
+    window.clearTimeout(serviceTimerRef.current);
+    serviceTimerRef.current = window.setTimeout(() => {
+      setActiveService(index);
+      setServicePhase("revealing");
+      serviceTimerRef.current = window.setTimeout(() => setServicePhase("idle"), 520);
+    }, 340);
   }
 
-  function selectService(index) {
-    if (index === activeService) return;
-    setServiceDirection(index > activeService ? "forward" : "back");
-    setActiveService(index);
-  }
+  useEffect(() => () => window.clearTimeout(serviceTimerRef.current), []);
 
   function handleServiceKeyDown(event, index) {
     if (!["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End"].includes(event.key)) return;
@@ -495,7 +573,6 @@ export function HomePage() {
   }
 
   const service = services[activeService];
-  const approach = approachMoments[activeApproach];
   const founder = founderLenses[activeFounder];
 
   return (
@@ -531,13 +608,16 @@ export function HomePage() {
         <div className="o2-hero__inner">
           <div className="o2-hero__copy">
             <p className="o2-hero__eyebrow">Psicanálise aplicada às organizações</p>
-            <h1 id="hero-title">Escuta que<br />produz direção<span className="o2-hero__title-dot">.</span></h1>
+            <h1 id="hero-title">
+              <span className="o2-hero__title-line is-first">Escuta que</span>
+              <span className="o2-hero__title-line is-second">produz direção<span className="o2-hero__title-dot">.</span></span>
+            </h1>
             <p className="o2-hero__lede">Psicanálise aplicada à leitura do que move pessoas, relações e trabalho.</p>
             <div className="o2-hero__actions">
               <a className="o2-hero__cta" href="#contato">Agende uma conversa <Arrow /></a>
               <a className="o2-hero__secondary" href="#abertura">Conheça nossa abordagem <Arrow down /></a>
             </div>
-            <p className="o2-hero__note"><i aria-hidden="true" />O simbólico nunca se fecha.</p>
+            <p className="o2-hero__note"><i aria-hidden="true" />Passe pelas palavras. Arraste o fio para mudar seu percurso.</p>
           </div>
           <figure className="o2-hero__media">
             <img
@@ -545,6 +625,7 @@ export function HomePage() {
               alt="Ambiente arquitetônico circular com camadas que evocam linguagem, sujeito e desejo"
               decoding="async"
               fetchPriority="high"
+              draggable="false"
             />
           </figure>
         </div>
@@ -579,46 +660,21 @@ export function HomePage() {
             </figcaption>
           </figure>
 
-          <div className="o2-opening__path">
-            <p className="o2-kicker">Três movimentos</p>
-            <h3>Da escuta à direção.</h3>
-            <div className="o2-opening__path-body">
-              <svg className="o2-opening__thread" viewBox="0 0 48 390" preserveAspectRatio="none" aria-hidden="true">
-                <path d="M24 0C8 58 42 95 24 146C6 198 43 242 24 292C8 334 22 365 24 390" />
-              </svg>
-              <ol className="o2-opening__sequence" aria-label="Etapas da abordagem" role="tablist">
-                {approachMoments.map((moment, index) => (
-                  <li key={moment.title} role="presentation">
-                    <button
-                      type="button"
-                      id={`approach-tab-${index}`}
-                      role="tab"
-                      aria-selected={activeApproach === index}
-                      aria-controls="approach-panel"
-                      tabIndex={activeApproach === index ? 0 : -1}
-                      className={activeApproach === index ? "is-active" : ""}
-                      onClick={() => setActiveApproach(index)}
-                      onKeyDown={(event) => handleApproachKeyDown(event, index)}
-                    >
-                      <i aria-hidden="true" />
-                      <span>{String(index + 1).padStart(2, "0")}</span>
-                      <strong>{moment.title}</strong>
-                      <small>{moment.subtitle}</small>
-                    </button>
-                  </li>
-                ))}
-              </ol>
-            </div>
-            <div
-              className="o2-opening__insight"
-              id="approach-panel"
-              role="tabpanel"
-              aria-labelledby={`approach-tab-${activeApproach}`}
-              aria-live="polite"
-            >
-              <span>Em foco · {String(activeApproach + 1).padStart(2, "0")}/03</span>
-              <p key={approach.title}>{approach.text}</p>
-            </div>
+          <div className="o2-opening__field-notes">
+            <p className="o2-kicker">Registro de campo</p>
+            <h3>O método aparece no modo de conduzir.</h3>
+            <p className="o2-opening__field-lede">Um trecho real de facilitação: presença, leitura do grupo e direção construída no encontro — sem encenação e sem fórmula pronta.</p>
+            <ol className="o2-opening__principles" aria-label="Princípios presentes no trabalho de campo">
+              {approachMoments.map((moment, index) => (
+                <li key={moment.title}>
+                  <span>{String(index + 1).padStart(2, "0")}</span>
+                  <div>
+                    <strong>{moment.title}</strong>
+                    <p>{moment.text}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
           </div>
         </div>
       </section>
@@ -653,15 +709,23 @@ export function HomePage() {
             ))}
           </div>
           <article
-            className={`o2-solution-browser__panel is-${serviceDirection}`}
+            className={`o2-solution-browser__panel is-${serviceDirection} is-${servicePhase}`}
             id="service-panel"
-            key={service.title}
             role="tabpanel"
             aria-labelledby={`service-tab-${activeService}`}
             aria-live="polite"
           >
-            <figure><img data-cms-key={`solution-${activeService + 1}-image`} src={service.image} alt={service.alt} loading="lazy" decoding="async" /></figure>
-            <div>
+            <figure className="o2-solution-browser__media">
+              <img
+                data-cms-key={`solution-${activeService + 1}-image`}
+                src={service.image}
+                alt={service.alt}
+                loading="eager"
+                decoding="async"
+                draggable="false"
+              />
+            </figure>
+            <div className="o2-solution-browser__copy" key={service.title}>
               <p>{service.text}</p>
               <span>{service.meta}</span>
               <a className="o2-button is-dark" href="#contato">Conversar sobre esta solução <Arrow /></a>
