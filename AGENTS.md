@@ -53,6 +53,7 @@ Before making substantial visual changes, use the Product Design plugin's `get-c
 - The user clarified that the hero typography must remain fixed: the terracotta line should interact with the text, not move the text. Anchor the line to the headline punctuation and let the line carry the deformation.
 - The video section should not pretend that generic stages are synchronized with the footage. Treat the workshop film as authentic field evidence and pair it with stable, always-visible editorial notes that explain what the viewer is seeing.
 - Make the hero line/text relationship visually explicit rather than conceptual: use one continuous living thread as an underline beneath the headline, pass it behind the fixed letterforms, connect it through the final punctuation, and let pointer proximity or dragging fluidly deform the thread itself.
+- The user approved the living thread itself but found the overall hero composition unbalanced. Preserve the thread behavior while judging it inside the whole poster: the capsule header must not dominate, visible interaction instructions should not become a fourth focal point, and the thread should align with the architecture rather than bisect the image as a strong horizon.
 
 When implementing from a selected generated mock, treat that image as the source of truth for layout, component anatomy, density, spacing, color, typography, visible content, and hierarchy.
 
