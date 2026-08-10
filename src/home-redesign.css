@@ -824,10 +824,10 @@ body { min-height: 100dvh; margin: 0; color: var(--o2-ink); background: var(--o2
   :root { --o2-header-resting-bottom: 72px; }
 
   .o2-header {
-    top: max(8px, env(safe-area-inset-top));
+    top: 0;
     width: 100%;
-    height: 64px;
-    padding: 0 max(18px, env(safe-area-inset-right)) 0 max(18px, env(safe-area-inset-left));
+    height: calc(64px + max(8px, env(safe-area-inset-top)));
+    padding: max(8px, env(safe-area-inset-top)) max(18px, env(safe-area-inset-right)) 0 max(18px, env(safe-area-inset-left));
     border-color: transparent;
     border-radius: 0;
     background: linear-gradient(180deg, rgb(2 10 18 / 56%), transparent);
@@ -839,6 +839,7 @@ body { min-height: 100dvh; margin: 0; color: var(--o2-ink); background: var(--o2
     top: max(8px, env(safe-area-inset-top));
     width: calc(100% - 16px);
     height: 60px;
+    padding-top: 0;
     padding-right: 10px;
     padding-left: 16px;
     border-color: rgb(20 34 61 / 12%);
