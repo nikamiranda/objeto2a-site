@@ -967,3 +967,12 @@ body { min-height: 100dvh; margin: 0; color: var(--o2-ink); background: var(--o2
   .o2-solution-browser__panel p { font-size: 1.35rem; }
   .o2-solution-browser__panel > div > span { margin: 18px 0 24px; }
 }
+
+@media (min-width: 721px) and (max-width: 1120px) {
+  .o2-solution-browser { grid-template-columns: minmax(0, 1fr); }
+  .o2-solution-browser__panel {
+    width: 100%;
+    min-width: 0;
+    grid-template-columns: minmax(0, 1.15fr) minmax(240px, .85fr);
+  }
+}
