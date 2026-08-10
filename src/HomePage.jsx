@@ -572,13 +572,16 @@ export function HomePage() {
             <p className="o2-hero__note"><i aria-hidden="true" />Passe pelas palavras. Arraste o fio para mudar seu percurso.</p>
           </div>
           <figure className="o2-hero__media">
-            <img
-              src="/hero-architecture-clean.png"
-              alt="Ambiente arquitetônico circular com camadas que evocam linguagem, sujeito e desejo"
-              decoding="async"
-              fetchPriority="high"
-              draggable="false"
-            />
+            <picture>
+              <source media="(max-width: 720px)" srcSet="/hero-architecture-mobile.png" />
+              <img
+                src="/hero-architecture-clean.png"
+                alt="Ambiente arquitetônico circular com camadas que evocam linguagem, sujeito e desejo"
+                decoding="async"
+                fetchPriority="high"
+                draggable="false"
+              />
+            </picture>
           </figure>
         </div>
         <HeroTrace heroRef={heroRef} />

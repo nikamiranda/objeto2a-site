@@ -84,6 +84,7 @@ body { min-height: 100dvh; margin: 0; color: var(--o2-ink); background: var(--o2
 .o2-hero__note { margin: clamp(44px, 6vh, 70px) 0 0; display: flex; gap: 14px; align-items: center; color: rgb(231 220 200 / 88%); font-size: .72rem; }
 .o2-hero__note i { width: 15px; height: 15px; display: block; border: 1px solid var(--o2-terracotta); border-radius: 50%; }
 .o2-hero__media { position: absolute; z-index: 0; inset: -132px calc(50% - 50vw) -46px; margin: 0; overflow: hidden; background: #111310; }
+.o2-hero__media picture { width: 100%; height: 100%; display: block; }
 .o2-hero__media img { width: 100%; height: 100%; object-fit: cover; object-position: center center; transform: none; }
 .o2-hero__watermark { position: absolute; z-index: 0; bottom: -12%; left: -3%; width: clamp(260px, 34vw, 600px); height: auto; color: var(--o2-offwhite); opacity: .025; pointer-events: none; transform: rotate(-8deg); }
 .o2-hero__trace { position: absolute; z-index: 4; inset: 100px 0 0; width: 100%; height: calc(100% - 100px); overflow: visible; pointer-events: none; }
@@ -921,8 +922,8 @@ body { min-height: 100dvh; margin: 0; color: var(--o2-ink); background: var(--o2
   .o2-hero__media img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    object-position: 57% center;
+    object-fit: contain;
+    object-position: center top;
   }
   .o2-hero__watermark {
     z-index: 2;
