@@ -58,13 +58,16 @@ const services = [
   {
     title: "Programas para organizações",
     text: "Jornadas completas para lideranças, equipes e culturas em movimento. Do diagnóstico ao acompanhamento qualitativo.",
+    fit: "Quando a questão atravessa cultura, liderança e prática — e um encontro isolado não basta.",
     meta: "Diagnóstico · Liderança · Cultura · NR-1",
     image: "/case-redballoon-grupo.png",
+    displayImage: "/case-redballoon-grupo.webp",
     alt: "Grupo reunido após uma jornada de desenvolvimento da Objeto 2a",
   },
   {
     title: "Mentorias",
     text: "Percursos individuais ou coletivos com profundidade, direção e aplicação concreta no cotidiano.",
+    fit: "Quando uma liderança precisa ler melhor o que vive para decidir e agir com mais clareza.",
     meta: "Liderança · Carreira · Marca pessoal",
     image: "/mentoring.jpg",
     alt: "Sessão de mentoria e desenvolvimento",
@@ -72,6 +75,7 @@ const services = [
   {
     title: "Workshops & masterclasses",
     text: "Experiências concentradas para abrir repertórios, mobilizar conversas e ativar novas práticas.",
+    fit: "Quando o grupo precisa construir linguagem comum e colocar uma conversa importante em movimento.",
     meta: "Comunicação · Inteligência emocional · IA",
     image: "/case-redballoon-grupo-horizontal.jpg",
     alt: "Grupo reunido após um workshop da Objeto 2a com a Red Balloon",
@@ -79,6 +83,7 @@ const services = [
   {
     title: "Facilitação & laboratórios",
     text: "Espaços de construção coletiva para questões complexas que não cabem em respostas prontas.",
+    fit: "Quando a direção precisa ser construída entre diferentes vozes, tensões e possibilidades.",
     meta: "Futuros · Alinhamento · Learning sprints",
     image: "/facilitation.jpg",
     alt: "Processo de facilitação com uma equipe",
@@ -522,6 +527,7 @@ export function HomePage() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [headerOnLight, setHeaderOnLight] = useState(false);
   const [activeService, setActiveService] = useState(0);
+  const [previousService, setPreviousService] = useState(null);
   const [serviceDirection, setServiceDirection] = useState("forward");
   const [servicePhase, setServicePhase] = useState("idle");
   const [activeFounder, setActiveFounder] = useState(0);
@@ -793,18 +799,26 @@ export function HomePage() {
   }
 
   function selectService(index) {
-    if (index === activeService || servicePhase !== "idle") return;
-    setServiceDirection(index > activeService ? "forward" : "back");
-    setServicePhase("covering");
+    if (index === activeService) return;
     window.clearTimeout(serviceTimerRef.current);
+    setPreviousService(activeService);
+    setServiceDirection(index > activeService ? "forward" : "back");
+    setActiveService(index);
+    setServicePhase("transitioning");
     serviceTimerRef.current = window.setTimeout(() => {
-      setActiveService(index);
-      setServicePhase("revealing");
-      serviceTimerRef.current = window.setTimeout(() => setServicePhase("idle"), 520);
-    }, 340);
+      setPreviousService(null);
+      setServicePhase("idle");
+    }, 680);
   }
 
   useEffect(() => () => window.clearTimeout(serviceTimerRef.current), []);
+
+  useEffect(() => {
+    services.forEach((item) => {
+      const image = new Image();
+      image.src = item.displayImage || item.image;
+    });
+  }, []);
 
   function handleServiceKeyDown(event, index) {
     if (!["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End"].includes(event.key)) return;
@@ -831,6 +845,7 @@ export function HomePage() {
   }
 
   const service = services[activeService];
+  const outgoingService = previousService === null ? null : services[previousService];
   const founder = founderLenses[activeFounder];
 
   return (
@@ -985,7 +1000,7 @@ export function HomePage() {
               >
                 <span>0{index + 1}</span>
                 <strong>{item.title}</strong>
-                <i>{index === activeService ? "−" : "+"}</i>
+                <small aria-hidden="true">{index === activeService ? "Em foco" : "Explorar"}</small>
               </button>
             ))}
           </div>
@@ -997,10 +1012,20 @@ export function HomePage() {
             aria-live="polite"
           >
             <figure className="o2-solution-browser__media">
+              {outgoingService && (
+                <img
+                  className="is-outgoing"
+                  src={outgoingService.displayImage || outgoingService.image}
+                  alt=""
+                  aria-hidden="true"
+                  draggable="false"
+                />
+              )}
               <img
                 key={service.image}
                 data-cms-key={`solution-${activeService + 1}-image`}
-                src={service.image}
+                className={outgoingService ? "is-incoming" : "is-current"}
+                src={service.displayImage || service.image}
                 alt={service.alt}
                 loading="eager"
                 decoding="async"
@@ -1008,7 +1033,12 @@ export function HomePage() {
               />
             </figure>
             <div className="o2-solution-browser__copy" key={service.title}>
+              <header>
+                <span>0{activeService + 1} / 04</span>
+                <h3>{service.title}</h3>
+              </header>
               <p>{service.text}</p>
+              <p className="o2-solution-browser__fit"><span>Faz sentido quando</span>{service.fit}</p>
               <span>{service.meta}</span>
               <a className="o2-button is-dark" href="#contato">Conversar sobre esta solução <Arrow /></a>
             </div>
