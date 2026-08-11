@@ -60,6 +60,7 @@ Before making substantial visual changes, use the Product Design plugin's `get-c
 - The user approved the living thread itself but found the overall hero composition unbalanced. Preserve the thread behavior while judging it inside the whole poster: the capsule header must not dominate, visible interaction instructions should not become a fourth focal point, and the thread should align with the architecture rather than bisect the image as a strong horizon.
 - On mobile, use the supplied portrait chair artwork as the dedicated hero source. Keep it top-aligned and fully visible across the width so the upper arch, the words and the vase are not lost to a desktop-style `cover` crop.
 - The mobile hamburger must feel deliberately choreographed rather than switch open/closed abruptly. Morph the icon into a close state, unfold the menu from the trigger, stagger link entrances, animate the reverse path on close and respect `prefers-reduced-motion`.
+- On mobile, the dedicated hero video should play once, hold its final frame for about 10 seconds, then restart through a true two-layer crossfade. Never expose a black frame or make the restart cut visible, and pause the cycle while the hero is outside the viewport.
 
 When implementing from a selected generated mock, treat that image as the source of truth for layout, component anatomy, density, spacing, color, typography, visible content, and hierarchy.
 

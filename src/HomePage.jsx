@@ -430,15 +430,40 @@ function MethodStory() {
         <header>
           <p className="o2-kicker">Como trabalhamos</p>
           <h2>Da escuta à ação. <em>Sem fórmulas prontas.</em></h2>
+          <div className="o2-method__mobile-progress" aria-hidden="true">
+            <i style={{ transform: `scaleX(${progress})` }} />
+          </div>
+          <div className="o2-method__mobile-steps" aria-label="Etapas do método">
+            {methodStages.map((stage, index) => (
+              <button
+                className={activeStage === index ? "is-active" : ""}
+                type="button"
+                onClick={() => {
+                  const section = sectionRef.current;
+                  if (!section) return;
+                  const travel = section.offsetHeight - window.innerHeight;
+                  window.scrollTo({ top: section.offsetTop + (travel * index) / 2, behavior: "smooth" });
+                }}
+                aria-current={activeStage === index ? "step" : undefined}
+                key={stage.number}
+              >
+                <span>{stage.number}</span>{stage.eyebrow}
+              </button>
+            ))}
+          </div>
         </header>
-        {methodStages.map((stage) => (
-          <article key={stage.number}>
+        <div className="o2-method__mobile-stages">
+        {methodStages.map((stage, index) => (
+          <article className={activeStage === index ? "is-active" : ""} aria-hidden={activeStage !== index} key={stage.number}>
             <figure><img data-cms-key={`method-${stage.number}-image`} src={stage.image} alt={stage.alt} width={stage.width} height={stage.height} loading="lazy" decoding="async" /></figure>
-            <span>{stage.number} / 03 · {stage.eyebrow}</span>
-            <h3>{stage.title}</h3>
-            <p>{stage.text}</p>
+            <div className="o2-method__mobile-copy">
+              <span>Etapa {stage.number} de 03</span>
+              <h3>{stage.title}</h3>
+              <p>{stage.text}</p>
+            </div>
           </article>
         ))}
+        </div>
       </div>
     </section>
   );
@@ -446,6 +471,7 @@ function MethodStory() {
 
 export function HomePage() {
   const heroRef = useRef(null);
+  const heroVideoRef = useRef([]);
   const fieldVideoRef = useRef(null);
   const serviceTimerRef = useRef(null);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -463,6 +489,101 @@ export function HomePage() {
     video.muted = true;
     video.loop = true;
     video.setAttribute("muted", "");
+  }, []);
+
+  useEffect(() => {
+    const hero = heroRef.current;
+    const videos = heroVideoRef.current.filter(Boolean);
+    const mobileQuery = window.matchMedia("(max-width: 720px)");
+    if (!hero || videos.length !== 2) return undefined;
+
+    let holdTimer = 0;
+    let blendTimer = 0;
+    let isVisible = false;
+    let activeIndex = 0;
+
+    const clearCycle = () => {
+      window.clearTimeout(holdTimer);
+      window.clearTimeout(blendTimer);
+    };
+
+    const prepare = (video) => {
+      video.defaultMuted = true;
+      video.muted = true;
+      video.setAttribute("muted", "");
+    };
+
+    videos.forEach((video, index) => {
+      prepare(video);
+      video.classList.toggle("is-active", index === activeIndex);
+      video.classList.remove("is-incoming", "is-visible");
+    });
+
+    const playActive = () => {
+      if (!isVisible || !mobileQuery.matches) return;
+      videos[activeIndex].play().catch(() => {});
+    };
+
+    const crossFade = () => {
+      if (!isVisible || !mobileQuery.matches) return;
+      const outgoingIndex = activeIndex;
+      const incomingIndex = 1 - activeIndex;
+      const outgoing = videos[outgoingIndex];
+      const incoming = videos[incomingIndex];
+
+      incoming.currentTime = 0;
+      incoming.play().catch(() => {});
+      activeIndex = incomingIndex;
+
+      incoming.classList.add("is-incoming");
+      requestAnimationFrame(() => requestAnimationFrame(() => incoming.classList.add("is-visible")));
+
+      blendTimer = window.setTimeout(() => {
+        incoming.classList.add("is-active");
+        incoming.classList.remove("is-incoming", "is-visible");
+        outgoing.classList.remove("is-active");
+        outgoing.pause();
+        outgoing.currentTime = 0;
+      }, 1300);
+    };
+
+    const holdLastFrame = (index) => {
+      if (index !== activeIndex) return;
+      clearCycle();
+      if (!isVisible || !mobileQuery.matches) return;
+      holdTimer = window.setTimeout(crossFade, 10000);
+    };
+
+    const onVisibility = ([entry]) => {
+      isVisible = entry.isIntersecting;
+      if (!isVisible || !mobileQuery.matches) {
+        clearCycle();
+        videos.forEach((video) => video.pause());
+        return;
+      }
+      if (videos[activeIndex].ended) holdLastFrame(activeIndex);
+      else playActive();
+    };
+
+    const onBreakpointChange = () => {
+      clearCycle();
+      if (mobileQuery.matches && isVisible) playActive();
+      else videos.forEach((video) => video.pause());
+    };
+
+    const endedHandlers = videos.map((_, index) => () => holdLastFrame(index));
+
+    const observer = new IntersectionObserver(onVisibility, { threshold: 0.1 });
+    observer.observe(hero);
+    videos.forEach((video, index) => video.addEventListener("ended", endedHandlers[index]));
+    mobileQuery.addEventListener("change", onBreakpointChange);
+
+    return () => {
+      clearCycle();
+      observer.disconnect();
+      videos.forEach((video, index) => video.removeEventListener("ended", endedHandlers[index]));
+      mobileQuery.removeEventListener("change", onBreakpointChange);
+    };
   }, []);
 
   useEffect(() => {
@@ -629,6 +750,18 @@ export function HomePage() {
                 draggable="false"
               />
             </picture>
+            {[0, 1].map((layer) => (
+              <video
+                ref={(video) => { heroVideoRef.current[layer] = video; }}
+                className={`o2-hero__mobile-video${layer === 0 ? " is-active" : ""}`}
+                src="/hero-architecture-mobile.mp4"
+                muted
+                playsInline
+                preload="auto"
+                aria-hidden="true"
+                key={layer}
+              />
+            ))}
           </figure>
         </div>
         <HeroTrace heroRef={heroRef} />

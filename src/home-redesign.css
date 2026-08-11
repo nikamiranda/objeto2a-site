@@ -86,6 +86,23 @@ body { min-height: 100dvh; margin: 0; color: var(--o2-ink); background: var(--o2
 .o2-hero__media { position: absolute; z-index: 0; inset: -132px calc(50% - 50vw) -46px; margin: 0; overflow: hidden; background: #111310; }
 .o2-hero__media picture { width: 100%; height: 100%; display: block; }
 .o2-hero__media img { width: 100%; height: 100%; object-fit: cover; object-position: center center; transform: none; }
+.o2-hero__mobile-video { display: none; }
+.o2-hero__eyebrow,
+.o2-hero__title-line,
+.o2-hero__lede,
+.o2-hero__actions {
+  animation: o2-hero-copy-in .86s cubic-bezier(.22, 1, .36, 1) both;
+  will-change: opacity, transform, filter;
+}
+.o2-hero__eyebrow { animation-delay: .12s; }
+.o2-hero__title-line.is-first { animation-delay: .25s; }
+.o2-hero__title-line.is-second { animation-delay: .37s; }
+.o2-hero__lede { animation-delay: .54s; }
+.o2-hero__actions { animation-delay: .68s; }
+@keyframes o2-hero-copy-in {
+  from { opacity: 0; filter: blur(5px); transform: translateY(22px); }
+  to { opacity: 1; filter: blur(0); transform: translateY(0); }
+}
 .o2-hero__watermark { position: absolute; z-index: 0; bottom: -12%; left: -3%; width: clamp(260px, 34vw, 600px); height: auto; color: var(--o2-offwhite); opacity: .025; pointer-events: none; transform: rotate(-8deg); }
 .o2-hero__trace { position: absolute; z-index: 4; inset: 100px 0 0; width: 100%; height: calc(100% - 100px); overflow: visible; pointer-events: none; }
 .o2-hero__trace path { fill: none; stroke-linecap: round; vector-effect: non-scaling-stroke; }
@@ -350,11 +367,11 @@ body { min-height: 100dvh; margin: 0; color: var(--o2-ink); background: var(--o2
 @media (max-width: 720px) {
   html { scroll-padding-top: 68px; }
   .o2-header { height: 68px; padding: 0 18px; }
-  .o2-chapters { top: 68px; right: 0; left: 0; width: 100%; height: 2px; display: block; color: transparent; background: rgb(20 34 61 / 14%); transform: none; }
+  .o2-chapters { top: 68px; right: 38px; left: 38px; width: auto; height: 2px; display: block; overflow: hidden; border-radius: 999px; color: transparent; background: rgb(20 34 61 / 14%); transform: none; }
   .o2-chapters.is-on-dark { background: rgb(250 249 246 / 15%); }
   .o2-chapters__current, .o2-chapters__rail a, .o2-chapters__rail::before { display: none; }
   .o2-chapters__rail { width: 100%; height: 2px; display: block; }
-  .o2-chapters__rail::after { position: absolute; z-index: 1; inset: 0 auto 0 0; width: calc(100% * var(--chapter-progress)); height: 2px; display: block; border-radius: 0 999px 999px 0; background: var(--o2-terracotta); transform: none; transition: width .12s linear; }
+  .o2-chapters__rail::after { position: absolute; z-index: 1; inset: 0 auto 0 0; width: calc(100% * var(--chapter-progress)); height: 2px; display: block; border-radius: 999px; background: var(--o2-terracotta); transform: none; transition: width .12s linear; }
   .o2-signature { min-height: 44px; gap: 8px; }
   .o2-signature__symbol { width: 36px; height: 36px; }
   .o2-signature__lockup strong { font-size: .84rem; }
@@ -433,6 +450,10 @@ body { min-height: 100dvh; margin: 0; color: var(--o2-ink); background: var(--o2
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
+  .o2-hero__eyebrow,
+  .o2-hero__title-line,
+  .o2-hero__lede,
+  .o2-hero__actions { animation: none; filter: none; transform: none; }
   .o2-reveal { opacity: 1; transform: none; transition: none; }
   .o2-button, .o2-method__visual article, .o2-hero__media video, .o2-hero__signal, .o2-opening__line i { transition: none; }
   .o2-hero__trace { transform: none; transition: none; }
@@ -864,8 +885,8 @@ body { min-height: 100dvh; margin: 0; color: var(--o2-ink); background: var(--o2
   .o2-hero::before {
     z-index: 1;
     background:
-      linear-gradient(180deg, rgb(2 10 18 / 30%) 0%, rgb(2 10 18 / 4%) 22%, rgb(2 10 18 / 20%) 38%, rgb(2 10 18 / 91%) 61%, rgb(2 10 18 / 99%) 100%),
-      linear-gradient(90deg, rgb(2 10 18 / 68%) 0%, rgb(2 10 18 / 12%) 58%, rgb(2 10 18 / 38%) 100%);
+      linear-gradient(180deg, rgb(2 10 18 / 16%) 0%, transparent 30%, rgb(2 10 18 / 8%) 42%, rgb(2 10 18 / 68%) 67%, rgb(2 10 18 / 90%) 100%),
+      linear-gradient(90deg, rgb(2 10 18 / 34%) 0%, rgb(2 10 18 / 4%) 58%, rgb(2 10 18 / 16%) 100%);
   }
   .o2-hero__inner {
     min-height: max(100svh, 780px);
@@ -926,6 +947,23 @@ body { min-height: 100dvh; margin: 0; color: var(--o2-ink); background: var(--o2
     object-fit: contain;
     object-position: center top;
   }
+  .o2-hero__media picture { display: none; }
+  .o2-hero__media .o2-hero__mobile-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: contain;
+    object-position: center top;
+    opacity: 0;
+    filter: none;
+    transform: none;
+    transition: opacity 1200ms cubic-bezier(.4, 0, .2, 1);
+  }
+  .o2-hero__media .o2-hero__mobile-video.is-active { z-index: 1; opacity: 1; }
+  .o2-hero__media .o2-hero__mobile-video.is-incoming { z-index: 2; opacity: 0; }
+  .o2-hero__media .o2-hero__mobile-video.is-incoming.is-visible { opacity: 1; }
   .o2-hero__watermark {
     z-index: 2;
     top: auto;
@@ -1104,4 +1142,104 @@ body { min-height: 100dvh; margin: 0; color: var(--o2-ink); background: var(--o2
    overlap their content. Keep this after the desktop density refinements. */
 @media (max-width: 1120px) {
   .o2-method { height: auto; }
+}
+
+/* Mobile keeps the desktop method's pinned, scroll-led narrative. */
+@media (max-width: 720px) {
+  .o2-method { height: 290svh; }
+  .o2-method__mobile {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    min-height: 680px;
+    padding: 100px 24px 24px;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    overflow: hidden;
+  }
+  .o2-method__mobile header { margin: 0; }
+  .o2-method__mobile header .o2-kicker { margin-bottom: 12px; }
+  .o2-method__mobile h2 { max-width: 390px; font-size: clamp(1.95rem, 8.5vw, 2.55rem); line-height: .96; text-wrap: balance; }
+  .o2-method__mobile h2 em { display: block; margin-left: 0; }
+  .o2-method__mobile-progress { height: 2px; margin-top: 20px; overflow: hidden; border-radius: 999px; background: rgb(255 255 255 / 14%); }
+  .o2-method__mobile-progress i { width: 100%; height: 100%; display: block; background: var(--o2-terracotta); transform-origin: left; }
+  .o2-method__mobile-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  .o2-method__mobile-steps button {
+    min-width: 0;
+    min-height: 48px;
+    padding: 10px 0 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    align-items: flex-start;
+    border: 0;
+    color: rgb(250 249 246 / 42%);
+    background: transparent;
+    font: 500 clamp(.5rem, 2.2vw, .58rem)/1.2 inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: color .3s ease;
+  }
+  .o2-method__mobile-steps button span { color: var(--o2-terracotta); font-size: .66rem; }
+  .o2-method__mobile-steps button.is-active { color: var(--o2-offwhite); }
+  .o2-method__mobile-steps button:not(.is-active) { opacity: .72; }
+  .o2-method__mobile-stages { position: relative; min-height: 0; margin-top: 20px; }
+  .o2-method__mobile article {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, auto) auto;
+    align-content: start;
+    gap: 0;
+    opacity: 0;
+    transform: translateY(16px);
+    pointer-events: none;
+    transition: opacity .48s ease, transform .62s cubic-bezier(.22, 1, .36, 1);
+  }
+  .o2-method__mobile article.is-active { opacity: 1; transform: translateY(0); pointer-events: auto; }
+  .o2-method__mobile article figure {
+    grid-row: auto;
+    width: 100%;
+    height: min(32svh, 280px);
+    min-height: 210px;
+    max-height: 280px;
+    margin: 0;
+    padding: 10px;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    border: 1px solid rgb(250 249 246 / 9%);
+    border-radius: 14px;
+    background: rgb(16 29 53 / 64%);
+  }
+  .o2-method__mobile article img { width: auto; height: auto; max-width: 100%; max-height: min(30svh, 260px); object-fit: contain; }
+  .o2-method__mobile-copy { position: relative; align-self: end; padding: 20px 0 0; }
+  .o2-method__mobile-copy::before { content: none; }
+  .o2-method__mobile article.is-active .o2-method__mobile-copy > * { animation: o2-method-mobile-copy-in .62s cubic-bezier(.22, 1, .36, 1) both; }
+  .o2-method__mobile article.is-active .o2-method__mobile-copy > span { animation-delay: .08s; }
+  .o2-method__mobile article.is-active .o2-method__mobile-copy > h3 { animation-delay: .16s; }
+  .o2-method__mobile article.is-active .o2-method__mobile-copy > p { animation-delay: .25s; }
+  .o2-method__mobile article > .o2-method__mobile-copy > span { display: block; color: var(--o2-terracotta); font-size: .54rem; letter-spacing: .1em; text-transform: uppercase; }
+  .o2-method__mobile article .o2-method__mobile-copy h3 { max-width: 330px; margin: 8px 0 12px; font-family: inherit; font-size: clamp(1.75rem, 7.7vw, 2.25rem); font-weight: 500; letter-spacing: -.035em; line-height: 1.02; }
+  .o2-method__mobile article .o2-method__mobile-copy p { max-width: 36rem; margin: 0; color: rgb(250 249 246 / 72%); font-size: clamp(.82rem, 3.5vw, .92rem); line-height: 1.48; }
+}
+
+@keyframes o2-method-mobile-copy-in {
+  from { opacity: 0; filter: blur(4px); transform: translateY(14px); }
+  to { opacity: 1; filter: blur(0); transform: translateY(0); }
+}
+
+@media (max-width: 720px) and (max-height: 740px) {
+  .o2-method__mobile { min-height: 620px; padding-top: 68px; }
+  .o2-method__mobile h2 { font-size: 2.15rem; }
+  .o2-method__mobile article img { max-height: 31svh; }
+  .o2-method__mobile article .o2-method__mobile-copy h3 { font-size: 1.75rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .o2-method__mobile article,
+  .o2-method__mobile-steps button { transition: none; }
+  .o2-method__mobile article.is-active .o2-method__mobile-copy > * { animation: none; }
 }
