@@ -14,6 +14,8 @@ test("keeps the fixed footer covered until the closing contact section", () => {
 });
 
 test("keeps the complete institutional footer in the homepage", () => {
+  const footerRule = css.match(/\.o2-footer\s*\{[^}]+\}/)?.[0] ?? "";
+
   assert.match(homePage, /function SiteFooter/);
   assert.match(homePage, /Psicanálise aplicada à leitura do que move pessoas, relações e trabalho\./);
   assert.match(homePage, /Navegação/);
@@ -21,6 +23,9 @@ test("keeps the complete institutional footer in the homepage", () => {
   assert.match(homePage, /Todos os direitos reservados\./);
   assert.match(homePage, /Rio de Janeiro · Brasil/);
   assert.match(homePage, /if \(!entry\.isIntersecting\) return;[\s\S]+setContactVisible\(true\);[\s\S]+observer\.disconnect\(\);/);
+  assert.match(footerRule, /grid-template-rows:\s*minmax\(0, 1fr\) auto/);
+  assert.match(footerRule, /row-gap:\s*24px/);
+  assert.doesNotMatch(footerRule, /[;{]\s*gap:\s*clamp\(48px, 7vw, 120px\)/);
 });
 
 test("gives the animated contact headline enough room for every glyph", () => {
