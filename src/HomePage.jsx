@@ -531,20 +531,26 @@ export function HomePage() {
       const outgoing = videos[outgoingIndex];
       const incoming = videos[incomingIndex];
 
-      incoming.currentTime = 0;
+      incoming.currentTime = 0.05;
       incoming.play().catch(() => {});
-      activeIndex = incomingIndex;
 
-      incoming.classList.add("is-incoming");
-      requestAnimationFrame(() => requestAnimationFrame(() => incoming.classList.add("is-visible")));
+      const revealIncoming = () => {
+        if (!isVisible || !mobileQuery.matches) return;
+        activeIndex = incomingIndex;
+        incoming.classList.add("is-incoming");
+        requestAnimationFrame(() => requestAnimationFrame(() => incoming.classList.add("is-visible")));
 
-      blendTimer = window.setTimeout(() => {
-        incoming.classList.add("is-active");
-        incoming.classList.remove("is-incoming", "is-visible");
-        outgoing.classList.remove("is-active");
-        outgoing.pause();
-        outgoing.currentTime = 0;
-      }, 1300);
+        blendTimer = window.setTimeout(() => {
+          incoming.classList.add("is-active");
+          incoming.classList.remove("is-incoming", "is-visible");
+          outgoing.classList.remove("is-active");
+          outgoing.pause();
+          outgoing.currentTime = 0;
+        }, 800);
+      };
+
+      if (incoming.requestVideoFrameCallback) incoming.requestVideoFrameCallback(revealIncoming);
+      else requestAnimationFrame(revealIncoming);
     };
 
     const holdLastFrame = (index) => {

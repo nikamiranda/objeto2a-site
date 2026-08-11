@@ -959,7 +959,7 @@ body { min-height: 100dvh; margin: 0; color: var(--o2-ink); background: var(--o2
     opacity: 0;
     filter: none;
     transform: none;
-    transition: opacity 1200ms cubic-bezier(.4, 0, .2, 1);
+    transition: opacity 720ms cubic-bezier(.4, 0, .2, 1);
   }
   .o2-hero__media .o2-hero__mobile-video.is-active { z-index: 1; opacity: 1; }
   .o2-hero__media .o2-hero__mobile-video.is-incoming { z-index: 2; opacity: 0; }
