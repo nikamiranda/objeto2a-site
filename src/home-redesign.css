@@ -639,6 +639,10 @@ body { min-height: 100dvh; margin: 0; color: var(--o2-ink); background: var(--o2
   .o2-footer__back span { display: none; }
 }
 
+@media (min-width: 721px) and (prefers-reduced-motion: reduce) {
+  .o2-hero__video { display: none; }
+}
+
 /* Independent draggable thread and viewport-density refinement. */
 .o2-hero {
   user-select: none;

@@ -137,7 +137,7 @@ function tracePath(points) {
   return path;
 }
 
-function HeroTrace({ heroRef }) {
+function HeroTrace({ heroRef, onTraceMotion }) {
   const svgRef = useRef(null);
   const pathRef = useRef(null);
   const echoRef = useRef(null);
@@ -165,13 +165,20 @@ function HeroTrace({ heroRef }) {
       velocityY: 0,
     }));
     const pointer = { x: 0, y: 0, smoothX: 0, smoothY: 0, active: false, pressed: false, moved: false };
+    let interactionEnergy = 0;
     let frame = 0;
     let previousTime = performance.now();
 
     const locatePointer = (event) => {
       const rect = svg.getBoundingClientRect();
-      pointer.x = ((event.clientX - rect.left) / rect.width) * 1600;
-      pointer.y = ((event.clientY - rect.top) / rect.height) * 900;
+      const nextX = ((event.clientX - rect.left) / rect.width) * 1600;
+      const nextY = ((event.clientY - rect.top) / rect.height) * 900;
+      if (pointer.moved && pointer.active) {
+        const travel = Math.hypot(nextX - pointer.x, nextY - pointer.y);
+        interactionEnergy = Math.min(1, interactionEnergy + travel / (pointer.pressed ? 65 : 110));
+      }
+      pointer.x = nextX;
+      pointer.y = nextY;
       if (!pointer.moved) {
         pointer.smoothX = pointer.x;
         pointer.smoothY = pointer.y;
@@ -187,6 +194,7 @@ function HeroTrace({ heroRef }) {
       if (!pointer.active) return;
       event.preventDefault();
       pointer.pressed = pointer.active;
+      interactionEnergy = Math.max(interactionEnergy, .22);
       hero.setPointerCapture?.(event.pointerId);
       hero.classList.add("is-trace-engaged");
       svg.classList.toggle("is-engaged", pointer.pressed);
@@ -197,6 +205,7 @@ function HeroTrace({ heroRef }) {
           const influence = Math.exp(-Math.pow((point.x - pointer.x) / 250, 2));
           point.velocityY += (point.y + point.offsetY - pointer.y) * influence * 0.055;
         });
+        interactionEnergy = Math.max(interactionEnergy, .38);
       }
       pointer.pressed = false;
       if (event?.pointerId !== undefined && hero.hasPointerCapture?.(event.pointerId)) {
@@ -213,6 +222,8 @@ function HeroTrace({ heroRef }) {
     const animate = (time) => {
       const delta = Math.min(1.8, Math.max(0.6, (time - previousTime) / 16.67));
       previousTime = time;
+      interactionEnergy *= Math.pow(.9, delta);
+      onTraceMotion?.(interactionEnergy > .018 ? interactionEnergy : 0);
       const idleTime = time * 0.001;
       pointer.smoothX += (pointer.x - pointer.smoothX) * (pointer.pressed ? .2 : .11);
       pointer.smoothY += (pointer.y - pointer.smoothY) * (pointer.pressed ? .2 : .11);
@@ -268,7 +279,7 @@ function HeroTrace({ heroRef }) {
       hero.removeEventListener("dragstart", stopNativeDrag);
       window.removeEventListener("pointerup", onPointerUp);
     };
-  }, [heroRef]);
+  }, [heroRef, onTraceMotion]);
 
   return (
     <svg ref={svgRef} className="o2-hero__trace" viewBox="0 0 1600 900" preserveAspectRatio="none" aria-hidden="true">
@@ -485,6 +496,28 @@ export function HomePage() {
   const [contactVisible, setContactVisible] = useState(false);
   const [formState, setFormState] = useState("idle");
 
+  const driveHeroVideo = useCallback((intensity) => {
+    if (window.matchMedia("(max-width: 720px)").matches) return;
+    const video = heroVideoRef.current[0];
+    const hero = heroRef.current;
+    if (!video || !hero) return;
+
+    const rect = hero.getBoundingClientRect();
+    if (rect.bottom <= 0 || rect.top >= window.innerHeight || document.hidden) {
+      video.pause();
+      return;
+    }
+
+    if (intensity <= 0) {
+      video.pause();
+      return;
+    }
+
+    video.loop = true;
+    video.playbackRate = Math.min(1.85, .32 + intensity * 1.53);
+    video.play().catch(() => {});
+  }, []);
+
   const setFieldVideo = useCallback((video) => {
     fieldVideoRef.current = video;
     if (!video) return;
@@ -497,6 +530,7 @@ export function HomePage() {
   useEffect(() => {
     const hero = heroRef.current;
     const videos = heroVideoRef.current.filter(Boolean);
+    const mobileQuery = window.matchMedia("(max-width: 720px)");
     if (!hero || videos.length !== 2) return undefined;
 
     let holdTimer = 0;
@@ -523,12 +557,12 @@ export function HomePage() {
     });
 
     const playActive = () => {
-      if (!isVisible) return;
+      if (!isVisible || !mobileQuery.matches) return;
       videos[activeIndex].play().catch(() => {});
     };
 
     const crossFade = () => {
-      if (!isVisible) return;
+      if (!isVisible || !mobileQuery.matches) return;
       const outgoingIndex = activeIndex;
       const incomingIndex = 1 - activeIndex;
       const outgoing = videos[outgoingIndex];
@@ -538,7 +572,7 @@ export function HomePage() {
       incoming.play().catch(() => {});
 
       const revealIncoming = () => {
-        if (!isVisible) return;
+        if (!isVisible || !mobileQuery.matches) return;
         activeIndex = incomingIndex;
         incoming.classList.add("is-incoming");
         requestAnimationFrame(() => requestAnimationFrame(() => incoming.classList.add("is-visible")));
@@ -559,13 +593,13 @@ export function HomePage() {
     const holdLastFrame = (index) => {
       if (index !== activeIndex) return;
       clearCycle();
-      if (!isVisible) return;
+      if (!isVisible || !mobileQuery.matches) return;
       holdTimer = window.setTimeout(crossFade, 10000);
     };
 
     const onVisibility = ([entry]) => {
       isVisible = entry.isIntersecting;
-      if (!isVisible) {
+      if (!isVisible || !mobileQuery.matches) {
         clearCycle();
         videos.forEach((video) => video.pause());
         return;
@@ -577,7 +611,20 @@ export function HomePage() {
     const resumeIfVisible = () => {
       const rect = hero.getBoundingClientRect();
       isVisible = rect.bottom > 0 && rect.top < window.innerHeight;
-      if (!document.hidden && isVisible) playActive();
+      if (!document.hidden && mobileQuery.matches && isVisible) playActive();
+    };
+
+    const onBreakpointChange = () => {
+      clearCycle();
+      activeIndex = 0;
+      videos.forEach((video, index) => {
+        video.pause();
+        video.loop = false;
+        video.playbackRate = 1;
+        video.classList.toggle("is-active", index === activeIndex);
+        video.classList.remove("is-incoming", "is-visible");
+      });
+      if (mobileQuery.matches && isVisible) playActive();
     };
 
     const endedHandlers = videos.map((_, index) => () => holdLastFrame(index));
@@ -591,6 +638,7 @@ export function HomePage() {
     });
     document.addEventListener("visibilitychange", resumeIfVisible);
     window.addEventListener("pageshow", resumeIfVisible);
+    mobileQuery.addEventListener("change", onBreakpointChange);
     playActive();
 
     return () => {
@@ -603,6 +651,7 @@ export function HomePage() {
       });
       document.removeEventListener("visibilitychange", resumeIfVisible);
       window.removeEventListener("pageshow", resumeIfVisible);
+      mobileQuery.removeEventListener("change", onBreakpointChange);
     };
   }, []);
 
@@ -795,7 +844,6 @@ export function HomePage() {
               <video
                 ref={(video) => { heroVideoRef.current[layer] = video; }}
                 className={`o2-hero__video${layer === 0 ? " is-active" : ""}`}
-                autoPlay={layer === 0}
                 muted
                 playsInline
                 preload="auto"
@@ -808,7 +856,7 @@ export function HomePage() {
             ))}
           </figure>
         </div>
-        <HeroTrace heroRef={heroRef} />
+        <HeroTrace heroRef={heroRef} onTraceMotion={driveHeroVideo} />
       </section>
 
       <section className="o2-opening" id="abertura" aria-labelledby="opening-title">
