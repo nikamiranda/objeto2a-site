@@ -1627,6 +1627,15 @@ textarea:focus-visible {
   .sub-contact footer { grid-template-columns: 1fr; gap: 18px; }
   .sub-contact__links { flex-wrap: wrap; }
 }
+
+@media (max-width: 360px) {
+  .case-feature__title { gap: 14px; }
+  .case-feature__title > div:first-child { min-width: 0; }
+  .case-feature__title h2 { font-size: 3.35rem; line-height: .84; }
+  .case-stat { gap: 6px; }
+  .case-stat strong { font-size: 3rem; }
+  .case-stat span { font-size: .55rem; }
+}
 /* Visual editing affordances only appear inside the admin preview iframe. */
 .cms-preview-mode [data-cms-id] {
   cursor: pointer;
