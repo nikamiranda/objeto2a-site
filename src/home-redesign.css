@@ -930,12 +930,16 @@ body { min-height: 100dvh; margin: 0; color: var(--o2-ink); background: var(--o2
     padding: 0 22px;
   }
   .o2-hero__secondary {
+    width: 44px;
     min-height: 44px;
-    padding-bottom: 3px;
+    padding: 0;
     align-self: center;
     justify-content: center;
     text-align: center;
+    border-bottom: 0;
   }
+  .o2-hero__secondary-label { display: none; }
+  .o2-hero__secondary > span:last-child { font-size: 1rem; animation: o2-hero-arrow-down 2.2s cubic-bezier(.22, 1, .36, 1) infinite; }
   .o2-hero__media {
     position: absolute;
     z-index: 0;
@@ -977,6 +981,12 @@ body { min-height: 100dvh; margin: 0; color: var(--o2-ink); background: var(--o2
     width: 260px;
     opacity: .024;
   }
+}
+
+@keyframes o2-hero-arrow-down {
+  0%, 28%, 100% { opacity: .62; transform: translateY(-2px); }
+  46% { opacity: 1; transform: translateY(5px); }
+  62% { opacity: .82; transform: translateY(1px); }
 }
 
 @media (max-width: 360px) {
@@ -1139,6 +1149,7 @@ body { min-height: 100dvh; margin: 0; color: var(--o2-ink); background: var(--o2
   .o2-menu::before,
   .o2-menu i { transition: none !important; }
   .o2-header nav { transform: none; clip-path: none; }
+  .o2-hero__secondary > span:last-child { animation: none; }
 }
 
 /* The scroll-pinned method height belongs to desktop only. On smaller

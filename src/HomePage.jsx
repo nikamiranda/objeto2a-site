@@ -761,7 +761,9 @@ export function HomePage() {
             <p className="o2-hero__lede">Psicanálise aplicada à leitura do que move pessoas, relações e trabalho.</p>
             <div className="o2-hero__actions">
               <a className="o2-hero__cta" href="#contato">Agende uma conversa <Arrow /></a>
-              <a className="o2-hero__secondary" href="#abertura">Conheça nossa abordagem <Arrow down /></a>
+              <a className="o2-hero__secondary" href="#abertura" aria-label="Conheça nossa abordagem">
+                <span className="o2-hero__secondary-label">Conheça nossa abordagem</span><Arrow down />
+              </a>
             </div>
             <p className="o2-hero__note"><i aria-hidden="true" />Passe pelas palavras. Arraste o fio para mudar seu percurso.</p>
           </div>
