@@ -15,6 +15,7 @@ const methodSteps = [
     verb: "Escutar",
     title: "Entrar no contexto real",
     image: "/fundadoras-v2.png",
+    alt: "Mônica Miranda e Kátia Puente em uma experiência da Objeto 2a",
     caption: "Leitura situada",
     text: "Conversas, observação e perguntas que revelam como o trabalho e as relações acontecem de verdade.",
     outputs: ["Escuta de atores-chave", "Leitura de contexto", "Questão central compartilhada"],
@@ -24,6 +25,7 @@ const methodSteps = [
     verb: "Compreender",
     title: "Ler o sistema por inteiro",
     image: "/case-redballoon-reuniao-v2.png",
+    alt: "Encontro remoto de diagnóstico com lideranças da Red Balloon",
     caption: "Diagnóstico vivo",
     text: "Conectamos cultura, rotina, afetos e estratégia para reconhecer padrões e possibilidades de movimento.",
     outputs: ["Hipóteses de trabalho", "Mapa de tensões", "Desenho singular da jornada"],
@@ -33,6 +35,7 @@ const methodSteps = [
     verb: "Ativar",
     title: "Fazer a mudança ganhar corpo",
     image: "/case-redballoon-dia2.jpg",
+    alt: "Experiência de desenvolvimento com lideranças da Red Balloon",
     caption: "Experiência aplicada",
     text: "Criamos situações de aprendizagem que ampliam autonomia, repertório e inteligência relacional.",
     outputs: ["Experiências práticas", "Acompanhamento qualitativo", "Próximos movimentos"],
@@ -47,6 +50,7 @@ const solutionCards = [
     audience: "Organizações",
     need: "Cultura",
     image: "/case-redballoon-reuniao-v2.png",
+    alt: "Encontro de diagnóstico com lideranças da Red Balloon",
     summary: "Jornadas completas, do diagnóstico ao acompanhamento.",
     formats: ["Diagnóstico organizacional", "Liderança e cultura", "Soft skills e CNV", "Relatório qualitativo"],
   },
@@ -57,6 +61,7 @@ const solutionCards = [
     audience: "Lideranças",
     need: "Desenvolvimento",
     image: "/mentoring.jpg",
+    alt: "Conversa de mentoria conduzida pela Objeto 2a",
     summary: "Percursos individuais ou coletivos com profundidade e aplicação.",
     formats: ["Liderança", "Carreira e reinvenção", "Marca pessoal", "Autoconhecimento aplicado"],
   },
@@ -67,6 +72,7 @@ const solutionCards = [
     audience: "Equipes",
     need: "Comunicação",
     image: "/case-redballoon-katia.png",
+    alt: "Workshop facilitado por Kátia Puente",
     summary: "Experiências concentradas para abrir repertórios e novas práticas.",
     formats: ["Comunicação e feedback", "Inteligência emocional", "Pensamento crítico", "Metodologias ativas"],
   },
@@ -77,6 +83,7 @@ const solutionCards = [
     audience: "Equipes",
     need: "Estratégia",
     image: "/facilitation.jpg",
+    alt: "Facilitação estratégica com uma equipe",
     summary: "Construção coletiva para questões que não cabem em respostas prontas.",
     formats: ["Desenho de futuros", "Alinhamento de equipes", "Clínicas de ideias", "Learning sprints"],
   },
@@ -87,6 +94,7 @@ const solutionCards = [
     audience: "Organizações",
     need: "Saúde relacional",
     image: "/nexo-humano-hero.png",
+    alt: "Material visual do programa Liderança sustentável 2026",
     summary: "Liderança, riscos psicossociais e autonomia humana no novo cenário organizacional.",
     formats: ["Inteligência emocional", "Comunicação não violenta", "NR-1 e riscos psicossociais", "Pensamento crítico na era da IA"],
   },
@@ -116,7 +124,7 @@ function SubHeader({ path }) {
   );
 }
 
-function PageHero({ eyebrow, title, intro, image, children }) {
+function PageHero({ eyebrow, title, intro, image, imageAlt, children }) {
   return (
     <section className="page-hero">
       <div className="page-hero__copy">
@@ -126,7 +134,7 @@ function PageHero({ eyebrow, title, intro, image, children }) {
         {children}
       </div>
       <figure>
-        <img src={image} alt="" />
+        <img src={image} alt={imageAlt} />
         <figcaption>OBJETO 2a · RIO DE JANEIRO</figcaption>
       </figure>
     </section>
@@ -164,6 +172,7 @@ function MethodPage() {
         title={<>Escuta profunda.<br />Movimento possível.</>}
         intro="Uma jornada não começa pelo formato. Começa pela leitura do contexto e da relação entre pessoas, trabalho e cultura."
         image="/mapa-empatia.jpg"
+        imageAlt="Matriz de trabalho usada para mapear escuta e ação"
       >
         <a className="text-link" href="#percurso">EXPLORAR O PERCURSO ↓</a>
       </PageHero>
@@ -190,7 +199,7 @@ function MethodPage() {
         </div>
         <article className="method-panel">
           <figure>
-            <img src={step.image} alt="" />
+            <img src={step.image} alt={step.alt} />
             <figcaption>{step.caption}</figcaption>
           </figure>
           <div>
@@ -244,6 +253,7 @@ function SolutionsPage() {
         title={<>A questão vem<br />antes do formato.</>}
         intro="Programas, mentorias, workshops e laboratórios desenhados a partir do contexto, das pessoas e do movimento desejado."
         image="/case-redballoon-dia2.jpg"
+        imageAlt="Experiência de desenvolvimento com lideranças da Red Balloon"
       />
       <section className="solution-finder section-pad">
         <div className="sub-section-head">
@@ -284,7 +294,7 @@ function SolutionsPage() {
             ))}
           </div>
           <article className="solution-browser__detail">
-            <img src={detail.image} alt="" />
+            <img src={detail.image} alt={detail.alt} />
             <div>
               <p className="overline">{detail.audience} · {detail.need}</p>
               <h2>{detail.title}</h2>
@@ -312,9 +322,9 @@ function SolutionsPage() {
 function WorksPage() {
   const [moment, setMoment] = useState(0);
   const moments = [
-    { label: "Contexto", image: "/case-redballoon-reuniao-v2.png", title: "Cinco unidades, um sistema de relações", text: "O trabalho partiu da escuta de lideranças e dos desafios vividos na operação." },
-    { label: "Experiência", image: "/case-redballoon-katia.png", title: "Soft skills no contexto real", text: "Encontros práticos conectaram comunicação, adaptabilidade e liderança às situações cotidianas." },
-    { label: "Movimento", image: "/case-redballoon-dia2.jpg", title: "Maturidade tática e inteligência relacional", text: "O acompanhamento qualitativo registrou repertórios, ajustes e próximos movimentos." },
+    { label: "Contexto", image: "/case-redballoon-reuniao-v2.png", alt: "Encontro remoto de diagnóstico com lideranças da Red Balloon", title: "Cinco unidades, um sistema de relações", text: "O trabalho partiu da escuta de lideranças e dos desafios vividos na operação." },
+    { label: "Experiência", image: "/case-redballoon-katia.png", alt: "Workshop conduzido por Kátia Puente com a Red Balloon", title: "Soft skills no contexto real", text: "Encontros práticos conectaram comunicação, adaptabilidade e liderança às situações cotidianas." },
+    { label: "Movimento", image: "/case-redballoon-dia2.jpg", alt: "Experiência de desenvolvimento com lideranças da Red Balloon", title: "Maturidade tática e inteligência relacional", text: "O acompanhamento qualitativo registrou repertórios, ajustes e próximos movimentos." },
   ];
   const item = moments[moment];
   return (
@@ -324,6 +334,7 @@ function WorksPage() {
         title={<>Ideias que ganham corpo<br />no contexto real.</>}
         intro="Projetos desenhados com cada cliente, com atenção à cultura, às relações e ao que precisa mudar na prática."
         image="/case-redballoon-monica.png"
+        imageAlt="Mônica Miranda em encontro profissional da Objeto 2a"
       />
       <section className="case-feature section-pad">
         <div className="case-feature__title">
@@ -343,7 +354,7 @@ function WorksPage() {
               </button>
             ))}
           </div>
-          <figure><img src={item.image} alt="" /></figure>
+          <figure><img src={item.image} alt={item.alt} /></figure>
           <article><p className="overline">0{moment + 1} · {item.label}</p><h3>{item.title}</h3><p>{item.text}</p></article>
         </div>
       </section>
@@ -356,10 +367,10 @@ function WorksPage() {
       <section className="work-mosaic section-pad">
         <div className="sub-section-head"><p className="overline">FORMATOS EM AÇÃO</p><h2>Cada encontro é também<br />um protótipo de futuro.</h2></div>
         <div>
-          <figure className="is-wide"><img src="/facilitation.jpg" alt="" /><figcaption>Facilitação estratégica</figcaption></figure>
-          <figure><img src="/bootcamp.png" alt="" /><figcaption>Bootcamps</figcaption></figure>
-          <figure><img src="/mentoring.jpg" alt="" /><figcaption>Mentorias</figcaption></figure>
-          <figure className="is-wide"><img src="/mapa-empatia.jpg" alt="" /><figcaption>Workshops experienciais</figcaption></figure>
+          <figure className="is-wide"><img src="/facilitation.jpg" alt="Facilitação estratégica com uma equipe" /><figcaption>Facilitação estratégica</figcaption></figure>
+          <figure><img src="/bootcamp.png" alt="Registros de bootcamps da Objeto 2a" /><figcaption>Bootcamps</figcaption></figure>
+          <figure><img src="/mentoring.jpg" alt="Conversa de mentoria conduzida pela Objeto 2a" /><figcaption>Mentorias</figcaption></figure>
+          <figure className="is-wide"><img src="/mapa-empatia.jpg" alt="Matriz usada em workshop experiencial" /><figcaption>Workshops experienciais</figcaption></figure>
         </div>
       </section>
       <ContactBand title="Seu contexto pode ser o próximo ponto de partida." />
@@ -393,6 +404,7 @@ function AboutPage() {
         title={<>Dois olhares.<br />Um campo de possibilidades.</>}
         intro="A Objeto 2a conecta repertórios complementares para trabalhar o que existe entre estratégia e subjetividade, desempenho e saúde relacional."
         image="/fundadoras-v2.png"
+        imageAlt="Mônica Miranda e Kátia Puente, fundadoras da Objeto 2a"
       />
       <section className="founder-studio section-pad">
         <div className="sub-section-head">
