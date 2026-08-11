@@ -529,7 +529,7 @@ export function HomePage() {
   const [formState, setFormState] = useState("idle");
 
   const driveHeroVideo = useCallback((intensity) => {
-    if (window.matchMedia("(max-width: 720px)").matches) return;
+    if (window.matchMedia("(max-width: 1120px), (hover: none), (pointer: coarse)").matches) return;
     const video = heroVideoRef.current[0];
     const hero = heroRef.current;
     if (!video || !hero) return;
@@ -562,14 +562,18 @@ export function HomePage() {
   useEffect(() => {
     const hero = heroRef.current;
     const videos = heroVideoRef.current.filter(Boolean);
-    const mobileQuery = window.matchMedia("(max-width: 720px)");
+    const autonomousQuery = window.matchMedia("(max-width: 1120px), (hover: none), (pointer: coarse)");
+    const mobileSourceQuery = window.matchMedia("(max-width: 720px)");
     if (!hero || videos.length !== 2) return undefined;
 
     let holdTimer = 0;
     let blendTimer = 0;
+    let resizeFrame = 0;
     const heroRect = hero.getBoundingClientRect();
     let isVisible = heroRect.bottom > 0 && heroRect.top < window.innerHeight;
     let activeIndex = 0;
+    const getViewportMode = () => `${autonomousQuery.matches}:${mobileSourceQuery.matches}`;
+    let viewportMode = getViewportMode();
 
     const clearCycle = () => {
       window.clearTimeout(holdTimer);
@@ -589,12 +593,12 @@ export function HomePage() {
     });
 
     const playActive = () => {
-      if (!isVisible || !mobileQuery.matches) return;
+      if (!isVisible || !autonomousQuery.matches) return;
       videos[activeIndex].play().catch(() => {});
     };
 
     const crossFade = () => {
-      if (!isVisible || !mobileQuery.matches) return;
+      if (!isVisible || !autonomousQuery.matches) return;
       const outgoingIndex = activeIndex;
       const incomingIndex = 1 - activeIndex;
       const outgoing = videos[outgoingIndex];
@@ -604,7 +608,7 @@ export function HomePage() {
       incoming.play().catch(() => {});
 
       const revealIncoming = () => {
-        if (!isVisible || !mobileQuery.matches) return;
+        if (!isVisible || !autonomousQuery.matches) return;
         activeIndex = incomingIndex;
         incoming.classList.add("is-incoming");
         requestAnimationFrame(() => requestAnimationFrame(() => incoming.classList.add("is-visible")));
@@ -625,13 +629,13 @@ export function HomePage() {
     const holdLastFrame = (index) => {
       if (index !== activeIndex) return;
       clearCycle();
-      if (!isVisible || !mobileQuery.matches) return;
+      if (!isVisible || !autonomousQuery.matches) return;
       holdTimer = window.setTimeout(crossFade, 10000);
     };
 
     const onVisibility = ([entry]) => {
       isVisible = entry.isIntersecting;
-      if (!isVisible || !mobileQuery.matches) {
+      if (!isVisible || !autonomousQuery.matches) {
         clearCycle();
         videos.forEach((video) => video.pause());
         return;
@@ -643,11 +647,12 @@ export function HomePage() {
     const resumeIfVisible = () => {
       const rect = hero.getBoundingClientRect();
       isVisible = rect.bottom > 0 && rect.top < window.innerHeight;
-      if (!document.hidden && mobileQuery.matches && isVisible) playActive();
+      if (!document.hidden && autonomousQuery.matches && isVisible) playActive();
     };
 
     const onBreakpointChange = () => {
       clearCycle();
+      viewportMode = getViewportMode();
       activeIndex = 0;
       videos.forEach((video, index) => {
         video.pause();
@@ -655,8 +660,17 @@ export function HomePage() {
         video.playbackRate = 1;
         video.classList.toggle("is-active", index === activeIndex);
         video.classList.remove("is-incoming", "is-visible");
+        video.load();
       });
-      if (mobileQuery.matches && isVisible) playActive();
+      resumeIfVisible();
+    };
+
+    const syncViewport = () => {
+      cancelAnimationFrame(resizeFrame);
+      resizeFrame = requestAnimationFrame(() => {
+        if (getViewportMode() !== viewportMode) onBreakpointChange();
+        else resumeIfVisible();
+      });
     };
 
     const endedHandlers = videos.map((_, index) => () => holdLastFrame(index));
@@ -670,11 +684,15 @@ export function HomePage() {
     });
     document.addEventListener("visibilitychange", resumeIfVisible);
     window.addEventListener("pageshow", resumeIfVisible);
-    mobileQuery.addEventListener("change", onBreakpointChange);
+    window.addEventListener("resize", syncViewport, { passive: true });
+    window.addEventListener("orientationchange", syncViewport);
+    autonomousQuery.addEventListener("change", syncViewport);
+    mobileSourceQuery.addEventListener("change", syncViewport);
     playActive();
 
     return () => {
       clearCycle();
+      cancelAnimationFrame(resizeFrame);
       observer.disconnect();
       videos.forEach((video, index) => {
         video.removeEventListener("ended", endedHandlers[index]);
@@ -683,7 +701,10 @@ export function HomePage() {
       });
       document.removeEventListener("visibilitychange", resumeIfVisible);
       window.removeEventListener("pageshow", resumeIfVisible);
-      mobileQuery.removeEventListener("change", onBreakpointChange);
+      window.removeEventListener("resize", syncViewport);
+      window.removeEventListener("orientationchange", syncViewport);
+      autonomousQuery.removeEventListener("change", syncViewport);
+      mobileSourceQuery.removeEventListener("change", syncViewport);
     };
   }, []);
 
