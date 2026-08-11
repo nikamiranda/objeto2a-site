@@ -1113,6 +1113,8 @@ body { min-height: 100dvh; margin: 0; color: var(--o2-ink); background: var(--o2
       backdrop-filter .42s ease;
   }
 
+  .o2-header.is-menu-open { overflow: visible; }
+
   .o2-header nav,
   .o2-header nav.is-open {
     display: flex;
