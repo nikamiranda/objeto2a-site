@@ -65,7 +65,6 @@ Before making substantial visual changes, use the Product Design plugin's `get-c
 
 - In the “Da questão real ao formato certo” solutions browser, the first program image is the in-person group selfie preserved as `case-redballoon-grupo.png`; do not substitute the workflow matrix or either remote-meeting screenshot. The capsule header should transition progressively out of the hero instead of changing with a hard visual cut.
 - In that solutions browser, media should fill the panel’s image side and dissolve into the adjacent copy with a directional fade—horizontal toward the text on desktop and vertical toward the text on mobile—rather than appearing as a smaller rectangle nested inside the panel.
-- The requested “header transition” includes the seam between the opening hero and the first content section, not only the capsule navigation’s color change. Do not solve that seam with a white fade. Continue the hero’s living terracotta thread into an interactive boundary that responds to pointer and scroll and appears to pull the first editorial section into view.
 
 When implementing from a selected generated mock, treat that image as the source of truth for layout, component anatomy, density, spacing, color, typography, visible content, and hierarchy.
 
