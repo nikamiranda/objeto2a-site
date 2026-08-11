@@ -497,7 +497,6 @@ export function HomePage() {
   useEffect(() => {
     const hero = heroRef.current;
     const videos = heroVideoRef.current.filter(Boolean);
-    const mobileQuery = window.matchMedia("(max-width: 720px)");
     if (!hero || videos.length !== 2) return undefined;
 
     let holdTimer = 0;
@@ -524,12 +523,12 @@ export function HomePage() {
     });
 
     const playActive = () => {
-      if (!isVisible || !mobileQuery.matches) return;
+      if (!isVisible) return;
       videos[activeIndex].play().catch(() => {});
     };
 
     const crossFade = () => {
-      if (!isVisible || !mobileQuery.matches) return;
+      if (!isVisible) return;
       const outgoingIndex = activeIndex;
       const incomingIndex = 1 - activeIndex;
       const outgoing = videos[outgoingIndex];
@@ -539,7 +538,7 @@ export function HomePage() {
       incoming.play().catch(() => {});
 
       const revealIncoming = () => {
-        if (!isVisible || !mobileQuery.matches) return;
+        if (!isVisible) return;
         activeIndex = incomingIndex;
         incoming.classList.add("is-incoming");
         requestAnimationFrame(() => requestAnimationFrame(() => incoming.classList.add("is-visible")));
@@ -560,13 +559,13 @@ export function HomePage() {
     const holdLastFrame = (index) => {
       if (index !== activeIndex) return;
       clearCycle();
-      if (!isVisible || !mobileQuery.matches) return;
+      if (!isVisible) return;
       holdTimer = window.setTimeout(crossFade, 10000);
     };
 
     const onVisibility = ([entry]) => {
       isVisible = entry.isIntersecting;
-      if (!isVisible || !mobileQuery.matches) {
+      if (!isVisible) {
         clearCycle();
         videos.forEach((video) => video.pause());
         return;
@@ -575,16 +574,10 @@ export function HomePage() {
       else playActive();
     };
 
-    const onBreakpointChange = () => {
-      clearCycle();
-      if (mobileQuery.matches && isVisible) playActive();
-      else videos.forEach((video) => video.pause());
-    };
-
     const resumeIfVisible = () => {
       const rect = hero.getBoundingClientRect();
       isVisible = rect.bottom > 0 && rect.top < window.innerHeight;
-      if (!document.hidden && mobileQuery.matches && isVisible) playActive();
+      if (!document.hidden && isVisible) playActive();
     };
 
     const endedHandlers = videos.map((_, index) => () => holdLastFrame(index));
@@ -596,7 +589,6 @@ export function HomePage() {
       video.addEventListener("loadeddata", resumeIfVisible);
       video.addEventListener("canplay", resumeIfVisible);
     });
-    mobileQuery.addEventListener("change", onBreakpointChange);
     document.addEventListener("visibilitychange", resumeIfVisible);
     window.addEventListener("pageshow", resumeIfVisible);
     playActive();
@@ -609,7 +601,6 @@ export function HomePage() {
         video.removeEventListener("loadeddata", resumeIfVisible);
         video.removeEventListener("canplay", resumeIfVisible);
       });
-      mobileQuery.removeEventListener("change", onBreakpointChange);
       document.removeEventListener("visibilitychange", resumeIfVisible);
       window.removeEventListener("pageshow", resumeIfVisible);
     };
@@ -803,15 +794,17 @@ export function HomePage() {
             {[0, 1].map((layer) => (
               <video
                 ref={(video) => { heroVideoRef.current[layer] = video; }}
-                className={`o2-hero__mobile-video${layer === 0 ? " is-active" : ""}`}
-                src="/hero-architecture-mobile.mp4"
+                className={`o2-hero__video${layer === 0 ? " is-active" : ""}`}
                 autoPlay={layer === 0}
                 muted
                 playsInline
                 preload="auto"
                 aria-hidden="true"
                 key={layer}
-              />
+              >
+                <source media="(max-width: 720px)" src="/hero-architecture-mobile.mp4" type="video/mp4" />
+                <source src="/hero-architecture-loop.mp4" type="video/mp4" />
+              </video>
             ))}
           </figure>
         </div>
