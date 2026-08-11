@@ -754,11 +754,10 @@ export function HomePage() {
     const contact = contactRef.current;
     if (!contact) return undefined;
 
-    const observer = new IntersectionObserver(([entry]) => {
-      if (!entry.isIntersecting) return;
-      setContactVisible(true);
-      observer.disconnect();
-    }, { rootMargin: "320px 0px 0px", threshold: 0 });
+    const observer = new IntersectionObserver(
+      ([entry]) => setContactVisible(entry.isIntersecting),
+      { rootMargin: "320px 0px 0px", threshold: 0 },
+    );
 
     observer.observe(contact);
     return () => observer.disconnect();

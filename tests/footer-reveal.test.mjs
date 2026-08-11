@@ -7,10 +7,15 @@ const homePage = await readFile(new URL("../src/HomePage.jsx", import.meta.url),
 
 test("keeps the fixed footer covered until the closing contact section", () => {
   const aboutRule = css.match(/\.o2-about\s*\{[^}]+\}/)?.[0] ?? "";
+  const observerCallback = homePage.match(
+    /const contact = contactRef\.current;[\s\S]+?const observer = new IntersectionObserver\(([\s\S]+?)\n\s*observer\.observe\(contact\);/,
+  )?.[1] ?? "";
 
   assert.match(aboutRule, /background:\s*var\(--o2-paper\)/);
   assert.match(css, /\.o2-footer\s*\{[^}]+opacity:\s*0/);
   assert.match(css, /\.o2-footer\.is-reveal-ready\s*\{[^}]+opacity:\s*1/);
+  assert.match(observerCallback, /setContactVisible\(entry\.isIntersecting\)/);
+  assert.doesNotMatch(observerCallback, /observer\.disconnect\(\)/);
 });
 
 test("keeps the complete institutional footer in the homepage", () => {
@@ -22,7 +27,6 @@ test("keeps the complete institutional footer in the homepage", () => {
   assert.match(homePage, /Acompanhe/);
   assert.match(homePage, /Todos os direitos reservados\./);
   assert.match(homePage, /Rio de Janeiro · Brasil/);
-  assert.match(homePage, /if \(!entry\.isIntersecting\) return;[\s\S]+setContactVisible\(true\);[\s\S]+observer\.disconnect\(\);/);
   assert.match(footerRule, /grid-template-rows:\s*minmax\(0, 1fr\) auto/);
   assert.match(footerRule, /row-gap:\s*24px/);
   assert.doesNotMatch(footerRule, /[;{]\s*gap:\s*clamp\(48px, 7vw, 120px\)/);
