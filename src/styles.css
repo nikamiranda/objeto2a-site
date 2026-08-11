@@ -1570,6 +1570,7 @@ textarea:focus-visible {
   .page-hero h1 { font-size: clamp(2.6rem, 12vw, 3.5rem); }
   .page-hero__copy > p:not(.overline) { margin-top: 24px; font-size: .9rem; }
   .page-hero figure { min-height: 460px; height: 120vw; border-radius: 20px; }
+  .page-hero .text-link { min-height: 44px; display: inline-flex; align-items: center; }
 
   .subpage .section-pad { padding: 72px 18px; }
   .sub-section-head { margin-bottom: 38px; display: block; }
