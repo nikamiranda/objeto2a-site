@@ -61,6 +61,10 @@ Before making substantial visual changes, use the Product Design plugin's `get-c
 - On mobile, use the supplied portrait chair artwork as the dedicated hero source. Keep it top-aligned and fully visible across the width so the upper arch, the words and the vase are not lost to a desktop-style `cover` crop.
 - The mobile hamburger must feel deliberately choreographed rather than switch open/closed abruptly. Morph the icon into a close state, unfold the menu from the trigger, stagger link entrances, animate the reverse path on close and respect `prefers-reduced-motion`.
 - On mobile, the dedicated hero video should play once, hold its final frame for about 10 seconds, then restart through a true two-layer crossfade. Never expose a black frame or make the restart cut visible, and pause the cycle while the hero is outside the viewport.
+- The final “Uma conversa para começar” section keeps its contact form, but the form submit is the only CTA; do not add a competing direct-contact link. Give the submit button a restrained shiny treatment and animate the editorial text. Preserve the footer’s established aesthetic, keep it hidden everywhere else, and reveal it from behind the closing section only at the end; keep mobile footer copy deliberately terse.
+
+- In the “Da questão real ao formato certo” solutions browser, the first program image is the in-person group selfie preserved as `case-redballoon-grupo.png`; do not substitute the workflow matrix or either remote-meeting screenshot. The capsule header should transition progressively out of the hero instead of changing with a hard visual cut.
+- In that solutions browser, media should fill the panel’s image side and dissolve into the adjacent copy with a directional fade—horizontal toward the text on desktop and vertical toward the text on mobile—rather than appearing as a smaller rectangle nested inside the panel.
 
 When implementing from a selected generated mock, treat that image as the source of truth for layout, component anatomy, density, spacing, color, typography, visible content, and hierarchy.
 

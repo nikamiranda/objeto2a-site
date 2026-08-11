@@ -59,8 +59,8 @@ const services = [
     title: "Programas para organizações",
     text: "Jornadas completas para lideranças, equipes e culturas em movimento. Do diagnóstico ao acompanhamento qualitativo.",
     meta: "Diagnóstico · Liderança · Cultura · NR-1",
-    image: "/case-redballoon-dia2.jpg",
-    alt: "Equipe reunida em uma jornada de desenvolvimento",
+    image: "/case-redballoon-grupo.png",
+    alt: "Grupo reunido após uma jornada de desenvolvimento da Objeto 2a",
   },
   {
     title: "Mentorias",
@@ -73,8 +73,8 @@ const services = [
     title: "Workshops & masterclasses",
     text: "Experiências concentradas para abrir repertórios, mobilizar conversas e ativar novas práticas.",
     meta: "Comunicação · Inteligência emocional · IA",
-    image: "/case-redballoon-katia.png",
-    alt: "Workshop facilitado por Kátia Puente",
+    image: "/case-redballoon-grupo-horizontal.jpg",
+    alt: "Grupo reunido após um workshop da Objeto 2a com a Red Balloon",
   },
   {
     title: "Facilitação & laboratórios",
@@ -471,8 +471,10 @@ function MethodStory() {
 
 export function HomePage() {
   const heroRef = useRef(null);
+  const headerRef = useRef(null);
   const heroVideoRef = useRef([]);
   const fieldVideoRef = useRef(null);
+  const contactRef = useRef(null);
   const serviceTimerRef = useRef(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [headerOnLight, setHeaderOnLight] = useState(false);
@@ -480,6 +482,7 @@ export function HomePage() {
   const [serviceDirection, setServiceDirection] = useState("forward");
   const [servicePhase, setServicePhase] = useState("idle");
   const [activeFounder, setActiveFounder] = useState(0);
+  const [contactVisible, setContactVisible] = useState(false);
   const [formState, setFormState] = useState("idle");
 
   const setFieldVideo = useCallback((video) => {
@@ -621,6 +624,9 @@ export function HomePage() {
         const trigger = Number.parseFloat(
           getComputedStyle(document.documentElement).getPropertyValue("--o2-header-resting-bottom"),
         ) || 108;
+        const transitionDistance = Math.min(220, Math.max(150, window.innerHeight * 0.2));
+        const headerProgress = Math.min(1, Math.max(0, (trigger + transitionDistance - heroBottom) / transitionDistance));
+        headerRef.current?.style.setProperty("--o2-header-progress", headerProgress.toFixed(3));
         setHeaderOnLight(isHeaderOverLightSection(heroBottom, trigger));
       });
     };
@@ -670,6 +676,19 @@ export function HomePage() {
       video.removeEventListener("ended", play);
       document.removeEventListener("visibilitychange", resumeAfterVisibilityChange);
     };
+  }, []);
+
+  useEffect(() => {
+    const contact = contactRef.current;
+    if (!contact) return undefined;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setContactVisible(entry.isIntersecting),
+      { rootMargin: "320px 0px 0px", threshold: 0 },
+    );
+
+    observer.observe(contact);
+    return () => observer.disconnect();
   }, []);
 
   function handleSubmit(event) {
@@ -723,7 +742,10 @@ export function HomePage() {
 
   return (
     <main className="o2-home" id="inicio">
-      <header className={`o2-header ${headerOnLight || menuOpen ? "is-solid" : ""}`}>
+      <header
+        ref={headerRef}
+        className={`o2-header ${headerOnLight || menuOpen ? "is-solid" : ""} ${menuOpen ? "is-menu-open" : ""}`}
+      >
         <Brand inverse={!headerOnLight && !menuOpen} href="#inicio" />
         <nav className={menuOpen ? "is-open" : ""} aria-label="Navegação principal">
           {navItems.map((item) => (
@@ -882,6 +904,7 @@ export function HomePage() {
           >
             <figure className="o2-solution-browser__media">
               <img
+                key={service.image}
                 data-cms-key={`solution-${activeService + 1}-image`}
                 src={service.image}
                 alt={service.alt}
@@ -986,15 +1009,24 @@ export function HomePage() {
         </div>
       </section>
 
-      <section className="o2-contact" id="contato" data-cms-section-key="contato">
+      <section
+        ref={contactRef}
+        className={`o2-contact ${contactVisible ? "is-visible" : ""}`}
+        id="contato"
+        data-cms-section-key="contato"
+      >
         <div className="o2-contact__lead">
-          <p className="o2-kicker">Uma conversa para começar</p>
-          <h2>Traga o desafio.<br /><em>A gente começa pela escuta.</em></h2>
-          <p>Conte o que está pedindo movimento. A partir da questão real, pensamos juntos no melhor ponto de partida.</p>
-          <a href={whatsapp} target="_blank" rel="noreferrer">Conversar direto no WhatsApp <Arrow /></a>
+          <p className="o2-kicker o2-contact__reveal">Uma conversa para começar</p>
+          <h2>
+            <span className="o2-contact__line"><span>Traga o desafio.</span></span>
+            <span className="o2-contact__line"><em>A gente começa pela escuta.</em></span>
+          </h2>
+          <p className="o2-contact__intro o2-contact__reveal">
+            Conte o que está pedindo movimento. A partir da questão real, pensamos juntos no melhor ponto de partida.
+          </p>
         </div>
 
-        <form className="o2-contact__form" onSubmit={handleSubmit}>
+        <form className="o2-contact__form o2-contact__reveal" onSubmit={handleSubmit}>
           <div className="o2-contact__form-heading">
             <span>Mensagem</span>
             <h3>Qual desafio sua organização está vivendo?</h3>
@@ -1002,14 +1034,14 @@ export function HomePage() {
           <label>Nome<input name="name" required autoComplete="name" placeholder="Seu nome" /></label>
           <label>E-mail<input name="email" required type="email" autoComplete="email" placeholder="voce@empresa.com" /></label>
           <label>O que precisa se mover?<textarea name="message" required rows="3" placeholder="Conte em poucas palavras" /></label>
-          <button type="submit">Enviar pelo WhatsApp <Arrow /></button>
+          <button className="o2-contact__cta" type="submit"><span>Enviar pelo WhatsApp</span> <Arrow /></button>
           <p className="o2-form-status" role="status">
             {formState === "sent" ? "O WhatsApp será aberto com a mensagem preenchida." : " "}
           </p>
         </form>
       </section>
 
-      <footer className="o2-footer">
+      <footer className={`o2-footer ${contactVisible ? "is-reveal-ready" : ""}`}>
         <Brand inverse />
         <nav aria-label="Navegação do rodapé">
           {navItems.map((item) => <a href={item.href} key={item.href}>{item.label}</a>)}
@@ -1020,7 +1052,7 @@ export function HomePage() {
         </div>
         <div className="o2-footer__meta">
           <span>© {new Date().getFullYear()} Objeto 2a</span>
-          <span>Rio de Janeiro · Brasil</span>
+          <span className="o2-footer__location">Rio de Janeiro · Brasil</span>
           <a href="#inicio">Voltar ao início ↑</a>
         </div>
       </footer>
