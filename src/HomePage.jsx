@@ -288,6 +288,83 @@ function HeroTrace({ heroRef }) {
   );
 }
 
+function HeroOpeningHandoff() {
+  const shellRef = useRef(null);
+  const fillRef = useRef(null);
+  const lineRef = useRef(null);
+
+  useEffect(() => {
+    const shell = shellRef.current;
+    const fill = fillRef.current;
+    const line = lineRef.current;
+    if (!shell || !fill || !line) return undefined;
+
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const pointCount = 9;
+    const pointer = { x: 800, y: 82, smoothX: 800, smoothY: 82, active: false };
+    let scrollTarget = 0;
+    let scrollSmooth = 0;
+    let frame = 0;
+
+    const updateScroll = () => {
+      const rect = shell.getBoundingClientRect();
+      scrollTarget = Math.min(1, Math.max(0, (window.innerHeight - rect.top) / (window.innerHeight * .5)));
+    };
+
+    const updatePointer = (event) => {
+      const rect = shell.getBoundingClientRect();
+      pointer.x = ((event.clientX - rect.left) / rect.width) * 1600;
+      pointer.y = ((event.clientY - rect.top) / rect.height) * 180;
+      pointer.active = event.clientX >= rect.left && event.clientX <= rect.right
+        && event.clientY >= rect.top - 48 && event.clientY <= rect.bottom + 48;
+    };
+
+    const draw = (time = 0) => {
+      scrollSmooth += (scrollTarget - scrollSmooth) * (reducedMotion ? 1 : .075);
+      pointer.smoothX += (pointer.x - pointer.smoothX) * .1;
+      pointer.smoothY += (pointer.y - pointer.smoothY) * .1;
+
+      const points = Array.from({ length: pointCount }, (_, index) => {
+        const x = (1600 / (pointCount - 1)) * index;
+        const edgeLock = Math.sin((Math.PI * index) / (pointCount - 1));
+        const baseY = 116 - scrollSmooth * 48 + Math.sin(index * 1.13) * 12 * edgeLock;
+        const idleY = reducedMotion ? 0 : Math.sin(time * .00055 + index * .72) * 4 * edgeLock;
+        const distance = Math.abs(x - pointer.smoothX);
+        const influence = pointer.active && !reducedMotion ? Math.exp(-Math.pow(distance / 260, 2)) * edgeLock : 0;
+        const pointerPull = Math.max(-42, Math.min(42, pointer.smoothY - baseY)) * influence * .58;
+        return { x, y: baseY + idleY + pointerPull };
+      });
+
+      const linePath = tracePath(points);
+      line.setAttribute("d", linePath);
+      fill.setAttribute("d", `${linePath} L1600 180 L0 180 Z`);
+      if (!reducedMotion) frame = requestAnimationFrame(draw);
+    };
+
+    updateScroll();
+    draw();
+    window.addEventListener("scroll", updateScroll, { passive: true });
+    window.addEventListener("resize", updateScroll);
+    window.addEventListener("pointermove", updatePointer, { passive: true });
+
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", updateScroll);
+      window.removeEventListener("resize", updateScroll);
+      window.removeEventListener("pointermove", updatePointer);
+    };
+  }, []);
+
+  return (
+    <div ref={shellRef} className="o2-opening__handoff" aria-hidden="true">
+      <svg viewBox="0 0 1600 180" preserveAspectRatio="none">
+        <path ref={fillRef} className="o2-opening__handoff-fill" />
+        <path ref={lineRef} className="o2-opening__handoff-line" />
+      </svg>
+    </div>
+  );
+}
+
 function ChapterNav() {
   const [activeId, setActiveId] = useState("inicio");
   const [progress, setProgress] = useState(0);
@@ -819,6 +896,7 @@ export function HomePage() {
       </section>
 
       <section className="o2-opening" id="abertura" aria-labelledby="opening-title">
+        <HeroOpeningHandoff />
         <p className="o2-kicker">A abordagem Objeto 2a</p>
         <div className="o2-opening__statement">
           <h2 id="opening-title">Ler o que está em jogo para dar direção ao que precisa mudar.</h2>
