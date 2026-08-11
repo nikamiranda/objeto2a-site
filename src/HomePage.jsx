@@ -29,6 +29,8 @@ const methodStages = [
     text: "Escutamos pessoas, lemos indicadores e observamos o trabalho como ele realmente acontece.",
     image: "/fundadoras-v2.png",
     alt: "Mônica Miranda e Kátia Puente, fundadoras da Objeto 2a",
+    width: 1053,
+    height: 1494,
   },
   {
     number: "02",
@@ -37,6 +39,8 @@ const methodStages = [
     text: "Conectamos cultura, rotina, afetos e estratégia para desenhar uma intervenção própria para aquele contexto.",
     image: "/case-redballoon-reuniao-v2.png",
     alt: "Encontro de diagnóstico com a equipe Red Balloon",
+    width: 1593,
+    height: 987,
   },
   {
     number: "03",
@@ -45,6 +49,8 @@ const methodStages = [
     text: "Criamos experiências aplicáveis e acompanhamos qualitativamente o que muda nas relações e nas práticas.",
     image: "/case-redballoon-dia2.jpg",
     alt: "Experiência de desenvolvimento com lideranças",
+    width: 1920,
+    height: 1080,
   },
 ];
 
@@ -408,7 +414,7 @@ function MethodStory() {
           {methodStages.map((stage, index) => (
             <article className={activeStage === index ? "is-active" : ""} aria-hidden={activeStage !== index} key={stage.number}>
               <figure>
-                <img data-cms-key={`method-${stage.number}-image`} src={stage.image} alt={stage.alt} loading="lazy" decoding="async" />
+                <img data-cms-key={`method-${stage.number}-image`} src={stage.image} alt={stage.alt} width={stage.width} height={stage.height} loading="lazy" decoding="async" />
               </figure>
               <div>
                 <span>{stage.number} / 03</span>
@@ -427,7 +433,7 @@ function MethodStory() {
         </header>
         {methodStages.map((stage) => (
           <article key={stage.number}>
-            <figure><img data-cms-key={`method-${stage.number}-image`} src={stage.image} alt={stage.alt} loading="lazy" decoding="async" /></figure>
+            <figure><img data-cms-key={`method-${stage.number}-image`} src={stage.image} alt={stage.alt} width={stage.width} height={stage.height} loading="lazy" decoding="async" /></figure>
             <span>{stage.number} / 03 · {stage.eyebrow}</span>
             <h3>{stage.title}</h3>
             <p>{stage.text}</p>
@@ -696,7 +702,7 @@ export function HomePage() {
         </header>
         <div className="o2-case__body o2-reveal">
           <figure>
-            <img data-cms-key="red-balloon-case-image" src="/case-redballoon-reuniao-v2.png" alt="Encontro de diagnóstico com lideranças da Red Balloon" loading="lazy" decoding="async" />
+            <img data-cms-key="red-balloon-case-image" src="/case-redballoon-reuniao-v2.png" alt="Encontro de diagnóstico com lideranças da Red Balloon" width="1593" height="987" loading="lazy" decoding="async" />
           </figure>
           <div className="o2-case__copy">
             <span>Red Balloon · 2025</span>
@@ -722,7 +728,7 @@ export function HomePage() {
 
       <section className="o2-about" id="sobre" data-cms-section-key="sobre">
         <figure className="o2-about__photo o2-reveal">
-          <img data-cms-key="founders-image" src="/fundadoras-v2.png" alt="Mônica Miranda e Kátia Puente, fundadoras da Objeto 2a" loading="lazy" decoding="async" />
+          <img data-cms-key="founders-image" src="/fundadoras-v2.png" alt="Mônica Miranda e Kátia Puente, fundadoras da Objeto 2a" width="1053" height="1494" loading="lazy" decoding="async" />
           <figcaption>Mônica Miranda + Kátia Puente</figcaption>
         </figure>
         <div className="o2-about__copy o2-reveal">
