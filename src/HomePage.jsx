@@ -499,7 +499,8 @@ export function HomePage() {
 
     let holdTimer = 0;
     let blendTimer = 0;
-    let isVisible = false;
+    const heroRect = hero.getBoundingClientRect();
+    let isVisible = heroRect.bottom > 0 && heroRect.top < window.innerHeight;
     let activeIndex = 0;
 
     const clearCycle = () => {
@@ -577,18 +578,37 @@ export function HomePage() {
       else videos.forEach((video) => video.pause());
     };
 
+    const resumeIfVisible = () => {
+      const rect = hero.getBoundingClientRect();
+      isVisible = rect.bottom > 0 && rect.top < window.innerHeight;
+      if (!document.hidden && mobileQuery.matches && isVisible) playActive();
+    };
+
     const endedHandlers = videos.map((_, index) => () => holdLastFrame(index));
 
     const observer = new IntersectionObserver(onVisibility, { threshold: 0.1 });
     observer.observe(hero);
-    videos.forEach((video, index) => video.addEventListener("ended", endedHandlers[index]));
+    videos.forEach((video, index) => {
+      video.addEventListener("ended", endedHandlers[index]);
+      video.addEventListener("loadeddata", resumeIfVisible);
+      video.addEventListener("canplay", resumeIfVisible);
+    });
     mobileQuery.addEventListener("change", onBreakpointChange);
+    document.addEventListener("visibilitychange", resumeIfVisible);
+    window.addEventListener("pageshow", resumeIfVisible);
+    playActive();
 
     return () => {
       clearCycle();
       observer.disconnect();
-      videos.forEach((video, index) => video.removeEventListener("ended", endedHandlers[index]));
+      videos.forEach((video, index) => {
+        video.removeEventListener("ended", endedHandlers[index]);
+        video.removeEventListener("loadeddata", resumeIfVisible);
+        video.removeEventListener("canplay", resumeIfVisible);
+      });
       mobileQuery.removeEventListener("change", onBreakpointChange);
+      document.removeEventListener("visibilitychange", resumeIfVisible);
+      window.removeEventListener("pageshow", resumeIfVisible);
     };
   }, []);
 
@@ -761,6 +781,7 @@ export function HomePage() {
                 ref={(video) => { heroVideoRef.current[layer] = video; }}
                 className={`o2-hero__mobile-video${layer === 0 ? " is-active" : ""}`}
                 src="/hero-architecture-mobile.mp4"
+                autoPlay={layer === 0}
                 muted
                 playsInline
                 preload="auto"
