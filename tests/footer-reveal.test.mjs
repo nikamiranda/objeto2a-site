@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 const css = await readFile(new URL("../src/home-redesign.css", import.meta.url), "utf8");
+const homePage = await readFile(new URL("../src/HomePage.jsx", import.meta.url), "utf8");
 
 test("keeps the fixed footer covered until the closing contact section", () => {
   const aboutRule = css.match(/\.o2-about\s*\{[^}]+\}/)?.[0] ?? "";
@@ -10,6 +11,16 @@ test("keeps the fixed footer covered until the closing contact section", () => {
   assert.match(aboutRule, /background:\s*var\(--o2-paper\)/);
   assert.match(css, /\.o2-footer\s*\{[^}]+opacity:\s*0/);
   assert.match(css, /\.o2-footer\.is-reveal-ready\s*\{[^}]+opacity:\s*1/);
+});
+
+test("keeps the complete institutional footer in the homepage", () => {
+  assert.match(homePage, /function SiteFooter/);
+  assert.match(homePage, /Psicanálise aplicada à leitura do que move pessoas, relações e trabalho\./);
+  assert.match(homePage, /Navegação/);
+  assert.match(homePage, /Acompanhe/);
+  assert.match(homePage, /Todos os direitos reservados\./);
+  assert.match(homePage, /Rio de Janeiro · Brasil/);
+  assert.match(homePage, /if \(!entry\.isIntersecting\) return;[\s\S]+setContactVisible\(true\);[\s\S]+observer\.disconnect\(\);/);
 });
 
 test("gives the animated contact headline enough room for every glyph", () => {

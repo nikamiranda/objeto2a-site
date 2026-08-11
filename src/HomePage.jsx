@@ -480,6 +480,38 @@ function MethodStory() {
   );
 }
 
+function SiteFooter({ reveal }) {
+  return (
+    <footer className={`o2-footer ${reveal ? "is-reveal-ready" : ""}`}>
+      <div className="o2-footer__identity">
+        <Brand inverse />
+        <p>Psicanálise aplicada à leitura do que move pessoas, relações e trabalho.</p>
+      </div>
+      <div className="o2-footer__group">
+        <span className="o2-footer__eyebrow">Navegação</span>
+        <nav aria-label="Navegação do rodapé">
+          {navItems.map((item) => <a href={item.href} key={item.href}>{item.label}</a>)}
+        </nav>
+      </div>
+      <div className="o2-footer__group o2-footer__group--social">
+        <span className="o2-footer__eyebrow">Acompanhe</span>
+        <div className="o2-footer__social">
+          <a href="https://www.instagram.com/objeto2a/" target="_blank" rel="noreferrer">Instagram <Arrow /></a>
+          <a href="https://www.linkedin.com/company/objeto2a" target="_blank" rel="noreferrer">LinkedIn <Arrow /></a>
+        </div>
+        <a className="o2-footer__back" href="#inicio">
+          <span>Voltar ao início</span>
+          <i aria-hidden="true">↑</i>
+        </a>
+      </div>
+      <div className="o2-footer__meta">
+        <span>© {new Date().getFullYear()} Objeto 2a Consultoria. Todos os direitos reservados.</span>
+        <span className="o2-footer__location">Rio de Janeiro · Brasil</span>
+      </div>
+    </footer>
+  );
+}
+
 export function HomePage() {
   const heroRef = useRef(null);
   const headerRef = useRef(null);
@@ -722,10 +754,11 @@ export function HomePage() {
     const contact = contactRef.current;
     if (!contact) return undefined;
 
-    const observer = new IntersectionObserver(
-      ([entry]) => setContactVisible(entry.isIntersecting),
-      { rootMargin: "320px 0px 0px", threshold: 0 },
-    );
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      setContactVisible(true);
+      observer.disconnect();
+    }, { rootMargin: "320px 0px 0px", threshold: 0 });
 
     observer.observe(contact);
     return () => observer.disconnect();
@@ -1082,33 +1115,7 @@ export function HomePage() {
         </form>
       </section>
 
-      <footer className={`o2-footer ${contactVisible ? "is-reveal-ready" : ""}`}>
-        <div className="o2-footer__identity">
-          <Brand inverse />
-          <p>Psicanálise aplicada à leitura do que move pessoas, relações e trabalho.</p>
-        </div>
-        <div className="o2-footer__group">
-          <span className="o2-footer__eyebrow">Navegação</span>
-          <nav aria-label="Navegação do rodapé">
-            {navItems.map((item) => <a href={item.href} key={item.href}>{item.label}</a>)}
-          </nav>
-        </div>
-        <div className="o2-footer__group o2-footer__group--social">
-          <span className="o2-footer__eyebrow">Acompanhe</span>
-          <div className="o2-footer__social">
-            <a href="https://www.instagram.com/objeto2a/" target="_blank" rel="noreferrer">Instagram <Arrow /></a>
-            <a href="https://www.linkedin.com/company/objeto2a" target="_blank" rel="noreferrer">LinkedIn <Arrow /></a>
-          </div>
-          <a className="o2-footer__back" href="#inicio">
-            <span>Voltar ao início</span>
-            <i aria-hidden="true">↑</i>
-          </a>
-        </div>
-        <div className="o2-footer__meta">
-          <span>© {new Date().getFullYear()} Objeto 2a Consultoria. Todos os direitos reservados.</span>
-          <span className="o2-footer__location">Rio de Janeiro · Brasil</span>
-        </div>
-      </footer>
+      <SiteFooter reveal={contactVisible} />
     </main>
   );
 }
