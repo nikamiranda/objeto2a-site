@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Brand, BrandSymbol } from "./Brand.jsx";
 import { getActiveChapter, getPageProgress, isHeaderOverLightSection } from "./interactionState.js";
 
@@ -446,6 +446,7 @@ function MethodStory() {
 
 export function HomePage() {
   const heroRef = useRef(null);
+  const fieldVideoRef = useRef(null);
   const serviceTimerRef = useRef(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [headerOnLight, setHeaderOnLight] = useState(false);
@@ -454,6 +455,15 @@ export function HomePage() {
   const [servicePhase, setServicePhase] = useState("idle");
   const [activeFounder, setActiveFounder] = useState(0);
   const [formState, setFormState] = useState("idle");
+
+  const setFieldVideo = useCallback((video) => {
+    fieldVideoRef.current = video;
+    if (!video) return;
+    video.defaultMuted = true;
+    video.muted = true;
+    video.loop = true;
+    video.setAttribute("muted", "");
+  }, []);
 
   useEffect(() => {
     let frame = 0;
@@ -482,6 +492,37 @@ export function HomePage() {
       const image = new Image();
       image.src = item.image;
     });
+  }, []);
+
+  useEffect(() => {
+    const video = fieldVideoRef.current;
+    if (!video) return undefined;
+
+    const play = () => {
+      video.defaultMuted = true;
+      video.muted = true;
+      video.play().catch(() => {});
+    };
+    const resumeWhenVisible = ([entry]) => {
+      if (entry.isIntersecting) play();
+    };
+    const resumeAfterVisibilityChange = () => {
+      if (!document.hidden && video.getBoundingClientRect().bottom > 0 && video.getBoundingClientRect().top < window.innerHeight) play();
+    };
+    const observer = new IntersectionObserver(resumeWhenVisible, { threshold: 0.15 });
+
+    observer.observe(video);
+    video.addEventListener("loadeddata", play);
+    video.addEventListener("ended", play);
+    document.addEventListener("visibilitychange", resumeAfterVisibilityChange);
+    play();
+
+    return () => {
+      observer.disconnect();
+      video.removeEventListener("loadeddata", play);
+      video.removeEventListener("ended", play);
+      document.removeEventListener("visibilitychange", resumeAfterVisibilityChange);
+    };
   }, []);
 
   function handleSubmit(event) {
@@ -603,6 +644,7 @@ export function HomePage() {
           <figure className="o2-opening__film">
             <div className="o2-opening__film-frame">
               <video
+                ref={setFieldVideo}
                 src="/hero-objeto2a.mp4"
                 poster="/hero-objeto2a-poster.jpg"
                 autoPlay
