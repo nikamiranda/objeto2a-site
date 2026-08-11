@@ -920,6 +920,8 @@ body { min-height: 100dvh; margin: 0; color: var(--o2-ink); background: var(--o2
   .o2-hero__actions {
     margin-top: 22px;
     gap: 12px;
+    width: 100%;
+    align-items: center;
   }
   .o2-hero__cta {
     width: min(100%, 280px);
@@ -930,6 +932,8 @@ body { min-height: 100dvh; margin: 0; color: var(--o2-ink); background: var(--o2
   .o2-hero__secondary {
     min-height: 44px;
     padding-bottom: 3px;
+    justify-content: center;
+    text-align: center;
   }
   .o2-hero__media {
     position: absolute;
