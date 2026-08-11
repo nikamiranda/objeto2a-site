@@ -1097,3 +1097,11 @@ body { min-height: 100dvh; margin: 0; color: var(--o2-ink); background: var(--o2
   .o2-menu i { transition: none !important; }
   .o2-header nav { transform: none; clip-path: none; }
 }
+
+/* The scroll-pinned method height belongs to desktop only. On smaller
+   viewports the three editorial panels are in normal document flow, so the
+   section must grow with them instead of letting the following section
+   overlap their content. Keep this after the desktop density refinements. */
+@media (max-width: 1120px) {
+  .o2-method { height: auto; }
+}
