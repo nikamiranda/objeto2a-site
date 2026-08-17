@@ -2016,3 +2016,54 @@ body { min-height: 100dvh; margin: 0; color: var(--o2-ink); background: var(--o2
   .article-detail__content--field { padding-top: 58px; }
   .article-detail__content--field aside { margin-bottom: 62px; }
 }
+
+/* Editorial index: keep the reading canvas generous, without letting the first
+   card and headline consume the whole viewport. */
+@media (min-width: 761px) {
+  .editorial-intro,
+  .editorial-featured,
+  .editorial-list,
+  .article-related,
+  .archive-hero,
+  .archive-index,
+  .salon-hero,
+  .salon-feature {
+    width: min(calc(100% - 112px), 1240px);
+  }
+
+  .editorial-intro {
+    min-height: 430px;
+    padding: clamp(64px, 9vw, 116px) 0 60px;
+    gap: 7vw;
+  }
+
+  .editorial-intro h1 { max-width: 760px; font-size: clamp(3.2rem, 6vw, 6.4rem); }
+  .editorial-intro > p { max-width: 330px; font-size: clamp(.9rem, 1vw, 1.02rem); }
+  .editorial-featured { padding-bottom: clamp(80px, 9vw, 120px); }
+  .article-card--priority {
+    min-height: min(42vw, 570px);
+    padding: 14px;
+    gap: clamp(28px, 4.5vw, 70px);
+  }
+  .article-card--priority .article-card__media { min-height: 360px; }
+  .article-card--priority .article-card__body { max-width: 440px; padding: 20px 14px 20px 0; }
+  .article-card--priority h2 { font-size: clamp(2.1rem, 3.65vw, 4.25rem); }
+  .article-card--priority .article-card__body > p:not(.article-card__meta) { font-size: .88rem; }
+  .editorial-list { padding-bottom: clamp(82px, 10vw, 130px); }
+  .editorial-list > header { margin-bottom: 40px; padding-top: 24px; }
+  .editorial-list h2, .article-related > h2 { font-size: clamp(2.2rem, 3.8vw, 4.35rem); }
+  .editorial-grid { gap: clamp(30px, 4vw, 60px); }
+  .editorial-signup { min-height: 360px; padding-block: 56px; }
+  .editorial-signup h2 { max-width: 700px; font-size: clamp(2.3rem, 4.4vw, 4.8rem); }
+
+  .archive-hero { min-height: 520px; padding: clamp(60px, 8vw, 105px) 0 54px; column-gap: 6vw; }
+  .archive-hero h1 { max-width: 730px; font-size: clamp(3.6rem, 6.5vw, 7.2rem); }
+  .archive-hero__number { top: clamp(72px, 8vw, 108px); font-size: clamp(5rem, 11vw, 11rem); }
+  .archive-lead { min-height: 540px; }
+  .archive-lead > a { min-height: 470px; }
+  .archive-lead article { padding: clamp(34px, 5vw, 68px) clamp(28px, 4vw, 60px); }
+  .archive-lead h2 { font-size: clamp(2.3rem, 3.8vw, 4.35rem); }
+  .archive-index { padding-block: clamp(78px, 10vw, 130px); }
+  .archive-index article { padding-block: 26px; }
+  .archive-index article h2 { font-size: clamp(1.55rem, 2.7vw, 3.3rem); }
+}
