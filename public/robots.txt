@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://objeto2a.com/sitemap.xml

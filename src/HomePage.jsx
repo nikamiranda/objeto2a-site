@@ -7,7 +7,7 @@ const whatsapp = "https://wa.me/5521986287957";
 const navItems = [
   { label: "Sobre", href: "#sobre" },
   { label: "Atuação", href: "#solucoes" },
-  { label: "Pensamento", href: "#abertura" },
+  { label: "Artigos", href: "/artigos", external: true },
   { label: "Contato", href: "#contato" },
 ];
 
@@ -485,9 +485,9 @@ function MethodStory() {
   );
 }
 
-function SiteFooter({ reveal }) {
+export function SiteFooter({ reveal, rootLinks = false, flow = false }) {
   return (
-    <footer className={`o2-footer ${reveal ? "is-reveal-ready" : ""}`}>
+    <footer className={`o2-footer ${flow ? "o2-footer--flow" : ""} ${reveal ? "is-reveal-ready" : ""}`}>
       <div className="o2-footer__identity">
         <Brand inverse />
         <p>Psicanálise aplicada à leitura do que move pessoas, relações e trabalho.</p>
@@ -495,7 +495,10 @@ function SiteFooter({ reveal }) {
       <div className="o2-footer__group">
         <span className="o2-footer__eyebrow">Navegação</span>
         <nav aria-label="Navegação do rodapé">
-          {navItems.map((item) => <a href={item.href} key={item.href}>{item.label}</a>)}
+          {navItems.map((item) => {
+            const href = rootLinks && item.href.startsWith("#") ? `/${item.href}` : item.href;
+            return <a href={href} key={item.href}>{item.label}</a>;
+          })}
         </nav>
       </div>
       <div className="o2-footer__group o2-footer__group--social">
@@ -857,7 +860,7 @@ export function HomePage() {
         <Brand inverse={!headerOnLight && !menuOpen} href="#inicio" />
         <nav className={menuOpen ? "is-open" : ""} aria-label="Navegação principal">
           {navItems.map((item) => (
-            <a href={item.href} onClick={() => setMenuOpen(false)} key={item.href}>{item.label}</a>
+            <a href={item.href} target={item.external ? "_blank" : undefined} rel={item.external ? "noreferrer" : undefined} onClick={() => setMenuOpen(false)} key={item.href}>{item.label}</a>
           ))}
           <a className="o2-nav__mobile-cta" href="#contato" onClick={() => setMenuOpen(false)}>Agende uma conversa</a>
         </nav>
