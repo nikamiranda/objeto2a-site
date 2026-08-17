@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Brand, BrandLine } from "./Brand.jsx";
-import { SiteFooter } from "./HomePage.jsx";
+import { SiteFooter, SiteHeader } from "./HomePage.jsx";
 
 const navigation = [
   ["/", "Início"],
@@ -508,7 +508,9 @@ export function Subpage({ path }) {
   if (!pages[path]) return <NotFoundPage />;
   return (
     <main className={`subpage ${path === "/sobre" ? "about-page" : ""}`.trim()}>
-      <SubHeader path={path} />
+      {path === "/sobre"
+        ? <SiteHeader solid staticSolid rootLinks brandHref="/" />
+        : <SubHeader path={path} />}
       {pages[path]}
     </main>
   );

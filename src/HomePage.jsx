@@ -5,7 +5,7 @@ import { getActiveChapter, getPageProgress, isHeaderOverLightSection } from "./i
 const whatsapp = "https://wa.me/5521986287957";
 
 const navItems = [
-  { label: "Sobre", href: "#sobre" },
+  { label: "Sobre", href: "/sobre" },
   { label: "Atuação", href: "#solucoes" },
   { label: "Artigos", href: "/artigos", external: true },
   { label: "Contato", href: "#contato" },
@@ -520,6 +520,44 @@ export function SiteFooter({ reveal, rootLinks = false, flow = false }) {
   );
 }
 
+export function SiteHeader({ solid = false, staticSolid = false, rootLinks = false, brandHref = "#inicio", headerRef = null }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const resolveHref = (href) => rootLinks && href.startsWith("#") ? `/${href}` : href;
+  const contactHref = resolveHref("#contato");
+
+  return (
+    <header
+      ref={headerRef}
+      className={`o2-header ${solid || menuOpen ? "is-solid" : ""} ${menuOpen ? "is-menu-open" : ""}`}
+      style={staticSolid ? { "--o2-header-progress": 1 } : undefined}
+    >
+      <Brand inverse={!solid && !menuOpen} href={brandHref} />
+      <nav className={menuOpen ? "is-open" : ""} aria-label="Navegação principal">
+        {navItems.map((item) => (
+          <a
+            href={resolveHref(item.href)}
+            target={item.external ? "_blank" : undefined}
+            rel={item.external ? "noreferrer" : undefined}
+            onClick={() => setMenuOpen(false)}
+            key={item.href}
+          >{item.label}</a>
+        ))}
+        <a className="o2-nav__mobile-cta" href={contactHref} onClick={() => setMenuOpen(false)}>Agende uma conversa</a>
+      </nav>
+      <a className="o2-header__cta" href={contactHref}>Agende uma conversa</a>
+      <button
+        className="o2-menu"
+        type="button"
+        aria-label={menuOpen ? "Fechar menu" : "Abrir menu"}
+        aria-expanded={menuOpen}
+        onClick={() => setMenuOpen((open) => !open)}
+      >
+        <i /><i />
+      </button>
+    </header>
+  );
+}
+
 export function HomePage() {
   const heroRef = useRef(null);
   const headerRef = useRef(null);
@@ -527,7 +565,6 @@ export function HomePage() {
   const fieldVideoRef = useRef(null);
   const contactRef = useRef(null);
   const serviceTimerRef = useRef(null);
-  const [menuOpen, setMenuOpen] = useState(false);
   const [headerOnLight, setHeaderOnLight] = useState(false);
   const [activeService, setActiveService] = useState(0);
   const [previousService, setPreviousService] = useState(null);
@@ -853,28 +890,7 @@ export function HomePage() {
 
   return (
     <main className="o2-home" id="inicio">
-      <header
-        ref={headerRef}
-        className={`o2-header ${headerOnLight || menuOpen ? "is-solid" : ""} ${menuOpen ? "is-menu-open" : ""}`}
-      >
-        <Brand inverse={!headerOnLight && !menuOpen} href="#inicio" />
-        <nav className={menuOpen ? "is-open" : ""} aria-label="Navegação principal">
-          {navItems.map((item) => (
-            <a href={item.href} target={item.external ? "_blank" : undefined} rel={item.external ? "noreferrer" : undefined} onClick={() => setMenuOpen(false)} key={item.href}>{item.label}</a>
-          ))}
-          <a className="o2-nav__mobile-cta" href="#contato" onClick={() => setMenuOpen(false)}>Agende uma conversa</a>
-        </nav>
-        <a className="o2-header__cta" href="#contato">Agende uma conversa</a>
-        <button
-          className="o2-menu"
-          type="button"
-          aria-label={menuOpen ? "Fechar menu" : "Abrir menu"}
-          aria-expanded={menuOpen}
-          onClick={() => setMenuOpen((open) => !open)}
-        >
-          <i /><i />
-        </button>
-      </header>
+      <SiteHeader solid={headerOnLight} brandHref="#inicio" headerRef={headerRef} />
       <ChapterNav />
 
       <section
