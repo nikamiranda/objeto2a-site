@@ -2042,7 +2042,8 @@ body { min-height: 100dvh; margin: 0; color: var(--o2-ink); background: var(--o2
   .editorial-featured { padding-bottom: clamp(80px, 9vw, 120px); }
   .article-card--priority {
     min-height: min(42vw, 570px);
-    padding: 0;
+    margin-inline: 18px;
+    padding: 18px;
     gap: clamp(28px, 4.5vw, 70px);
   }
   .article-card--priority .article-card__media { min-height: 360px; }
