@@ -8,7 +8,7 @@ export function pageSlug(path) {
 
 export function validPagePath(value) {
   const path = String(value || "/").trim();
-  return ["/", "/metodo", "/solucoes", "/trabalhos", "/sobre"].includes(path) ? path : null;
+  return ["/", "/metodo", "/solucoes", "/trabalhos", "/sobre", "/artigos"].includes(path) ? path : null;
 }
 
 export async function readJson(pathname, fallback = null) {
@@ -57,4 +57,3 @@ export function normalizeContent(value) {
   }
   return output;
 }
-

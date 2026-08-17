@@ -12,7 +12,9 @@ export const articles = [
     excerpt: "Silêncios, ruídos e repetições não são detalhes da rotina. Eles contam uma parte importante do que está em jogo no trabalho.",
     readingTime: "6 min de leitura",
     image: "/case-redballoon-reuniao-v2.png",
+    fieldImage: "/mapa-empatia.jpg",
     alt: "Encontro de diagnóstico com lideranças da Red Balloon",
+    fieldAlt: "Registro de uma matriz de escuta usada em trabalho de campo",
     imageWidth: 1593,
     imageHeight: 987,
     featured: true,
@@ -110,21 +112,39 @@ export const articles = [
   },
 ];
 
+function usePublishedArticles() {
+  const [catalog, setCatalog] = useState(articles);
+  useEffect(() => {
+    const controller = new AbortController();
+    const preview = new URLSearchParams(window.location.search).has("cms_preview");
+    fetch(`/api/articles${preview ? "?mode=admin" : ""}`, { signal: controller.signal, credentials: "same-origin" })
+      .then((response) => response.ok ? response.json() : Promise.reject(new Error("Catálogo indisponível")))
+      .then((data) => {
+        if (Array.isArray(data.items)) setCatalog(data.items);
+      })
+      .catch((error) => {
+        if (error.name !== "AbortError") setCatalog(articles);
+      });
+    return () => controller.abort();
+  }, []);
+  return catalog;
+}
+
 function setMeta(selector, value, attribute = "content") {
   const element = document.head.querySelector(selector);
   if (element) element.setAttribute(attribute, value);
 }
 
-function EditorialSeo({ article }) {
+function EditorialSeo({ article, catalog = articles }) {
   useEffect(() => {
     const path = article ? `/artigos/${article.slug}` : "/artigos";
     const title = article
-      ? `${article.title} | Artigos Objeto 2a`
+      ? article.seo?.title || `${article.title} | Artigos Objeto 2a`
       : "Artigos | Objeto 2a — escuta, cultura e trabalho";
     const description = article
-      ? article.excerpt
+      ? article.seo?.description || article.excerpt
       : "Reflexões da Objeto 2a sobre cultura, liderança, linguagem, saúde e trabalho.";
-    const image = article?.image || "/og-redesign.png";
+    const image = article?.seo?.image || article?.image || "/og-redesign.png";
     const absoluteImage = new URL(image, siteUrl).href;
     const canonical = `${siteUrl}${path}`;
 
@@ -161,7 +181,8 @@ function EditorialSeo({ article }) {
       headline: article.title,
       description: article.excerpt,
       image: { "@type": "ImageObject", url: absoluteImage, width: article.imageWidth, height: article.imageHeight },
-      author: { "@type": "Organization", name: "Objeto 2a" },
+      author: { "@type": "Organization", name: article.author || "Objeto 2a" },
+      datePublished: article.publishedAt || undefined,
       publisher: { "@type": "Organization", name: "Objeto 2a", logo: { "@type": "ImageObject", url: `${siteUrl}/favicon.svg` } },
     } : {
       "@context": "https://schema.org",
@@ -170,12 +191,12 @@ function EditorialSeo({ article }) {
       url: canonical,
       description,
       publisher: { "@type": "Organization", name: "Objeto 2a" },
-      blogPost: articles.map((item) => ({ "@type": "BlogPosting", headline: item.title, url: `${siteUrl}/artigos/${item.slug}` })),
+      blogPost: catalog.map((item) => ({ "@type": "BlogPosting", headline: item.title, url: `${siteUrl}/artigos/${item.slug}` })),
     });
     document.head.append(schema);
 
     return () => schema.remove();
-  }, [article]);
+  }, [article, catalog]);
   return null;
 }
 
@@ -274,16 +295,16 @@ function LayoutSwitch({ current }) {
   );
 }
 
-function ArticleIndex({ preview = false }) {
+function ArticleIndex({ preview = false, catalog = articles }) {
   const [category, setCategory] = useState("Todos");
-  const categories = ["Todos", ...articles.map((article) => article.category)];
-  const visibleArticles = useMemo(() => category === "Todos" ? articles : articles.filter((article) => article.category === category), [category]);
+  const categories = ["Todos", ...new Set(catalog.map((article) => article.category))];
+  const visibleArticles = useMemo(() => category === "Todos" ? catalog : catalog.filter((article) => article.category === category), [catalog, category]);
   const featured = visibleArticles[0];
   const remaining = visibleArticles.slice(1);
 
   return (
     <>
-      <EditorialSeo />
+      <EditorialSeo catalog={catalog} />
       <main className="editorial-page" id="inicio">
         <EditorialHeader />
         {preview && <LayoutSwitch current="a" />}
@@ -317,22 +338,22 @@ function ArticleIndex({ preview = false }) {
   );
 }
 
-function ArchiveLayout() {
+function ArchiveLayout({ catalog = articles }) {
   return (
     <>
-      <EditorialSeo />
+      <EditorialSeo catalog={catalog} />
       <main className="editorial-page layout-archive" id="inicio">
         <EditorialHeader />
         <section className="archive-hero">
           <div><p className="editorial-eyebrow">Caderno Objeto 2a</p><h1>O trabalho<br />também tem<br /><em>entrelinhas.</em></h1></div>
           <p>Artigos para acompanhar as palavras, os impasses e as relações que organizam a vida nas empresas.</p>
-          <span className="archive-hero__number">03<br /><small>leituras</small></span>
+          <span className="archive-hero__number">{String(catalog.length).padStart(2, "0")}<br /><small>leituras</small></span>
         </section>
         <section className="archive-lead">
-          <a href={`/artigos/${articles[0].slug}`}><img src={articles[0].image} alt={articles[0].alt} /></a>
-          <article><p className="article-card__meta"><span>{articles[0].category}</span>{articles[0].readingTime}</p><h2>{articles[0].title}</h2><p>{articles[0].excerpt}</p><a href={`/artigos/${articles[0].slug}`}>Abrir leitura <span>↗</span></a></article>
+          <a href={`/artigos/${catalog[0].slug}`}><img src={catalog[0].image} alt={catalog[0].alt} /></a>
+          <article><p className="article-card__meta"><span>{catalog[0].category}</span>{catalog[0].readingTime}</p><h2>{catalog[0].title}</h2><p>{catalog[0].excerpt}</p><a href={`/artigos/${catalog[0].slug}`}>Abrir leitura <span>↗</span></a></article>
         </section>
-        <section className="archive-index"><header><p className="editorial-eyebrow">Índice de campo</p><span>02 — 03</span></header>{articles.slice(1).map((article, index) => <article key={article.slug}><span>0{index + 2}</span><div><p>{article.category}</p><h2><a href={`/artigos/${article.slug}`}>{article.title}</a></h2></div><a href={`/artigos/${article.slug}`} aria-label={`Ler ${article.title}`}>↗</a></article>)}</section>
+        <section className="archive-index"><header><p className="editorial-eyebrow">Índice de campo</p><span>{catalog.length > 1 ? `02 — ${String(catalog.length).padStart(2, "0")}` : "01"}</span></header>{catalog.slice(1).map((article, index) => <article key={article.slug}><span>{String(index + 2).padStart(2, "0")}</span><div><p>{article.category}</p><h2><a href={`/artigos/${article.slug}`}>{article.title}</a></h2></div><a href={`/artigos/${article.slug}`} aria-label={`Ler ${article.title}`}>↗</a></article>)}</section>
         <section className="archive-note"><p>Leitura que não simplifica o que está em jogo.</p><a href="/#contato">Conversar com a Objeto 2a ↗</a></section>
         <SiteFooter reveal rootLinks flow />
       </main>
@@ -340,16 +361,16 @@ function ArchiveLayout() {
   );
 }
 
-function SalonLayout() {
+function SalonLayout({ catalog = articles }) {
   return (
     <>
-      <EditorialSeo />
+      <EditorialSeo catalog={catalog} />
       <main className="editorial-page layout-salon" id="inicio">
         <EditorialHeader />
         <LayoutSwitch current="c" />
         <section className="salon-hero"><p className="editorial-eyebrow">Artigos · opção C</p><span className="salon-hero__tag">Um lugar para demorar o olhar</span><h1>Uma ideia<br />pode abrir<br />uma conversa.</h1><p>Perspectivas para ler cultura, liderança e saúde relacional sem separar as pessoas do trabalho.</p></section>
-        <section className="salon-feature"><figure><img src={articles[0].image} alt={articles[0].alt} /><figcaption>Em foco</figcaption></figure><article><p className="article-card__meta"><span>{articles[0].category}</span>{articles[0].readingTime}</p><h2>{articles[0].title}</h2><p>{articles[0].excerpt}</p><a href={`/artigos/${articles[0].slug}`}>Ler com calma <span>↗</span></a></article></section>
-        <section className="salon-shelf"><p className="editorial-eyebrow">Na estante</p><div>{articles.slice(1).map((article) => <article key={article.slug}><a href={`/artigos/${article.slug}`}><img src={article.image} alt={article.alt} /></a><p>{article.category}</p><h2><a href={`/artigos/${article.slug}`}>{article.title}</a></h2><span>{article.readingTime}</span></article>)}</div></section>
+        <section className="salon-feature"><figure><img src={catalog[0].image} alt={catalog[0].alt} /><figcaption>Em foco</figcaption></figure><article><p className="article-card__meta"><span>{catalog[0].category}</span>{catalog[0].readingTime}</p><h2>{catalog[0].title}</h2><p>{catalog[0].excerpt}</p><a href={`/artigos/${catalog[0].slug}`}>Ler com calma <span>↗</span></a></article></section>
+        <section className="salon-shelf"><p className="editorial-eyebrow">Na estante</p><div>{catalog.slice(1).map((article) => <article key={article.slug}><a href={`/artigos/${article.slug}`}><img src={article.image} alt={article.alt} /></a><p>{article.category}</p><h2><a href={`/artigos/${article.slug}`}>{article.title}</a></h2><span>{article.readingTime}</span></article>)}</div></section>
         <section className="salon-closing"><p>O que merece encontrar linguagem no seu contexto?</p><a href="/#contato">Começar uma conversa ↗</a></section>
         <SiteFooter reveal rootLinks flow />
       </main>
@@ -357,13 +378,13 @@ function SalonLayout() {
   );
 }
 
-function ArticlePage({ article }) {
-  const related = articles.filter((item) => item.slug !== article.slug).slice(0, 2);
-  const fieldImage = article.slug === "quando-a-organizacao-nao-encontra-palavras" ? "/mapa-empatia.jpg" : article.image;
-  const fieldAlt = article.slug === "quando-a-organizacao-nao-encontra-palavras" ? "Registro de uma matriz de escuta usada em trabalho de campo" : article.alt;
+function ArticlePage({ article, catalog = articles }) {
+  const related = catalog.filter((item) => item.slug !== article.slug).slice(0, 2);
+  const fieldImage = article.fieldImage || article.image;
+  const fieldAlt = article.fieldAlt || article.alt;
   return (
     <>
-      <EditorialSeo article={article} />
+      <EditorialSeo article={article} catalog={catalog} />
       <main className="editorial-page article-page" id="inicio">
         <EditorialHeader />
         <article className="article-detail">
@@ -393,12 +414,14 @@ function ArticlePage({ article }) {
 }
 
 export function ArticlesPage({ path }) {
+  const catalog = usePublishedArticles();
   const slug = path.replace("/artigos/", "");
-  const article = articles.find((item) => item.slug === slug);
+  const article = catalog.find((item) => item.slug === slug);
   const layout = new URLSearchParams(window.location.search).get("layout");
-  if (article) return <ArticlePage article={article} />;
-  if (layout === "b") return <ArchiveLayout />;
-  if (layout === "c") return <SalonLayout />;
-  if (layout === "a") return <ArticleIndex preview />;
-  return <ArchiveLayout />;
+  if (!catalog.length) return <><EditorialSeo catalog={[]} /><main className="editorial-page layout-archive"><EditorialHeader /><section className="archive-hero"><div><p className="editorial-eyebrow">Caderno Objeto 2a</p><h1>Novas leituras<br />em preparação.</h1></div></section><SiteFooter reveal rootLinks flow /></main></>;
+  if (article) return <ArticlePage article={article} catalog={catalog} />;
+  if (layout === "b") return <ArchiveLayout catalog={catalog} />;
+  if (layout === "c") return <SalonLayout catalog={catalog} />;
+  if (layout === "a") return <ArticleIndex preview catalog={catalog} />;
+  return <ArchiveLayout catalog={catalog} />;
 }

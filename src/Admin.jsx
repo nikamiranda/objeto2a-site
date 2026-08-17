@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { upload as uploadBlob } from "@vercel/blob/client";
 import { Brand, BrandSymbol } from "./Brand.jsx";
+import { blankArticle, defaultArticles, slugifyArticle } from "./articleContent.js";
 import "./admin.css";
 
 const pages = [
@@ -9,6 +10,7 @@ const pages = [
   ["/solucoes", "Soluções"],
   ["/trabalhos", "Trabalhos"],
   ["/sobre", "Sobre"],
+  ["/artigos", "Índice de artigos"],
 ];
 
 const emptyContent = { patches: {}, order: [], seo: {} };
@@ -38,10 +40,16 @@ export function Admin() {
   const [versions, setVersions] = useState([]);
   const [dragging, setDragging] = useState(null);
   const [toast, setToast] = useState("");
+  const [articleItems, setArticleItems] = useState([]);
+  const [articleDraft, setArticleDraft] = useState(null);
+  const [savedArticle, setSavedArticle] = useState(null);
+  const [articleMediaTarget, setArticleMediaTarget] = useState("");
   const iframeRef = useRef(null);
   const fileRef = useRef(null);
   const contentRef = useRef(emptyContent);
   const dirty = JSON.stringify(content) !== JSON.stringify(savedContent);
+  const articleDirty = Boolean(articleDraft) && JSON.stringify(articleDraft) !== JSON.stringify(savedArticle);
+  const activeDirty = panel === "articles" ? articleDirty : dirty;
 
   const pageName = useMemo(() => pages.find(([path]) => path === page)?.[1] || "Página", [page]);
 
@@ -56,6 +64,10 @@ export function Admin() {
   useEffect(() => {
     if (authState === "ok") loadPage(page);
   }, [page, authState]);
+
+  useEffect(() => {
+    if (authState === "ok") loadArticles();
+  }, [authState]);
 
   useEffect(() => {
     contentRef.current = content;
@@ -131,6 +143,112 @@ export function Admin() {
     }
   }
 
+  async function loadArticles() {
+    try {
+      const data = await api("/api/articles?mode=admin");
+      setArticleItems(Array.isArray(data.items) ? data.items : []);
+    } catch (error) {
+      if (localPreview) setArticleItems(defaultArticles.map((article) => ({ ...article, status: "published", publishedSlug: article.slug })));
+      notify(error.message);
+    }
+  }
+
+  function createArticle() {
+    const next = blankArticle();
+    const used = new Set(articleItems.map((item) => item.slug));
+    let slug = next.slug;
+    let suffix = 2;
+    while (used.has(slug)) slug = `${next.slug}-${suffix++}`;
+    const unique = { ...next, slug, id: `${slug}-${Date.now()}`, status: "draft", hasUnpublishedChanges: true };
+    setArticleDraft(unique);
+    setSavedArticle(null);
+    setPanel("articles");
+  }
+
+  function editArticle(article) {
+    const next = clone(article);
+    setArticleDraft(next);
+    setSavedArticle(clone(next));
+    setPanel("articles");
+  }
+
+  function updateArticle(patch) {
+    setArticleDraft((current) => ({ ...current, ...patch }));
+  }
+
+  function updateArticleSection(index, patch) {
+    setArticleDraft((current) => ({
+      ...current,
+      sections: current.sections.map((section, sectionIndex) => sectionIndex === index ? { ...section, ...patch } : section),
+    }));
+  }
+
+  function moveArticleSection(index, direction) {
+    setArticleDraft((current) => {
+      const sections = [...current.sections];
+      const target = index + direction;
+      if (target < 0 || target >= sections.length) return current;
+      [sections[index], sections[target]] = [sections[target], sections[index]];
+      return { ...current, sections };
+    });
+  }
+
+  async function saveArticle(publish = false) {
+    if (!articleDraft) return;
+    setStatus(publish ? "Publicando artigo…" : "Salvando artigo…");
+    try {
+      const result = await api("/api/articles", {
+        method: "PUT",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ article: articleDraft, originalId: savedArticle?.id || articleDraft.id, publish }),
+      });
+      setArticleDraft(clone(result.article));
+      setSavedArticle(clone(result.article));
+      await loadArticles();
+      setStatus("Artigo salvo");
+      notify(publish ? "Artigo publicado" : "Rascunho do artigo salvo");
+      if (iframeRef.current) iframeRef.current.src = `/artigos/${result.article.slug}?cms_preview=1&v=${Date.now()}`;
+    } catch (error) {
+      setStatus(error.message);
+      notify(error.message);
+    }
+  }
+
+  async function unpublishArticle() {
+    if (!articleDraft || !window.confirm("Despublicar este artigo? Ele deixará de aparecer no site.")) return;
+    try {
+      await api("/api/articles", {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ id: articleDraft.id, action: "unpublish" }),
+      });
+      await loadArticles();
+      const next = { ...articleDraft, status: "draft", publishedSlug: "", hasUnpublishedChanges: true };
+      setArticleDraft(next);
+      setSavedArticle(clone(next));
+      notify("Artigo despublicado");
+    } catch (error) {
+      notify(error.message);
+    }
+  }
+
+  async function deleteArticle() {
+    if (!articleDraft || !window.confirm(`Excluir definitivamente “${articleDraft.title}”?`)) return;
+    try {
+      await api("/api/articles", {
+        method: "DELETE",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ id: articleDraft.id }),
+      });
+      setArticleDraft(null);
+      setSavedArticle(null);
+      await loadArticles();
+      notify("Artigo excluído");
+    } catch (error) {
+      notify(error.message);
+    }
+  }
+
   function notify(message) {
     setToast(message);
     window.setTimeout(() => setToast(""), 2800);
@@ -184,24 +302,49 @@ export function Admin() {
     if (!file) return;
     setStatus("Enviando mídia…");
     try {
-      const blob = await uploadBlob(`cms/media/${Date.now()}-${file.name}`, file, {
-        access: "public",
-        handleUploadUrl: "/api/upload",
-      });
+      let uploaded;
+      if (articleMediaTarget && articleDraft) {
+        const signed = await api("/api/article-media", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ filename: file.name, contentType: file.type, size: file.size }),
+        });
+        const form = new FormData();
+        form.append("cacheControl", "31536000");
+        form.append("", file);
+        const uploadResponse = await fetch(signed.signedUrl, {
+          method: "PUT",
+          headers: { "x-upsert": "false" },
+          body: form,
+        });
+        if (!uploadResponse.ok) {
+          const detail = await uploadResponse.json().catch(() => ({}));
+          throw new Error(detail.message || detail.error || "Não foi possível enviar a imagem ao Supabase.");
+        }
+        uploaded = { pathname: signed.path, url: signed.publicUrl };
+      } else {
+        uploaded = await uploadBlob(`cms/media/${Date.now()}-${file.name}`, file, {
+          access: "public",
+          handleUploadUrl: "/api/upload",
+        });
+      }
       const item = {
-        id: blob.pathname,
+        id: uploaded.pathname,
         filename: file.name,
         content_type: file.type,
         byte_size: file.size,
         created_at: new Date().toISOString(),
-        url: blob.url,
+        url: uploaded.url,
       };
       setMedia((items) => [item, ...items]);
-      if (selected) {
+      if (articleMediaTarget && articleDraft) {
+        updateArticle({ [articleMediaTarget]: item.url });
+        setArticleMediaTarget("");
+      } else if (selected) {
         replaceSelectedMedia(item.url, selected);
       }
       setStatus("Preview ao vivo");
-      notify(selected ? "Mídia substituída e adicionada à biblioteca" : "Mídia adicionada à biblioteca");
+      notify(articleMediaTarget || selected ? "Mídia aplicada e adicionada à biblioteca" : "Mídia adicionada à biblioteca");
     } catch (error) {
       setStatus(error.message);
       notify(error.message);
@@ -297,6 +440,7 @@ export function Admin() {
     const order = content.order.length ? content.order : sections.map((item) => item.id);
     return order.indexOf(a.id) - order.indexOf(b.id);
   });
+  const previewPath = panel === "articles" && articleDraft ? `/artigos/${articleDraft.slug}` : page;
 
   if (authState !== "ok") {
     return (
@@ -333,6 +477,9 @@ export function Admin() {
           <button className={panel === "pages" ? "is-active" : ""} onClick={() => setPanel("pages")}>
             <Icon>▤</Icon><span>Páginas</span>
           </button>
+          <button className={panel === "articles" ? "is-active" : ""} onClick={() => setPanel("articles")}>
+            <Icon>✎</Icon><span>Artigos</span>
+          </button>
           <button className={panel === "media" ? "is-active" : ""} onClick={() => setPanel("media")}>
             <Icon>▧</Icon><span>Mídia</span>
           </button>
@@ -349,8 +496,8 @@ export function Admin() {
 
       <aside className="admin-panel">
         <header>
-          <div><small>EDITANDO</small><strong>{pageName}</strong></div>
-          <span className={dirty ? "dirty" : ""}>{dirty ? "Alterações não salvas" : "Tudo salvo"}</span>
+          <div><small>EDITANDO</small><strong>{panel === "articles" ? articleDraft?.title || "Artigos" : pageName}</strong></div>
+          <span className={activeDirty ? "dirty" : ""}>{activeDirty ? "Alterações não salvas" : "Tudo salvo"}</span>
         </header>
 
         {panel === "pages" && (
@@ -363,6 +510,84 @@ export function Admin() {
                 </button>
               ))}
             </div>
+          </div>
+        )}
+
+        {panel === "articles" && (
+          <div className="panel-scroll article-admin">
+            {!articleDraft ? (
+              <>
+                <div className="panel-title"><h2>Artigos</h2><p>Crie, edite e publique as leituras do Caderno Objeto 2a.</p></div>
+                <button className="primary-wide" onClick={createArticle}>+ Criar novo artigo</button>
+                <div className="article-admin__list">
+                  {articleItems.map((article) => (
+                    <button onClick={() => editArticle(article)} key={article.id}>
+                      <span className={`article-status article-status--${article.status}`}>{article.status === "published" ? "Publicado" : "Rascunho"}</span>
+                      <strong>{article.title}</strong>
+                      <small>/{article.slug}{article.hasUnpublishedChanges ? " · alterações não publicadas" : ""}</small>
+                    </button>
+                  ))}
+                  {!articleItems.length && <div className="empty-state">Nenhum artigo criado.</div>}
+                </div>
+              </>
+            ) : (
+              <>
+                <button className="back-button" onClick={() => { setArticleDraft(null); setSavedArticle(null); }}>← Todos os artigos</button>
+                <div className="panel-title">
+                  <small>{articleDraft.status === "published" ? "PUBLICADO" : "RASCUNHO"}</small>
+                  <h2>{articleDraft.title || "Novo artigo"}</h2>
+                  <p>O rascunho só aparece publicamente depois de clicar em “Publicar”.</p>
+                </div>
+
+                <label className="field"><span>Título</span><input value={articleDraft.title} onChange={(event) => updateArticle({ title: event.target.value })} /></label>
+                <label className="field"><span>Endereço (slug)</span><div className="article-slug-field"><input value={articleDraft.slug} onChange={(event) => updateArticle({ slug: slugifyArticle(event.target.value) })} /><button type="button" onClick={() => updateArticle({ slug: slugifyArticle(articleDraft.title) })}>Gerar</button></div></label>
+                <div className="two-fields">
+                  <label className="field"><span>Categoria</span><input value={articleDraft.category} onChange={(event) => updateArticle({ category: event.target.value })} /></label>
+                  <label className="field"><span>Tempo de leitura</span><input value={articleDraft.readingTime} onChange={(event) => updateArticle({ readingTime: event.target.value })} /></label>
+                </div>
+                <label className="field"><span>Resumo</span><textarea rows="5" value={articleDraft.excerpt} onChange={(event) => updateArticle({ excerpt: event.target.value })} /></label>
+                <label className="article-check"><input type="checkbox" checked={articleDraft.featured} onChange={(event) => updateArticle({ featured: event.target.checked })} /><span>Destacar este artigo no índice</span></label>
+
+                <div className="panel-section-head"><strong>Imagem principal</strong></div>
+                <div className="media-current"><img src={articleDraft.image} alt="" /></div>
+                <button className="secondary-wide" onClick={() => { setArticleMediaTarget("image"); fileRef.current?.click(); }}>Enviar nova imagem</button>
+                <label className="field"><span>URL da imagem</span><input value={articleDraft.image} onChange={(event) => updateArticle({ image: event.target.value })} /></label>
+                <label className="field"><span>Texto alternativo</span><input value={articleDraft.alt} onChange={(event) => updateArticle({ alt: event.target.value })} /></label>
+                <div className="two-fields">
+                  <label className="field"><span>Largura original</span><input type="number" value={articleDraft.imageWidth} onChange={(event) => updateArticle({ imageWidth: Number(event.target.value) })} /></label>
+                  <label className="field"><span>Altura original</span><input type="number" value={articleDraft.imageHeight} onChange={(event) => updateArticle({ imageHeight: Number(event.target.value) })} /></label>
+                </div>
+
+                <div className="panel-section-head"><strong>Imagem de campo</strong></div>
+                <div className="media-current"><img src={articleDraft.fieldImage || articleDraft.image} alt="" /></div>
+                <button className="secondary-wide" onClick={() => { setArticleMediaTarget("fieldImage"); fileRef.current?.click(); }}>Enviar imagem de campo</button>
+                <label className="field"><span>URL da imagem de campo</span><input value={articleDraft.fieldImage || ""} onChange={(event) => updateArticle({ fieldImage: event.target.value })} /></label>
+                <label className="field"><span>Texto alternativo</span><input value={articleDraft.fieldAlt || ""} onChange={(event) => updateArticle({ fieldAlt: event.target.value })} /></label>
+
+                <div className="panel-section-head"><strong>Conteúdo do artigo</strong><small>{articleDraft.sections.length} SEÇÕES</small></div>
+                <div className="article-sections">
+                  {articleDraft.sections.map((section, index) => (
+                    <article key={`${articleDraft.id}-section-${index}`}>
+                      <header><span>{String(index + 1).padStart(2, "0")}</span><div><button onClick={() => moveArticleSection(index, -1)} disabled={index === 0} aria-label="Mover seção para cima">↑</button><button onClick={() => moveArticleSection(index, 1)} disabled={index === articleDraft.sections.length - 1} aria-label="Mover seção para baixo">↓</button><button className="danger" onClick={() => updateArticle({ sections: articleDraft.sections.filter((_, sectionIndex) => sectionIndex !== index) })} aria-label="Excluir seção">×</button></div></header>
+                      <label className="field"><span>Título da seção</span><input value={section.heading} onChange={(event) => updateArticleSection(index, { heading: event.target.value })} /></label>
+                      <label className="field"><span>Parágrafos</span><textarea rows="8" value={section.paragraphs.join("\n\n")} onChange={(event) => updateArticleSection(index, { paragraphs: event.target.value.split(/\n\s*\n/).map((item) => item.trim()) })} /><small>Separe os parágrafos com uma linha em branco.</small></label>
+                    </article>
+                  ))}
+                </div>
+                <button className="secondary-wide" onClick={() => updateArticle({ sections: [...articleDraft.sections, { heading: "Nova seção", paragraphs: [""] }] })}>+ Adicionar seção</button>
+
+                <div className="panel-section-head"><strong>SEO e compartilhamento</strong></div>
+                <label className="field"><span>Título SEO</span><input value={articleDraft.seo?.title || ""} onChange={(event) => updateArticle({ seo: { ...articleDraft.seo, title: event.target.value } })} placeholder={`${articleDraft.title} | Artigos Objeto 2a`} /></label>
+                <label className="field"><span>Descrição SEO</span><textarea rows="4" value={articleDraft.seo?.description || ""} onChange={(event) => updateArticle({ seo: { ...articleDraft.seo, description: event.target.value } })} placeholder={articleDraft.excerpt} /></label>
+                <label className="field"><span>Imagem de compartilhamento</span><input value={articleDraft.seo?.image || ""} onChange={(event) => updateArticle({ seo: { ...articleDraft.seo, image: event.target.value } })} placeholder={articleDraft.image} /></label>
+                <label className="field"><span>Autoria</span><input value={articleDraft.author || "Objeto 2a"} onChange={(event) => updateArticle({ author: event.target.value })} /></label>
+
+                <div className="article-admin__danger-zone">
+                  {articleDraft.status === "published" && <button onClick={unpublishArticle}>Despublicar</button>}
+                  <button className="danger" onClick={deleteArticle}>Excluir artigo</button>
+                </div>
+              </>
+            )}
           </div>
         )}
 
@@ -486,15 +711,22 @@ export function Admin() {
           </div>
         )}
 
-        <footer>
-          <button className="save-draft" onClick={() => save(false)} disabled={!dirty}>Salvar rascunho</button>
-          <button className="publish" onClick={() => save(true)}>Publicar <span>↑</span></button>
-        </footer>
+        {panel === "articles" ? (
+          <footer>
+            <button className="save-draft" onClick={() => saveArticle(false)} disabled={!articleDraft || !articleDirty}>Salvar rascunho</button>
+            <button className="publish" onClick={() => saveArticle(true)} disabled={!articleDraft}>Publicar <span>↑</span></button>
+          </footer>
+        ) : (
+          <footer>
+            <button className="save-draft" onClick={() => save(false)} disabled={!dirty}>Salvar rascunho</button>
+            <button className="publish" onClick={() => save(true)}>Publicar <span>↑</span></button>
+          </footer>
+        )}
       </aside>
 
       <main className="admin-canvas">
         <header className="canvas-toolbar">
-          <div className="breadcrumb"><span>Site</span><i>/</i><strong>{pageName}</strong><span className="live-dot"></span></div>
+          <div className="breadcrumb"><span>Site</span><i>/</i><strong>{panel === "articles" ? articleDraft?.title || "Artigos" : pageName}</strong><span className="live-dot"></span></div>
           <div className="preview-controls">
             <div className="preview-mode-switcher" aria-label="Modo do preview">
               <button className={previewMode === "edit" ? "is-active" : ""} onClick={() => setPreviewMode("edit")}>Editar</button>
@@ -506,10 +738,10 @@ export function Admin() {
               <button className={device === "mobile" ? "is-active" : ""} onClick={() => setDevice("mobile")} title="Celular">▯</button>
             </div>
           </div>
-          <div className="canvas-status"><span>{status}</span><button onClick={() => { iframeRef.current.src = `${page}?cms_preview=1&v=${Date.now()}`; }}>↻</button></div>
+          <div className="canvas-status"><span>{status}</span><button onClick={() => { iframeRef.current.src = `${previewPath}?cms_preview=1&v=${Date.now()}`; }}>↻</button></div>
         </header>
         <div className={`preview-stage preview-stage--${device}`}>
-          <iframe ref={iframeRef} title={`Preview de ${pageName}`} src={`${page}?cms_preview=1`} />
+          <iframe ref={iframeRef} title={`Preview de ${panel === "articles" ? articleDraft?.title || "Artigos" : pageName}`} src={`${previewPath}?cms_preview=1`} />
         </div>
       </main>
       <input ref={fileRef} className="visually-hidden" type="file" accept="image/*,video/*" onChange={(event) => upload(event.target.files?.[0])} />
