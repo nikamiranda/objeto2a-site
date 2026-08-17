@@ -109,7 +109,7 @@ function SubHeader({ path }) {
       <Brand />
       <nav className={open ? "sub-nav is-open" : "sub-nav"} aria-label="Navegação principal">
         {navigation.map(([href, label]) => (
-          <a className={path === href ? "is-active" : ""} href={href} target={href === "/artigos" ? "_blank" : undefined} rel={href === "/artigos" ? "noreferrer" : undefined} key={href}>{label}</a>
+          <a className={path === href ? "is-active" : ""} href={href} key={href}>{label}</a>
         ))}
       </nav>
       <a className="sub-header__action" href="/#contato">Vamos conversar</a>

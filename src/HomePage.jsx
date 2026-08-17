@@ -7,7 +7,7 @@ const whatsapp = "https://wa.me/5521986287957";
 const navItems = [
   { label: "Sobre", href: "/sobre" },
   { label: "Atuação", href: "#solucoes" },
-  { label: "Artigos", href: "/artigos", external: true },
+  { label: "Artigos", href: "/artigos" },
   { label: "Contato", href: "#contato" },
 ];
 
