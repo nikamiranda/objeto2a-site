@@ -90,18 +90,28 @@ export function Admin() {
       }
       if (event.data.type === "select") {
         setSelected(event.data.element);
-        setPanel("content");
+        if (!articleDraft) setPanel("content");
       }
       if (event.data.type === "replace-media") {
         setSelected(event.data.element);
-        setPanel("content");
-        window.setTimeout(() => fileRef.current?.click(), 0);
+        if (articleDraft) {
+          const source = String(event.data.element?.src || "");
+          const matches = (value) => value && (source === value || source.endsWith(value) || value.endsWith(source));
+          const target = matches(articleDraft.fieldImage) ? "fieldImage" : matches(articleDraft.image) ? "image" : "";
+          if (target) {
+            setArticleMediaTarget(target);
+            window.setTimeout(() => fileRef.current?.click(), 0);
+          }
+        } else {
+          setPanel("content");
+          window.setTimeout(() => fileRef.current?.click(), 0);
+        }
       }
-      if (event.data.type === "change") updatePatch(event.data.element.id, { text: event.data.element.text });
+      if (event.data.type === "change" && !articleDraft) updatePatch(event.data.element.id, { text: event.data.element.text });
     };
     window.addEventListener("message", onMessage);
     return () => window.removeEventListener("message", onMessage);
-  }, [content, previewMode]);
+  }, [content, previewMode, articleDraft]);
 
   useEffect(() => {
     iframeRef.current?.contentWindow?.postMessage(
@@ -440,7 +450,7 @@ export function Admin() {
     const order = content.order.length ? content.order : sections.map((item) => item.id);
     return order.indexOf(a.id) - order.indexOf(b.id);
   });
-  const previewPath = panel === "articles" && articleDraft ? `/artigos/${articleDraft.slug}` : page;
+  const previewPath = articleDraft ? `/artigos/${articleDraft.slug}` : page;
 
   if (authState !== "ok") {
     return (

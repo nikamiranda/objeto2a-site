@@ -33,6 +33,8 @@ test("article API uses Supabase and the dashboard exposes editorial CRUD", async
   assert.match(admin, /Criar novo artigo/);
   assert.match(admin, /saveArticle\(true\)/);
   assert.match(admin, /deleteArticle/);
+  assert.match(admin, /const previewPath = articleDraft \? `\/artigos\/\$\{articleDraft\.slug\}` : page/);
+  assert.match(admin, /if \(!articleDraft\) setPanel\("content"\)/);
   assert.match(admin, /\/api\/article-media/);
   assert.match(mediaApi, /createSignedUploadUrl/);
   assert.match(mediaApi, /article-media/);
