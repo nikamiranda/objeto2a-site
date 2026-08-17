@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Brand } from "./Brand.jsx";
+import { Brand, BrandLine } from "./Brand.jsx";
 
 const navigation = [
   ["/", "Início"],
@@ -400,59 +400,83 @@ function AboutPage() {
   const profile = people[person];
   return (
     <>
-      <PageHero
-        eyebrow="SOBRE A OBJETO 2a"
-        title={<>Dois olhares.<br />Um campo de possibilidades.</>}
-        intro="A Objeto 2a conecta repertórios complementares para trabalhar o que existe entre estratégia e subjetividade, desempenho e saúde relacional."
-        image="/fundadoras-v2.png"
-        imageAlt="Mônica Miranda e Kátia Puente, fundadoras da Objeto 2a"
-      />
-      <section className="founder-studio section-pad">
-        <div className="sub-section-head">
-          <div><p className="overline">QUEM FAZ</p><h2>Complementares<br />por escolha.</h2></div>
-          <div className="founder-toggle">
-            <button className={person === "monica" ? "is-active" : ""} onClick={() => setPerson("monica")} type="button">Mônica</button>
-            <button className={person === "katia" ? "is-active" : ""} onClick={() => setPerson("katia")} type="button">Kátia</button>
+      <section className="about-hero">
+        <div className="about-shell about-hero__grid">
+          <div className="about-hero__copy">
+            <p className="overline">SOBRE A OBJETO 2a</p>
+            <h1>Dois olhares.<br />Uma escuta que<br />produz direção.</h1>
+            <p>A Objeto 2a aproxima psicanálise, sociologia clínica e comunicação para ler o que move pessoas, relações e trabalho.</p>
+            <a className="about-text-link" href="#fundadoras">Conheça as fundadoras <span>↓</span></a>
           </div>
+          <figure className="about-hero__media">
+            <img src="/fundadoras-v2.png" alt="Mônica Miranda e Kátia Puente, fundadoras da Objeto 2a" />
+            <figcaption><span>Mônica Miranda · Kátia Puente</span><span>Rio de Janeiro</span></figcaption>
+          </figure>
         </div>
-        <article className="founder-card">
-          <img src={profile.image} alt={profile.name} />
-          <div>
-            <p className="overline">{profile.role}</p>
-            <h2>{profile.name}</h2>
-            <div className="tag-cloud">{profile.fields.map((field) => <span key={field}>{field}</span>)}</div>
-            <p>{profile.bio}</p>
-          </div>
-        </article>
+        <BrandLine className="about-hero__line" />
       </section>
 
-      <section className="origin-story section-pad">
-        <figure><img src="/workshop.jpg" alt="Experiência de aprendizagem facilitada pela Objeto 2a" /></figure>
-        <div>
-          <p className="overline">NOSSA HISTÓRIA</p>
-          <h2>Da Educriative<br />para a Objeto 2a.</h2>
-          <p>A empresa nasceu de um laboratório de ativação e criação para transformar autoconhecimento, estratégia e criatividade em impacto humano e organizacional.</p>
-          <div className="value-cloud">
-            {["Escuta ativa", "Nexialismo", "Singularidade ativa", "Diversidade", "Aprendizagem contínua", "Inovação humanizada", "Letramento humano"].map((value) => <span key={value}>{value}</span>)}
+      <section className="about-founders" id="fundadoras">
+        <div className="about-shell">
+          <header className="about-heading">
+            <div><p className="overline">QUEM FAZ</p><h2>Complementares<br />por escolha.</h2></div>
+            <p>Formações distintas que se encontram numa mesma prática: escutar com rigor para produzir leitura, linguagem e movimento.</p>
+          </header>
+          <div className="about-founder-tabs" role="tablist" aria-label="Conheça as fundadoras">
+            {Object.entries(people).map(([key, item], index) => (
+              <button
+                className={person === key ? "is-active" : ""}
+                onClick={() => setPerson(key)}
+                type="button"
+                role="tab"
+                aria-selected={person === key}
+                key={key}
+              ><span>0{index + 1}</span>{item.name}</button>
+            ))}
           </div>
-        </div>
-      </section>
-
-      <section className="beliefs section-pad">
-        <p className="overline">NO QUE ACREDITAMOS</p>
-        <div className="belief-grid">
-          {[
-            ["01", "Toda organização é também uma rede de relações."],
-            ["02", "O que não encontra linguagem continua agindo."],
-            ["03", "Aprendizagem precisa tocar o trabalho real."],
-            ["04", "Não existe transformação sem autoria."],
-          ].map(([number, text]) => <article key={number}><span>{number}</span><h3>{text}</h3></article>)}
+          <article className="about-founder-profile">
+            <figure><img src={profile.image} alt={profile.name} /></figure>
+            <div className="about-founder-profile__copy">
+              <p className="overline">{profile.role}</p>
+              <h3>{profile.name}</h3>
+              <p>{profile.bio}</p>
+              <ul>{profile.fields.map((field) => <li key={field}>{field}</li>)}</ul>
+            </div>
+          </article>
         </div>
       </section>
 
-      <section className="about-photo-band">
-        <img src="/case-redballoon-dia2.jpg" alt="Encontro de desenvolvimento facilitado pela Objeto 2a" />
-        <div><p className="overline">O NEXO HUMANO</p><h2>Entre o técnico e o relacional, existe o lugar onde o trabalho realmente acontece.</h2></div>
+      <section className="about-origin">
+        <div className="about-shell about-origin__grid">
+          <figure><img src="/workshop.jpg" alt="Experiência de aprendizagem facilitada pela Objeto 2a" /></figure>
+          <div className="about-origin__copy">
+            <p className="overline">NOSSA HISTÓRIA</p>
+            <h2>Da Educriative<br />para a Objeto 2a.</h2>
+            <p>A empresa nasceu como um laboratório de ativação e criação. Ao longo do caminho, a escuta ganhou mais profundidade e o trabalho encontrou seu eixo: transformar questões humanas e organizacionais em direção possível.</p>
+            <div className="about-values">
+              {["Escuta ativa", "Singularidade", "Aprendizagem contínua", "Inovação humanizada"].map((value, index) => <span key={value}><i>0{index + 1}</i>{value}</span>)}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="about-beliefs">
+        <div className="about-shell">
+          <div className="about-heading about-heading--beliefs"><p className="overline">NO QUE ACREDITAMOS</p><h2>Princípios que orientam<br />a nossa prática.</h2></div>
+          <div className="about-belief-list">
+            {[
+              ["01", "Toda organização é também uma rede de relações."],
+              ["02", "O que não encontra linguagem continua agindo."],
+              ["03", "Aprendizagem precisa tocar o trabalho real."],
+              ["04", "Não existe transformação sem autoria."],
+            ].map(([number, text]) => <article key={number}><span>{number}</span><h3>{text}</h3></article>)}
+          </div>
+        </div>
+      </section>
+
+      <section className="about-manifesto">
+        <div className="about-manifesto__media"><img src="/case-redballoon-dia2.jpg" alt="Encontro de desenvolvimento facilitado pela Objeto 2a" /></div>
+        <div className="about-manifesto__copy"><p className="overline">O NEXO HUMANO</p><h2>Entre o técnico e o relacional existe o lugar onde o trabalho realmente acontece.</h2><p>É nesse intervalo que escutamos, lemos e construímos direção.</p></div>
       </section>
       <ContactBand title="Boas conversas mudam o desenho das possibilidades." />
     </>
@@ -479,7 +503,7 @@ export function Subpage({ path }) {
   };
   if (!pages[path]) return <NotFoundPage />;
   return (
-    <main className="subpage">
+    <main className={`subpage ${path === "/sobre" ? "about-page" : ""}`.trim()}>
       <SubHeader path={path} />
       {pages[path]}
     </main>
