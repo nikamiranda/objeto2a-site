@@ -215,7 +215,7 @@ body { min-height: 100dvh; margin: 0; color: var(--o2-ink); background: var(--o2
 .archive-hero > p { max-width: 310px; margin: 0 0 8px; align-self: end; color: rgb(250 249 246 / 80%); font-size: 1rem; line-height: 1.64; }
 .archive-hero__number { position: absolute; top: clamp(90px, 11vw, 150px); right: 1vw; color: rgb(250 249 246 / 20%); font-size: clamp(6rem, 15vw, 15rem); font-weight: 400; letter-spacing: -.12em; line-height: .62; }
 .archive-hero__number small { position: absolute; right: 2px; bottom: -22px; color: rgb(250 249 246 / 52%); font-size: .58rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; }
-.archive-lead { min-height: 690px; display: grid; grid-template-columns: 1.2fr .8fr; color: var(--o2-navy); background: var(--o2-sand); }
+.archive-lead { min-height: 690px; display: grid; grid-template-columns: 1.2fr .8fr; color: var(--o2-navy); background: var(--o2-offwhite); }
 .archive-lead > a { min-height: 600px; display: block; overflow: hidden; background: rgb(4 24 51 / 8%); }
 .archive-lead img { width: 100%; height: 100%; object-fit: contain; transition: transform .9s cubic-bezier(.22, 1, .36, 1); }
 .archive-lead > a:hover img { transform: scale(1.02); }
@@ -240,7 +240,7 @@ body { min-height: 100dvh; margin: 0; color: var(--o2-ink); background: var(--o2
 .layout-archive .editorial-footer { background: #133d36; }
 
 /* C — Salão: quiet architectural reading room, cards as a visual shelf. */
-.layout-salon { background: #f2efe8; }
+.layout-salon { background: var(--o2-offwhite); }
 .layout-salon .editorial-header { border-color: rgb(4 24 51 / 12%); }
 .salon-hero { width: min(calc(100% - 72px), 1400px); min-height: 690px; margin: 0 auto; padding: clamp(90px, 12vw, 165px) 0 80px; position: relative; display: grid; grid-template-columns: 1fr minmax(240px, .36fr); gap: 8vw; align-items: end; }
 .salon-hero::before { position: absolute; top: 83px; right: 0; width: min(35vw, 510px); aspect-ratio: 1; border-radius: 50% 50% 0 0; content: ""; background: var(--o2-terracotta); opacity: .9; }
@@ -266,7 +266,7 @@ body { min-height: 100dvh; margin: 0; color: var(--o2-ink); background: var(--o2
 .salon-shelf article h2 { max-width: 550px; margin: 0; font-size: clamp(1.8rem, 3.2vw, 3.7rem); font-weight: 400; letter-spacing: -.06em; line-height: .98; }
 .salon-shelf article h2 a { color: inherit; text-decoration: none; }
 .salon-shelf article > span { margin-top: 22px; display: block; color: rgb(250 249 246 / 53%); font-size: .62rem; }
-.salon-closing { min-height: 360px; padding: 64px max(36px, calc((100vw - 1400px) / 2)); display: flex; gap: 35px; flex-direction: column; justify-content: center; align-items: flex-start; color: var(--o2-navy); background: var(--o2-sand); }
+.salon-closing { min-height: 360px; padding: 64px max(36px, calc((100vw - 1400px) / 2)); display: flex; gap: 35px; flex-direction: column; justify-content: center; align-items: flex-start; color: var(--o2-navy); background: var(--o2-offwhite); }
 .salon-closing p { max-width: 890px; margin: 0; font-size: clamp(2.6rem, 5.2vw, 5.8rem); font-weight: 400; letter-spacing: -.075em; line-height: .91; }
 .salon-closing a { color: inherit; font-size: .72rem; font-weight: 600; text-decoration: none; }
 .layout-salon .editorial-footer { background: #1b1715; }
