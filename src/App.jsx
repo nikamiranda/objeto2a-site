@@ -5,7 +5,9 @@ import { useCmsRuntime } from "./cmsRuntime.js";
 
 export function App() {
   const path = window.location.pathname.replace(/\/+$/, "") || "/";
+  const isAdminHost = window.location.hostname === "admin.objeto2a.com";
+  const isCmsPreview = new URLSearchParams(window.location.search).has("cms_preview");
   useCmsRuntime();
-  if (path === "/admin") return <Admin />;
+  if (path === "/admin" || (isAdminHost && path === "/" && !isCmsPreview)) return <Admin />;
   return path === "/" ? <HomePage /> : <Subpage path={path} />;
 }
