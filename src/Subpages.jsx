@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { Brand, BrandLine } from "./Brand.jsx";
+import { SiteFooter } from "./HomePage.jsx";
 
 const navigation = [
   ["/", "Início"],
@@ -142,7 +143,7 @@ function PageHero({ eyebrow, title, intro, image, imageAlt, children }) {
   );
 }
 
-function ContactBand({ title = "Qual transformação está pedindo movimento?" }) {
+function ContactBand({ title = "Qual transformação está pedindo movimento?", withFooter = true }) {
   return (
     <section className="sub-contact">
       <p className="overline">PRÓXIMA CONVERSA</p>
@@ -150,15 +151,17 @@ function ContactBand({ title = "Qual transformação está pedindo movimento?" }
         <h2>{title}</h2>
         <a className="button button--light" href="https://wa.me/5521986287957" target="_blank" rel="noreferrer">CONTAR O CONTEXTO <span>↗</span></a>
       </div>
-      <footer>
-        <Brand inverse />
-        <div className="sub-contact__links">
-          <a href="https://wa.me/5521986287957" target="_blank" rel="noreferrer">WhatsApp ↗</a>
-          <a href="https://www.instagram.com/objeto2a/" target="_blank" rel="noreferrer">Instagram ↗</a>
-          <a href="https://www.linkedin.com/company/objeto2a" target="_blank" rel="noreferrer">LinkedIn ↗</a>
-        </div>
-        <span>Rio de Janeiro · CNPJ 36.476.871/0001-23</span>
-      </footer>
+      {withFooter && (
+        <footer>
+          <Brand inverse />
+          <div className="sub-contact__links">
+            <a href="https://wa.me/5521986287957" target="_blank" rel="noreferrer">WhatsApp ↗</a>
+            <a href="https://www.instagram.com/objeto2a/" target="_blank" rel="noreferrer">Instagram ↗</a>
+            <a href="https://www.linkedin.com/company/objeto2a" target="_blank" rel="noreferrer">LinkedIn ↗</a>
+          </div>
+          <span>Rio de Janeiro · CNPJ 36.476.871/0001-23</span>
+        </footer>
+      )}
     </section>
   );
 }
@@ -400,7 +403,7 @@ function AboutPage() {
   const profile = people[person];
   return (
     <>
-      <section className="about-hero">
+      <section className="about-hero" id="inicio">
         <div className="about-shell about-hero__grid">
           <div className="about-hero__copy">
             <p className="overline">SOBRE A OBJETO 2a</p>
@@ -478,7 +481,8 @@ function AboutPage() {
         <div className="about-manifesto__media"><img src="/case-redballoon-dia2.jpg" alt="Encontro de desenvolvimento facilitado pela Objeto 2a" /></div>
         <div className="about-manifesto__copy"><p className="overline">O NEXO HUMANO</p><h2>Entre o técnico e o relacional existe o lugar onde o trabalho realmente acontece.</h2><p>É nesse intervalo que escutamos, lemos e construímos direção.</p></div>
       </section>
-      <ContactBand title="Boas conversas mudam o desenho das possibilidades." />
+      <ContactBand title="Boas conversas mudam o desenho das possibilidades." withFooter={false} />
+      <SiteFooter reveal rootLinks flow />
     </>
   );
 }
