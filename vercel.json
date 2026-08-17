@@ -20,14 +20,12 @@
       ]
     }
   ],
-  "redirects": [
-    {
-      "source": "/admin",
-      "destination": "https://admin.objeto2a.com/",
-      "permanent": true
-    }
-  ],
   "routes": [
+    {
+      "src": "/admin/?$",
+      "status": 308,
+      "headers": { "Location": "https://admin.objeto2a.com/" }
+    },
     { "handle": "filesystem" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
