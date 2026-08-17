@@ -9,14 +9,6 @@
       ]
     },
     {
-      "source": "/admin",
-      "headers": [
-        { "key": "Cache-Control", "value": "no-store" },
-        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
-        { "key": "X-Content-Type-Options", "value": "nosniff" }
-      ]
-    },
-    {
       "source": "/",
       "has": [
         { "type": "header", "key": "host", "value": "admin.objeto2a.com" }
@@ -26,6 +18,13 @@
         { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
         { "key": "X-Content-Type-Options", "value": "nosniff" }
       ]
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/admin",
+      "destination": "https://admin.objeto2a.com/",
+      "permanent": true
     }
   ],
   "routes": [
